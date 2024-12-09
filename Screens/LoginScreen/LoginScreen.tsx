@@ -11,33 +11,56 @@ import {
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation, CommonActions } from "@react-navigation/native";
+import { UsersService } from "../../services/users.service";
+import { useAuth } from "../../providers/authentication";
 
-interface RegisterFormInterface {
+interface LoginFormInterface {
     username: string;
     password: string;
-    confirmPassword: string;
 }
 
-function RegisterScreen() {
+function LoginScreen() {
+    const { authState, login, logout } = useAuth();
     const navigation = useNavigation();
-    const [registerForm, setRegisterForm] = useState<RegisterFormInterface>({
-        username: "",
-        password: "",
-        confirmPassword: "",
+    const [loginForm, setLoginForm] = useState<LoginFormInterface>({
+        username: "martigiant@gmail.com",
+        password: "Marticvet",
     });
 
-    function submitRegisterFormHandler() {
+    async function submitLoginFormHandler() {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const passwordRegex =
             /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-        const isEmailValid = emailRegex.test(registerForm.username);
-        const isPasswordValid = passwordRegex.test(registerForm.password);
-        const isConfirmedPasswordValid = passwordRegex.test(registerForm.confirmPassword);
+        const isEmailValid = emailRegex.test(loginForm.username);
+        const isPasswordValid = passwordRegex.test(loginForm.password);
 
-        if (isEmailValid && isPasswordValid && isConfirmedPasswordValid) {
-            console.log("Register Successful!");
-            // Proceed with register actions
+        if (true) {
+            const userService = new UsersService();
+            const { username, password } = loginForm;
+
+            try {
+                const userService = new UsersService();
+                const response = await userService.loginUser({
+                    username,
+                    password,
+                });
+
+                if (!response) {
+                    window.alert("Invalid username or password");
+                    return;
+                }
+                const { token, firstName, lastName, userId } = response;
+                await login(token, firstName, lastName, userId); // Call the login function
+                console.log("User logged in successfully");
+            } catch (error) {
+                console.error("Error during login:", error);
+            }
+
+            // setLoginForm({
+            //     username: "",
+            //     password: "",
+            // });
         } else {
             // Generate an appropriate error message
             const errorMessage = !isEmailValid
@@ -52,16 +75,15 @@ function RegisterScreen() {
             ]);
 
             // Reset form and show alert
-            setRegisterForm({
+            setLoginForm({
                 username: "",
                 password: "",
-                confirmPassword: "",
             });
         }
     }
 
-    function registerFormHandler(field: string, value: string) {
-        setRegisterForm((oldState) => {
+    function loginFormHandler(field: string, value: string) {
+        setLoginForm((oldState) => {
             return {
                 ...oldState,
                 [field]: value,
@@ -75,7 +97,7 @@ function RegisterScreen() {
             CommonActions.reset({
                 index: 0, // this will set the first screen in the stack (only Register screen)
                 routes: [
-                    { name: "Login" }, // replace 'Register' with your registration screen name
+                    { name: "Register" }, // replace 'Register' with your registration screen name
                 ],
             })
         );
@@ -84,21 +106,21 @@ function RegisterScreen() {
     return (
         <View style={styles.container}>
             {/* <Text style={styles.welcome}>Welcome in AutoCare-Hub!</Text> */}
-            <View style={styles.registerInsideContainer}>
-                <View style={styles.registerWithContainer}>
-                    <View style={styles.registerTextContainer}>
-                        <Text style={styles.registerText}>Register With</Text>
+            <View style={styles.loginInsideContainer}>
+                <View style={styles.loginWithContainer}>
+                    <View style={styles.loginTextContainer}>
+                        <Text style={styles.loginText}>Login With</Text>
                     </View>
-                    <View style={styles.registerIcons}>
-                        <View style={styles.registerIcon}>
+                    <View style={styles.loginIcons}>
+                        <View style={styles.loginIcon}>
                             <Entypo name="facebook" size={24} color="black" />
                         </View>
 
-                        <View style={styles.registerIcon}>
+                        <View style={styles.loginIcon}>
                             <AntDesign name="google" size={24} color="black" />
                         </View>
 
-                        <View style={styles.registerIcon}>
+                        <View style={styles.loginIcon}>
                             <AntDesign name="apple1" size={24} color="black" />
                         </View>
                     </View>
@@ -110,68 +132,57 @@ function RegisterScreen() {
                     </View>
                 </View>
 
-                <View style={styles.registerForm}>
-                    <View style={styles.registerInformationContainer}>
-                        <Text style={styles.registerTextLabel}>Email Adress:</Text>
+                <View style={styles.loginForm}>
+                    <View style={styles.loginInformationContainer}>
+                        <Text style={styles.loginTextLabel}>Email Adress:</Text>
                         <TextInput
                             style={styles.textInput}
                             placeholder="Enter your username"
                             placeholderTextColor="#aaa"
                             onChangeText={(value) =>
-                                registerFormHandler("username", value)
+                                loginFormHandler("username", value)
                             }
-                            value={registerForm.username}
+                            value={loginForm.username}
                             autoCorrect={false}
                             autoCapitalize="none"
                         />
                     </View>
 
-                    <View style={styles.registerInformationContainer}>
-                        <Text style={styles.registerTextLabel}>Password:</Text>
+                    <View style={styles.loginInformationContainer}>
+                        <Text style={styles.loginTextLabel}>Password:</Text>
                         <TextInput
                             style={styles.textInput}
                             placeholder="Enter your password"
                             placeholderTextColor="#aaa"
                             onChangeText={(value) =>
-                                registerFormHandler("password", value)
+                                loginFormHandler("password", value)
                             }
-                            value={registerForm.password}
-                            secureTextEntry
-                        />
-                    </View>
-
-                    <View style={styles.registerInformationContainer}>
-                        <Text style={styles.registerTextLabel}>Confirm Password:</Text>
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="Confirm your password"
-                            placeholderTextColor="#aaa"
-                            onChangeText={(value) =>
-                                registerFormHandler("confirmPassword", value)
-                            }
-                            value={registerForm.confirmPassword}
+                            value={loginForm.password}
                             secureTextEntry
                         />
                     </View>
 
                     <View style={styles.buttonContainer}>
                         <Pressable
-                            onPress={submitRegisterFormHandler}
+                            onPress={submitLoginFormHandler}
                             style={({ pressed }) =>
                                 pressed
-                                    ? styles.pressedRegisterButton
-                                    : styles.registerButton
+                                    ? styles.pressedLoginButton
+                                    : styles.loginButton
                             }
                         >
-                            <Text style={styles.registerButtonText}>Register</Text>
+                            <Text style={styles.loginButtonText}>Login</Text>
                         </Pressable>
 
                         <View style={styles.registerOptionContainer}>
+                            <Text style={styles.registerOuterText}>
+                                Don't have account?
+                            </Text>
                             <Text
                                 style={styles.registerInnerText}
                                 onPress={navigateCreateAcountHandler}
                             >
-                                Do you have account?
+                                Create acount
                             </Text>
                         </View>
                     </View>
@@ -193,30 +204,30 @@ const styles = StyleSheet.create({
         fontSize: 24,
         paddingBottom: 18,
     },
-    registerInsideContainer: {
+    loginInsideContainer: {
         borderRadius: 12,
         height: "80%",
         flex: 1,
         width: "85%",
     },
-    registerForm: {
+    loginForm: {
         flex: 1,
     },
-    registerWithContainer: {
+    loginWithContainer: {
         alignItems: "center",
         justifyContent: "center",
         width: "100%",
         height: "35%",
         paddingHorizontal: 12,
     },
-    registerIcons: {
+    loginIcons: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
         width: "100%",
         padding: 8,
     },
-    registerIcon: {
+    loginIcon: {
         width: 68,
         height: 48,
         // borderColor: "red",
@@ -225,13 +236,13 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         paddingHorizontal: 8,
     },
-    registerTextContainer: {
+    loginTextContainer: {
         height: "35%",
         alignItems: "center",
         justifyContent: "center",
         width: "100%",
     },
-    registerText: {
+    loginText: {
         fontSize: 24,
     },
     dividerContainer: {
@@ -258,12 +269,12 @@ const styles = StyleSheet.create({
         fontSize: 16,
         borderRadius: 8,
     },
-    registerInformationContainer: {
+    loginInformationContainer: {
         width: "100%",
         justifyContent: "center",
         paddingHorizontal: 16,
     },
-    registerTextLabel: {
+    loginTextLabel: {
         fontSize: 16,
         marginBottom: 6,
     },
@@ -272,7 +283,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginTop: 24,
     },
-    registerButton: {
+    loginButton: {
         backgroundColor: "#4FD15B",
         width: "80%",
         height: 42,
@@ -280,7 +291,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         borderRadius: 16,
     },
-    pressedRegisterButton: {
+    pressedLoginButton: {
         backgroundColor: "#7ad784",
         width: "80%",
         height: 42,
@@ -288,7 +299,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         borderRadius: 16,
     },
-    registerButtonText: {
+    loginButtonText: {
         color: "white",
         fontSize: 24,
         textAlign: "center",
@@ -309,4 +320,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default RegisterScreen;
+export default LoginScreen;

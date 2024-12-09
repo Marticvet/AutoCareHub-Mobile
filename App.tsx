@@ -11,20 +11,23 @@ import {
     TouchableOpacity,
     Text,
 } from "react-native";
-import LoginScreen from "./Pages/LoginScreen/LoginScreen";
-import RegisterScreen from "./Pages/RegisterScreen/RegisterScreen";
-import HomePage from "./Pages/HomePage/HomePage";
+import LoginScreen from "./Screens/LoginScreen/LoginScreen";
+import RegisterScreen from "./Screens/RegisterScreen/RegisterScreen";
+import HomeScreen from "./Screens/HomeScreen/HomeScreen";
 import { AuthProvider, useAuth } from "./providers/authentication";
 import { UsersService } from "./services/users.service";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Keyboard } from "react-native";
 import { CommonActions } from "@react-navigation/native";
+import SettingsScreen from "./Screens/SettingsScreen/SettingsScreen";
+import AddVehicleScreen from "./Screens/AddVehicleScreen/AddVehicleScreen";
 // types.ts
 export type RootStackParamList = {
     Login: undefined; // No params for the Login screen
     Register: undefined; // No params for the Register screen
-    HomePage: undefined; // No params for the HomePage screen
+    HomeScreen: undefined; // No params for the HomeScreen screen
+    SettingsScreen: undefined; // No params for the SettingsScreen screen
 };
 
 const App = () => (
@@ -54,7 +57,6 @@ function RootNavigator() {
 
 function LogoutButton() {
     const { logout } = useAuth();
-    const navigation = useNavigation(); // Access navigation
 
     async function logoutHandler() {
         const userService = new UsersService();
@@ -63,17 +65,6 @@ function LogoutButton() {
             const response = await userService.logoutUser();
             if (response && response.status === 200) {
                 logout();
-
-                // Dismiss the keyboard before navigating
-                Keyboard.dismiss();
-
-                // Reset the navigation stack and navigate to the Login screen
-                navigation.dispatch(
-                    CommonActions.reset({
-                        index: 0,  // Set the Login screen as the first in the stack
-                        routes: [{ name: "Login" }],  // Route to the Login screen
-                    })
-                );
             }
         } catch (error) {
             console.error("Logout error:", error);
@@ -104,17 +95,21 @@ function NonAuthNavigator() {
 
 function AuthNavigator() {
     const { authState } = useAuth();
-    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
     if (authState.isLoggedIn) {
         return (
-            <AppStack.Navigator initialRouteName="HomePage">
+            <AppStack.Navigator initialRouteName="HomeScreen">
                 <AppStack.Screen
-                    name="HomePage"
-                    component={HomePage}
+                    name="HomeScreen"
+                    component={HomeScreen}
                     options={{
                         headerRight: () => <LogoutButton />,
+                        headerShown: false,
                     }}
+                />
+                <AppStack.Screen
+                    name="AddVehicleScreen"
+                    component={AddVehicleScreen}
                 />
             </AppStack.Navigator>
         );

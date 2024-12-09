@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 
 const HomeDashboard: React.FC = () => {
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Home Dashboard</Text>
