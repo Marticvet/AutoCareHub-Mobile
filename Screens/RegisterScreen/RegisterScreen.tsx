@@ -67,8 +67,6 @@ function RegisterScreen() {
                 lastName,
             });
 
-            console.log(response, `response`);
-
             if (response === undefined) {
                 Alert.alert("Registration Error", "Email already used!", [
                     {
@@ -89,7 +87,7 @@ function RegisterScreen() {
                 return;
             } else {
                 const { token, userId } = response;
-                await login(token, firstName, lastName, userId); // Call the login function
+                await login(token, userId, firstName, lastName); // Call the login function
 
                 setRegisterForm({
                     username: "",

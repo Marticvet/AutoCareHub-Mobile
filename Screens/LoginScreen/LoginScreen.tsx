@@ -55,7 +55,7 @@ function LoginScreen() {
                     return;
                 }
                 const { token, firstName, lastName, userId } = response;
-                await login(token, firstName, lastName, userId); // Call the login function
+                await login(token, userId, firstName, lastName); // Call the login function
                 console.log("User logged in successfully");
             } catch (error) {
                 console.error("Error during login:", error);
