@@ -7,6 +7,10 @@ import {
     Pressable,
     Alert,
     ScrollView,
+    KeyboardAvoidingView,
+    Platform,
+    TouchableWithoutFeedback,
+    Keyboard,
 } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -146,159 +150,208 @@ function RegisterScreen() {
                 contentContainerStyle={styles.scrollContent}
                 keyboardShouldPersistTaps="handled"
             >
-                <View style={styles.container}>
-                    {/* <Text style={styles.welcome}>Welcome in AutoCare-Hub!</Text> */}
-                    <View style={styles.registerInsideContainer}>
-                        <View style={styles.registerWithContainer}>
-                            <View style={styles.registerTextContainer}>
-                                <Text style={styles.registerText}>
-                                    Register With
-                                </Text>
-                            </View>
-                            <View style={styles.registerIcons}>
-                                <View style={styles.registerIcon}>
-                                    <Entypo
-                                        name="facebook"
-                                        size={24}
-                                        color="black"
-                                    />
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === "ios" ? "padding" : "height"}
+                    style={styles.scrollContent}
+                >
+                    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                        <View style={styles.container}>
+                            {/* <Text style={styles.welcome}>Welcome in AutoCare-Hub!</Text> */}
+                            <View style={styles.registerInsideContainer}>
+                                <View style={styles.registerWithContainer}>
+                                    <View style={styles.registerTextContainer}>
+                                        <Text style={styles.registerText}>
+                                            Register With
+                                        </Text>
+                                    </View>
+                                    <View style={styles.registerIcons}>
+                                        <View style={styles.registerIcon}>
+                                            <Entypo
+                                                name="facebook"
+                                                size={24}
+                                                color="black"
+                                            />
+                                        </View>
+
+                                        <View style={styles.registerIcon}>
+                                            <AntDesign
+                                                name="google"
+                                                size={24}
+                                                color="black"
+                                            />
+                                        </View>
+
+                                        <View style={styles.registerIcon}>
+                                            <AntDesign
+                                                name="apple1"
+                                                size={24}
+                                                color="black"
+                                            />
+                                        </View>
+                                    </View>
+
+                                    <View style={styles.dividerContainer}>
+                                        <View style={styles.line} />
+                                        <Text style={styles.text}>or</Text>
+                                        <View style={styles.line} />
+                                    </View>
                                 </View>
 
-                                <View style={styles.registerIcon}>
-                                    <AntDesign
-                                        name="google"
-                                        size={24}
-                                        color="black"
-                                    />
-                                </View>
-
-                                <View style={styles.registerIcon}>
-                                    <AntDesign
-                                        name="apple1"
-                                        size={24}
-                                        color="black"
-                                    />
-                                </View>
-                            </View>
-
-                            <View style={styles.dividerContainer}>
-                                <View style={styles.line} />
-                                <Text style={styles.text}>or</Text>
-                                <View style={styles.line} />
-                            </View>
-                        </View>
-
-                        <View style={styles.registerForm}>
-                            <View style={styles.registerInformationContainer}>
-                                <Text style={styles.registerTextLabel}>
-                                    Email Adress:
-                                </Text>
-                                <TextInput
-                                    style={styles.textInput}
-                                    placeholder="Enter your email"
-                                    placeholderTextColor="#aaa"
-                                    onChangeText={(value) =>
-                                        registerFormHandler("username", value)
-                                    }
-                                    value={registerForm.username}
-                                    autoCorrect={false}
-                                    autoCapitalize="none"
-                                />
-                            </View>
-
-                            <View style={styles.registerInformationContainer}>
-                                <Text style={styles.registerTextLabel}>
-                                    First Name:
-                                </Text>
-                                <TextInput
-                                    style={styles.textInput}
-                                    placeholder="Enter your first name"
-                                    placeholderTextColor="#aaa"
-                                    onChangeText={(value) =>
-                                        registerFormHandler("firstName", value)
-                                    }
-                                    value={registerForm.firstName}
-                                    autoCorrect={false}
-                                />
-                            </View>
-
-                            <View style={styles.registerInformationContainer}>
-                                <Text style={styles.registerTextLabel}>
-                                    Last Name:
-                                </Text>
-                                <TextInput
-                                    style={styles.textInput}
-                                    placeholder="Enter your last name"
-                                    placeholderTextColor="#aaa"
-                                    onChangeText={(value) =>
-                                        registerFormHandler("lastName", value)
-                                    }
-                                    value={registerForm.lastName}
-                                    autoCorrect={false}
-                                />
-                            </View>
-
-                            <View style={styles.registerInformationContainer}>
-                                <Text style={styles.registerTextLabel}>
-                                    Password:
-                                </Text>
-                                <TextInput
-                                    style={styles.textInput}
-                                    placeholder="Enter your password"
-                                    placeholderTextColor="#aaa"
-                                    onChangeText={(value) =>
-                                        registerFormHandler("password", value)
-                                    }
-                                    value={registerForm.password}
-                                    secureTextEntry
-                                />
-                            </View>
-
-                            <View style={styles.registerInformationContainer}>
-                                <Text style={styles.registerTextLabel}>
-                                    Confirm Password:
-                                </Text>
-                                <TextInput
-                                    style={styles.textInput}
-                                    placeholder="Confirm your password"
-                                    placeholderTextColor="#aaa"
-                                    onChangeText={(value) =>
-                                        registerFormHandler(
-                                            "confirmPassword",
-                                            value
-                                        )
-                                    }
-                                    value={registerForm.confirmPassword}
-                                    secureTextEntry
-                                />
-                            </View>
-
-                            <View style={styles.buttonContainer}>
-                                <Pressable
-                                    onPress={submitRegisterFormHandler}
-                                    style={({ pressed }) =>
-                                        pressed
-                                            ? styles.pressedRegisterButton
-                                            : styles.registerButton
-                                    }
-                                >
-                                    <Text style={styles.registerButtonText}>
-                                        Register
-                                    </Text>
-                                </Pressable>
-
-                                <View style={styles.registerOptionContainer}>
-                                    <Text
-                                        style={styles.registerInnerText}
-                                        onPress={navigateCreateAcountHandler}
+                                <View style={styles.registerForm}>
+                                    <View
+                                        style={
+                                            styles.registerInformationContainer
+                                        }
                                     >
-                                        Do you have account?
-                                    </Text>
+                                        <Text style={styles.registerTextLabel}>
+                                            Email Adress:
+                                        </Text>
+                                        <TextInput
+                                            style={styles.textInput}
+                                            placeholder="Enter your email"
+                                            placeholderTextColor="#aaa"
+                                            onChangeText={(value) =>
+                                                registerFormHandler(
+                                                    "username",
+                                                    value
+                                                )
+                                            }
+                                            value={registerForm.username}
+                                            autoCorrect={false}
+                                            autoCapitalize="none"
+                                        />
+                                    </View>
+
+                                    <View
+                                        style={
+                                            styles.registerInformationContainer
+                                        }
+                                    >
+                                        <Text style={styles.registerTextLabel}>
+                                            First Name:
+                                        </Text>
+                                        <TextInput
+                                            style={styles.textInput}
+                                            placeholder="Enter your first name"
+                                            placeholderTextColor="#aaa"
+                                            onChangeText={(value) =>
+                                                registerFormHandler(
+                                                    "firstName",
+                                                    value
+                                                )
+                                            }
+                                            value={registerForm.firstName}
+                                            autoCorrect={false}
+                                        />
+                                    </View>
+
+                                    <View
+                                        style={
+                                            styles.registerInformationContainer
+                                        }
+                                    >
+                                        <Text style={styles.registerTextLabel}>
+                                            Last Name:
+                                        </Text>
+                                        <TextInput
+                                            style={styles.textInput}
+                                            placeholder="Enter your last name"
+                                            placeholderTextColor="#aaa"
+                                            onChangeText={(value) =>
+                                                registerFormHandler(
+                                                    "lastName",
+                                                    value
+                                                )
+                                            }
+                                            value={registerForm.lastName}
+                                            autoCorrect={false}
+                                        />
+                                    </View>
+
+                                    <View
+                                        style={
+                                            styles.registerInformationContainer
+                                        }
+                                    >
+                                        <Text style={styles.registerTextLabel}>
+                                            Password:
+                                        </Text>
+                                        <TextInput
+                                            style={styles.textInput}
+                                            placeholder="Enter your password"
+                                            placeholderTextColor="#aaa"
+                                            onChangeText={(value) =>
+                                                registerFormHandler(
+                                                    "password",
+                                                    value
+                                                )
+                                            }
+                                            value={registerForm.password}
+                                            secureTextEntry
+                                        />
+                                    </View>
+
+                                    <View
+                                        style={
+                                            styles.registerInformationContainer
+                                        }
+                                    >
+                                        <Text style={styles.registerTextLabel}>
+                                            Confirm Password:
+                                        </Text>
+                                        <TextInput
+                                            style={styles.textInput}
+                                            placeholder="Confirm your password"
+                                            placeholderTextColor="#aaa"
+                                            onChangeText={(value) =>
+                                                registerFormHandler(
+                                                    "confirmPassword",
+                                                    value
+                                                )
+                                            }
+                                            value={registerForm.confirmPassword}
+                                            secureTextEntry
+                                        />
+                                    </View>
+
+                                    <View style={styles.buttonContainer}>
+                                        <Pressable
+                                            onPress={submitRegisterFormHandler}
+                                            style={({ pressed }) =>
+                                                pressed
+                                                    ? styles.pressedRegisterButton
+                                                    : styles.registerButton
+                                            }
+                                        >
+                                            <Text
+                                                style={
+                                                    styles.registerButtonText
+                                                }
+                                            >
+                                                Register
+                                            </Text>
+                                        </Pressable>
+
+                                        <View
+                                            style={
+                                                styles.registerOptionContainer
+                                            }
+                                        >
+                                            <Text
+                                                style={styles.registerInnerText}
+                                                onPress={
+                                                    navigateCreateAcountHandler
+                                                }
+                                            >
+                                                Do you have account?
+                                            </Text>
+                                        </View>
+                                    </View>
                                 </View>
                             </View>
                         </View>
-                    </View>
-                </View>
+                    </TouchableWithoutFeedback>
+                </KeyboardAvoidingView>
             </ScrollView>
         </View>
     );
@@ -310,6 +363,9 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "100%",
         backgroundColor: "white",
+    },
+    keyboardView: {
+        height: "90%",
     },
     container: {
         flex: 1,

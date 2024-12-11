@@ -7,6 +7,10 @@ import {
     Pressable,
     Alert,
     ScrollView,
+    KeyboardAvoidingView,
+    Platform,
+    Keyboard,
+    TouchableWithoutFeedback,
 } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -104,91 +108,118 @@ function LoginScreen() {
     }
 
     return (
-        <View style={styles.container}>
-            {/* <Text style={styles.welcome}>Welcome in AutoCare-Hub!</Text> */}
-            <View style={styles.loginInsideContainer}>
-                <View style={styles.loginWithContainer}>
-                    <View style={styles.loginTextContainer}>
-                        <Text style={styles.loginText}>Login With</Text>
-                    </View>
-                    <View style={styles.loginIcons}>
-                        <View style={styles.loginIcon}>
-                            <Entypo name="facebook" size={24} color="black" />
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={styles.container}
+            keyboardVerticalOffset={20}
+        >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <View style={styles.container}>
+                    <View style={styles.loginInsideContainer}>
+                        <View style={styles.loginWithContainer}>
+                            <View style={styles.loginTextContainer}>
+                                <Text style={styles.loginText}>Login With</Text>
+                            </View>
+                            <View style={styles.loginIcons}>
+                                <View style={styles.loginIcon}>
+                                    <Entypo
+                                        name="facebook"
+                                        size={24}
+                                        color="black"
+                                    />
+                                </View>
+
+                                <View style={styles.loginIcon}>
+                                    <AntDesign
+                                        name="google"
+                                        size={24}
+                                        color="black"
+                                    />
+                                </View>
+
+                                <View style={styles.loginIcon}>
+                                    <AntDesign
+                                        name="apple1"
+                                        size={24}
+                                        color="black"
+                                    />
+                                </View>
+                            </View>
+
+                            <View style={styles.dividerContainer}>
+                                <View style={styles.line} />
+                                <Text style={styles.text}>or</Text>
+                                <View style={styles.line} />
+                            </View>
                         </View>
 
-                        <View style={styles.loginIcon}>
-                            <AntDesign name="google" size={24} color="black" />
-                        </View>
+                        <View style={styles.loginForm}>
+                            <View style={styles.loginInformationContainer}>
+                                <Text style={styles.loginTextLabel}>
+                                    Email Adress:
+                                </Text>
+                                <TextInput
+                                    style={styles.textInput}
+                                    placeholder="Enter your username"
+                                    placeholderTextColor="#aaa"
+                                    onChangeText={(value) =>
+                                        loginFormHandler("username", value)
+                                    }
+                                    value={loginForm.username}
+                                    autoCorrect={false}
+                                    autoCapitalize="none"
+                                />
+                            </View>
 
-                        <View style={styles.loginIcon}>
-                            <AntDesign name="apple1" size={24} color="black" />
+                            <View style={styles.loginInformationContainer}>
+                                <Text style={styles.loginTextLabel}>
+                                    Password:
+                                </Text>
+                                <TextInput
+                                    style={styles.textInput}
+                                    placeholder="Enter your password"
+                                    placeholderTextColor="#aaa"
+                                    onChangeText={(value) =>
+                                        loginFormHandler("password", value)
+                                    }
+                                    value={loginForm.password}
+                                    secureTextEntry
+                                />
+                            </View>
+
+                            <View style={styles.buttonContainer}>
+                                <Pressable
+                                    onPress={submitLoginFormHandler}
+                                    style={({ pressed }) =>
+                                        pressed
+                                            ? styles.pressedLoginButton
+                                            : styles.loginButton
+                                    }
+                                >
+                                    <Text style={styles.loginButtonText}>
+                                        Login
+                                    </Text>
+                                </Pressable>
+
+                                <View style={styles.registerOptionContainer}>
+                                    <Text style={styles.registerOuterText}>
+                                        Don't have account?
+                                    </Text>
+                                    <Text
+                                        style={styles.registerInnerText}
+                                        onPress={navigateCreateAcountHandler}
+                                    >
+                                        Create acount
+                                    </Text>
+                                </View>
+                            </View>
                         </View>
                     </View>
 
-                    <View style={styles.dividerContainer}>
-                        <View style={styles.line} />
-                        <Text style={styles.text}>or</Text>
-                        <View style={styles.line} />
-                    </View>
+                    {/* </KeyboardAvoidingView> */}
                 </View>
-
-                <View style={styles.loginForm}>
-                    <View style={styles.loginInformationContainer}>
-                        <Text style={styles.loginTextLabel}>Email Adress:</Text>
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="Enter your username"
-                            placeholderTextColor="#aaa"
-                            onChangeText={(value) =>
-                                loginFormHandler("username", value)
-                            }
-                            value={loginForm.username}
-                            autoCorrect={false}
-                            autoCapitalize="none"
-                        />
-                    </View>
-
-                    <View style={styles.loginInformationContainer}>
-                        <Text style={styles.loginTextLabel}>Password:</Text>
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="Enter your password"
-                            placeholderTextColor="#aaa"
-                            onChangeText={(value) =>
-                                loginFormHandler("password", value)
-                            }
-                            value={loginForm.password}
-                            secureTextEntry
-                        />
-                    </View>
-
-                    <View style={styles.buttonContainer}>
-                        <Pressable
-                            onPress={submitLoginFormHandler}
-                            style={({ pressed }) =>
-                                pressed
-                                    ? styles.pressedLoginButton
-                                    : styles.loginButton
-                            }
-                        >
-                            <Text style={styles.loginButtonText}>Login</Text>
-                        </Pressable>
-
-                        <View style={styles.registerOptionContainer}>
-                            <Text style={styles.registerOuterText}>
-                                Don't have account?
-                            </Text>
-                            <Text
-                                style={styles.registerInnerText}
-                                onPress={navigateCreateAcountHandler}
-                            >
-                                Create acount
-                            </Text>
-                        </View>
-                    </View>
-                </View>
-            </View>
-        </View>
+            </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
     );
 }
 

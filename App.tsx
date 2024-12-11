@@ -104,7 +104,7 @@ function AuthNavigator() {
                     component={HomeScreen}
                     options={{
                         headerRight: () => <LogoutButton />,
-                        headerShown: false,
+                        // headerShown: false,
                     }}
                 />
                 <AppStack.Screen
