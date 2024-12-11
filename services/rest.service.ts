@@ -6,7 +6,7 @@ export class RestService {
     resourceUrl: string;
     baseUrl = Config.BASE_URL;
 
-    constructor(resourceUrl) {
+    constructor(resourceUrl: string) {
         this.resourceUrl = resourceUrl;
     }
 
@@ -19,7 +19,7 @@ export class RestService {
             .catch(this.handleError);
     }
 
-    async create(data) {
+    async create(data: object) {
         return fetch(this.baseUrl + this.resourceUrl, {
             method: "POST",
             headers: await this.buildDefaultHeaders(),
@@ -29,7 +29,7 @@ export class RestService {
             .catch(this.handleError);
     }
 
-    async update(id, data) {
+    async update(id: string | number, data: object) {
         return fetch(this.baseUrl + this.resourceUrl + "/" + id, {
             method: "PUT",
             headers: await this.buildDefaultHeaders(),
@@ -39,7 +39,7 @@ export class RestService {
             .catch(this.handleError);
     }
 
-    async getOneById(id) {
+    async getOneById(id: string | number) {
         return fetch(this.baseUrl + this.resourceUrl + "/" + id, {
             method: "GET",
             headers: await this.buildDefaultHeaders(),
@@ -65,7 +65,7 @@ export class RestService {
         return headers;
     }
 
-    handleError(err) {
+    handleError(err: Error) {
         console.log(err);
     }
 }

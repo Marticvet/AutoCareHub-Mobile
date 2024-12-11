@@ -40,7 +40,6 @@ function LoginScreen() {
         const isPasswordValid = passwordRegex.test(loginForm.password);
 
         if (true) {
-            const userService = new UsersService();
             const { username, password } = loginForm;
 
             try {

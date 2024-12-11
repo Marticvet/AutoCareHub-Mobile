@@ -16,6 +16,7 @@ import { useState, useEffect } from "react";
 import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
 import CustomPicker from "./CustomPicker";
+import { VehicleService } from "../../services/vehicle.service";
 
 const years = [
     // 1950, 1951, 1952, 1953, 1954, 1955, 1956, 1957, 1958, 1959, 1960, 1961,
@@ -27,30 +28,30 @@ const years = [
     2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024,
 ];
 
-const carTypesByShape = [
-    "Sedan",
-    "Hatchback",
-    "SUV",
-    "Coupe",
-    "Convertible",
-    "Station Wagon",
-    "Pickup Truck",
-    "Van",
-    "Minivan",
-    "Crossover",
-    "Sports Car",
-    "Luxury Car",
-    "Roadster",
-    "Off-Road Vehicle",
-    "Microcar",
-    "Compact Car",
-    "Supercar",
-    "Electric Vehicle",
-    "Liftback",
-    "Targa",
-    "Ute (Utility Vehicle)",
-    "Campervan",
-    "Panel Van",
+const carTypesByShape: {name: string, type: number}[] = [
+    { name: "Sedan", type: 1 },
+    { name: "Hatchback", type: 2 },
+    { name: "SUV", type: 3 },
+    { name: "Convertible", type: 4 },
+    { name: "Station Wagon", type: 5 },
+    { name: "Pickup Truck", type: 6 },
+    { name: "Van", type: 7 },
+    { name: "Crossover", type: 8 },
+    { name: "Sports Car", type: 9 },
+    { name: "Luxury Car", type: 10},
+    { name: "Roadster", type: 11 },
+    { name: "Off-Road Vehicle", type: 12 },
+    { name: "Compact Car", type: 13 },
+    { name: "Supercar", type: 14 },
+    { name: "Electric Vehicle", type: 15 },
+    { name: "Liftback", type: 16 },
+    { name: "Targa", type: 17 },
+    { name: "Ute (Utility Vehicle)", type: 18 },
+    { name: "Campervan", type: 19 },
+    { name: "Panel Van", type: 20 },
+    { name: "Coupe", type: 21 },
+    { name: "Minivan", type: 22 },
+    { name: "Microcar", type: 23 }
 ];
 
 const API_BASE_URL = "https://www.carqueryapi.com/api/0.3/";
@@ -66,14 +67,48 @@ interface Models {
     model_name: string | null;
 }
 
+interface VehicleData {
+    vehicleBrand: string;
+    vehicleModel: string;
+    vehicleModelYear: number;
+    vehicleCarType: number;
+    vehicleLicensePlate: string;
+    vehicleYearOfManufacture: string;
+    vehicleIdentificationNumber: string;
+}
+
 function AddVehicleScreen() {
     const [selectedVehicleBrand, setSelectedVehicleBrand] =
         useState<string>("");
     const [selectedModel, setSelectedModel] = useState<string>("");
     const [selectedYear, setSelectedYear] = useState<number>(2024);
     const [selectedCarType, setSelectedCarType] = useState<string>(
-        carTypesByShape[0]
+        carTypesByShape[0].name
     );
+    const [vehicleLicensePlate, setVehicleLicensePlate] = useState<string>("");
+    const [yearOfManufacture, setYearOfManufacture] = useState<string>("");
+    const [vehicleIdentificationNumber, setVehicleIdentificationNumber] =
+        useState<string>("");
+
+    // const addVehicleData: VehicleData = {
+    //     vehicleBrand: selectedVehicleBrand,
+    //     vehicleModel: selectedModel,
+    //     vehicleModelYear: selectedYear,
+    //     vehicleCarType:   carTypesByShape.findIndex(carType => carType.name === selectedCarType),
+    //     vehicleLicensePlate: vehicleLicensePlate,
+    //     vehicleYearOfManufacture: yearOfManufacture,
+    //     vehicleIdentificationNumber: vehicleIdentificationNumber,
+    // };
+
+    const addVehicleData: VehicleData = {
+        vehicleBrand: "BMW",
+        vehicleCarType: 1,
+        vehicleIdentificationNumber: "",
+        vehicleLicensePlate: "HU-MT7927",
+        vehicleModel: "330",
+        vehicleModelYear: 2024,
+        vehicleYearOfManufacture: "2023",
+    };
 
     const [brands, setBrands] = useState<Brands[]>([]);
     const [models, setModels] = useState<Models[]>([]);
@@ -121,14 +156,28 @@ function AddVehicleScreen() {
             setSelectedYear(Number(value));
         } else if (field === "carType") {
             setSelectedCarType(value);
+        } else if (field === "vehicleLicense") {
+            setVehicleLicensePlate(value);
+        } else if (field === "yearOfManufacture") {
+            setYearOfManufacture(value);
+        } else if (field === "vin") {
+            setVehicleIdentificationNumber(value);
         }
+    };
+
+    const addVehicleHandler = async () => {
+        const vehicleService = new VehicleService();
+
+        const response = await vehicleService.create(addVehicleData);
+
+        console.log(response, `response`);
     };
 
     return (
         <TouchableWithoutFeedback>
             <KeyboardAvoidingView
                 behavior="position"
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
+                keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
             >
                 <ScrollView contentContainerStyle={styles.container}>
                     {/* Vehicle Name/Model */}
@@ -186,7 +235,7 @@ function AddVehicleScreen() {
                     <View style={styles.pickerContainer}>
                         <View style={styles.pickerWrapper}>
                             <CustomPicker
-                                items={carTypesByShape}
+                                items={carTypesByShape.map(carType => carType.name)}
                                 selectedValue={selectedCarType}
                                 onValueChange={(value) =>
                                     handlePickerChange("carType", value)
@@ -202,12 +251,18 @@ function AddVehicleScreen() {
                         <TextInput
                             style={styles.input}
                             placeholder="Enter License Plate"
+                            onChangeText={(value) =>
+                                handlePickerChange("vehicleLicense", value)
+                            }
                         />
                         <Text style={styles.label}>Year of Manufacture:</Text>
                         <TextInput
                             style={styles.input}
                             placeholder="Enter a Year Of Manufacturing"
                             keyboardType="numeric"
+                            onChangeText={(value) =>
+                                handlePickerChange("yearOfManufacture", value)
+                            }
                         />
 
                         <Text style={styles.label}>
@@ -216,12 +271,15 @@ function AddVehicleScreen() {
                         <TextInput
                             style={styles.input}
                             placeholder="Enter your Vehicle Identification Number (VIN)"
+                            onChangeText={(value) =>
+                                handlePickerChange("vin", value)
+                            }
                         />
                         {/* Submit Button */}
                         <TouchableOpacity
                             style={styles.saveButton}
                             activeOpacity={0.65}
-                            onPress={() => {}}
+                            onPress={addVehicleHandler}
                         >
                             <Text style={styles.buttonText}>Save Vehicle</Text>
                         </TouchableOpacity>
