@@ -22,6 +22,7 @@ import { Keyboard } from "react-native";
 import { CommonActions } from "@react-navigation/native";
 import SettingsScreen from "./Screens/SettingsScreen/SettingsScreen";
 import AddVehicleScreen from "./Screens/AddVehicleScreen/AddVehicleScreen";
+import VehicleDetailScreen from "./Screens/VehicleDetailScreen/VehicleDetailScreen";
 // types.ts
 export type RootStackParamList = {
     Login: undefined; // No params for the Login screen
@@ -110,6 +111,16 @@ function AuthNavigator() {
                 <AppStack.Screen
                     name="AddVehicleScreen"
                     component={AddVehicleScreen}
+                    options={{
+                        title: "Add Vehicle",
+                    }}
+                />
+                <AppStack.Screen
+                    name="GetVehicleById"
+                    component={VehicleDetailScreen}
+                    options={{
+                        title: "Your Vehicle",
+                    }}
                 />
             </AppStack.Navigator>
         );

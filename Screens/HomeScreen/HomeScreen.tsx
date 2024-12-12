@@ -10,7 +10,10 @@ import {
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useAuth } from "../../providers/authentication";
 import { UsersService } from "../../services/users.service";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useEffect, useState } from "react";
+import { VehicleService } from "../../services/vehicle.service";
+import React from "react";
 
 type IconType = "car" | "calendar" | "bag-add-outline" | "cloud-upload-outline";
 
@@ -21,20 +24,60 @@ const quickActions: { id: string; name: string; icon: IconType }[] = [
     { id: "4", name: "Upload Document", icon: "cloud-upload-outline" },
 ];
 
+interface UserVehicles {
+    user_id: number;
+    vehicle_brand: string;
+    vehicle_car_type: string;
+    vehicle_id: number;
+    vehicle_identification_number: string;
+    vehicle_license_plate: string;
+    vehicle_model: string;
+    vehicle_model_year: number;
+    vehicle_year_of_manufacture: number;
+}
+
 function HomeScreen() {
     const navigation = useNavigation();
     const { authState } = useAuth();
-    const { firstName } = authState;
+    const { firstName, userId } = authState;
+    const [userVehicles, setUserVehicles] = useState<UserVehicles[]>([]);
 
-    function quickActionHandler(buttonTxt: string) {
+    function quickActionHandler(buttonTxt: string, vehicleId: number | null) {
         if (buttonTxt === "Add Vehicle") {
             // @ts-ignore
             navigation.navigate("AddVehicleScreen");
+        } else if (buttonTxt === "Get Vehicle By Id") {
+            // @ts-ignore
+            navigation.navigate("GetVehicleById", {
+                vehicleId: vehicleId,
+            });
         }
     }
 
+    useFocusEffect(
+        React.useCallback(() => {
+            // Do something when the screen is focused
+            const vehicleService = new VehicleService();
+
+            (async () => {
+                const response = await vehicleService.getUserVehicles(userId);
+
+                if (response) {
+                    setUserVehicles(response);
+                }
+            })();
+        }, [])
+    );
+
+    if (userVehicles.length === 0) {
+        return null;
+    }
+
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView
+            contentContainerStyle={styles.container}
+            nestedScrollEnabled={true}
+        >
             {/* Header */}
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>
@@ -63,9 +106,8 @@ function HomeScreen() {
                         key={action.id}
                         style={styles.quickAction}
                         activeOpacity={0.65}
-                        onPress={() => quickActionHandler(action.name)}
+                        onPress={() => quickActionHandler(action.name, null)}
                     >
-                        
                         <Ionicons name={action.icon} size={24} color="#fff" />
                         <Text style={styles.quickActionText}>
                             {action.name}
@@ -76,12 +118,58 @@ function HomeScreen() {
 
             {/* Recent Items */}
             <Text style={styles.sectionTitle}>Your Vehicles</Text>
-            {/* <FlatList
-                data={quickActions}
-                renderItem={quickActions}
-                keyExtractor={(item) => item.id}
-                contentContainerStyle={styles.listContainer}
-            /> */}
+            <ScrollView
+                nestedScrollEnabled={true}
+                horizontal={true}
+                contentContainerStyle={styles.vehicleContainerScrollView}
+            >
+                {userVehicles.length > 0 && (
+                    <FlatList
+                        style={styles.vehiclesContainer}
+                        data={userVehicles}
+                        renderItem={({ item }) => {
+                            return (
+                                <TouchableOpacity
+                                    onPress={() =>
+                                        quickActionHandler(
+                                            "Get Vehicle By Id",
+                                            item.vehicle_id
+                                        )
+                                    }
+                                >
+                                    <View style={styles.vehicleContainer}>
+                                        <Text style={styles.vehicle}>
+                                            Vehicle Brand: {item.vehicle_brand}
+                                        </Text>
+                                        <Text style={styles.vehicle}>
+                                            Vehicle Type:{" "}
+                                            {item.vehicle_car_type}
+                                        </Text>
+                                        <Text style={styles.vehicle}>
+                                            Vehicle License Plate:{" "}
+                                            {item.vehicle_license_plate}
+                                        </Text>
+                                        <Text style={styles.vehicle}>
+                                            Vehicle Model: {item.vehicle_model}
+                                        </Text>
+                                        <Text style={styles.vehicle}>
+                                            Vehicle Model Year:{" "}
+                                            {item.vehicle_model_year}
+                                        </Text>
+                                        <Text style={styles.vehicle}>
+                                            Vehicle Year Of Manufacture:{" "}
+                                            {item.vehicle_year_of_manufacture}
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                            );
+                        }}
+                        keyExtractor={(item) => item.vehicle_id.toString()}
+                        contentContainerStyle={styles.listContainer}
+                        showsVerticalScrollIndicator={true}
+                    />
+                )}
+            </ScrollView>
         </ScrollView>
     );
 }
@@ -92,8 +180,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#f5f5f5",
         padding: 16,
         paddingTop: 60,
-        paddingHorizontal: 25
-
+        paddingHorizontal: 25,
     },
     header: {
         marginBottom: 20,
@@ -152,7 +239,7 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontSize: 14,
         fontWeight: "500",
-        textAlign: "center"
+        textAlign: "center",
     },
     listContainer: {
         paddingVertical: 10,
@@ -174,6 +261,31 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: "#666",
         marginTop: 5,
+    },
+    vehicleContainerScrollView: {
+        width: "100%",
+        flex: 1,
+    },
+    vehiclesContainer: {
+        width: "100%",
+        flex: 1,
+    },
+    vehicleContainer: {
+        borderRadius: 8,
+        padding: 8,
+        backgroundColor: "white",
+        height: 160,
+        marginVertical: 15,
+        // flexDirection: 'row',
+        // width: '99%',
+        width: "100%",
+        shadowColor: "black",
+        // borderWidth: 1,
+        shadowRadius: 2,
+        elevation: 1,
+    },
+    vehicle: {
+        height: 25,
     },
 });
 

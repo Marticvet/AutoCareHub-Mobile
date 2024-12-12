@@ -7,20 +7,28 @@ export class VehicleService extends RestService {
         super("vehicles/vehicle");
     }
 
-    // get all tires manufacturers
+    // add new vehicle to user
     addVehicle(data: object) {
         this.resourceUrl = "vehicles/vehicle";
 
         return this.create(data);
     }
 
-    // // get manufacturer by name
-    // getManufacturerByName(manufacturerName) {
-    //     this.resourceUrl =
-    //         "tires/manufacturers/" + manufacturerName;
+    // get all user's vehicles
+    getUserVehicles(userId: string | null) {
+        this.resourceUrl =
+            "vehicles/userVehicles";
 
-    //     return this.getAll();
-    // }
+        return this.getOneById(Number(userId));
+    }  
+    
+    // get all user's vehicles
+    getVehiclesById(userId: string | null, vehicleId: string | null) {
+        this.resourceUrl =
+            "vehicles/userVehicles" + "/" + userId + "/" + vehicleId;
+
+        return this.getAll();
+    }
 
     // // get all models by manufacturer
     // getModelsByManufacturerByName(manufacturerName) {

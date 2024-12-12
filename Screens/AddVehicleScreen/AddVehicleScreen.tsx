@@ -6,17 +6,14 @@ import {
     TouchableOpacity,
     ScrollView,
     TouchableWithoutFeedback,
-    Keyboard,
     Platform,
-    Modal,
     KeyboardAvoidingView,
 } from "react-native";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { useState, useEffect } from "react";
-import { Picker } from "@react-native-picker/picker";
-import { useNavigation } from "@react-navigation/native";
 import CustomPicker from "./CustomPicker";
 import { VehicleService } from "../../services/vehicle.service";
+import { useAuth } from "../../providers/authentication";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 
 const years = [
     // 1950, 1951, 1952, 1953, 1954, 1955, 1956, 1957, 1958, 1959, 1960, 1961,
@@ -28,7 +25,7 @@ const years = [
     2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024,
 ];
 
-const carTypesByShape: {name: string, type: number}[] = [
+const carTypesByShape: { name: string; type: number }[] = [
     { name: "Sedan", type: 1 },
     { name: "Hatchback", type: 2 },
     { name: "SUV", type: 3 },
@@ -38,7 +35,7 @@ const carTypesByShape: {name: string, type: number}[] = [
     { name: "Van", type: 7 },
     { name: "Crossover", type: 8 },
     { name: "Sports Car", type: 9 },
-    { name: "Luxury Car", type: 10},
+    { name: "Luxury Car", type: 10 },
     { name: "Roadster", type: 11 },
     { name: "Off-Road Vehicle", type: 12 },
     { name: "Compact Car", type: 13 },
@@ -51,7 +48,7 @@ const carTypesByShape: {name: string, type: number}[] = [
     { name: "Panel Van", type: 20 },
     { name: "Coupe", type: 21 },
     { name: "Minivan", type: 22 },
-    { name: "Microcar", type: 23 }
+    { name: "Microcar", type: 23 },
 ];
 
 const API_BASE_URL = "https://www.carqueryapi.com/api/0.3/";
@@ -75,9 +72,13 @@ interface VehicleData {
     vehicleLicensePlate: string;
     vehicleYearOfManufacture: string;
     vehicleIdentificationNumber: string;
+    userId: string | null;
 }
 
 function AddVehicleScreen() {
+    const navigation = useNavigation();
+    const { authState } = useAuth();
+    const { userId } = authState;
     const [selectedVehicleBrand, setSelectedVehicleBrand] =
         useState<string>("");
     const [selectedModel, setSelectedModel] = useState<string>("");
@@ -90,25 +91,30 @@ function AddVehicleScreen() {
     const [vehicleIdentificationNumber, setVehicleIdentificationNumber] =
         useState<string>("");
 
-    // const addVehicleData: VehicleData = {
-    //     vehicleBrand: selectedVehicleBrand,
-    //     vehicleModel: selectedModel,
-    //     vehicleModelYear: selectedYear,
-    //     vehicleCarType:   carTypesByShape.findIndex(carType => carType.name === selectedCarType),
-    //     vehicleLicensePlate: vehicleLicensePlate,
-    //     vehicleYearOfManufacture: yearOfManufacture,
-    //     vehicleIdentificationNumber: vehicleIdentificationNumber,
-    // };
-
     const addVehicleData: VehicleData = {
-        vehicleBrand: "BMW",
-        vehicleCarType: 1,
-        vehicleIdentificationNumber: "",
-        vehicleLicensePlate: "HU-MT7927",
-        vehicleModel: "330",
-        vehicleModelYear: 2024,
-        vehicleYearOfManufacture: "2023",
+        vehicleBrand: selectedVehicleBrand,
+        vehicleModel: selectedModel,
+        vehicleModelYear: selectedYear,
+        vehicleCarType:
+            carTypesByShape.findIndex(
+                (carType) => carType.name === selectedCarType
+            ) + 1,
+        vehicleLicensePlate: vehicleLicensePlate,
+        vehicleYearOfManufacture: yearOfManufacture,
+        vehicleIdentificationNumber: vehicleIdentificationNumber,
+        userId: userId,
     };
+
+    // const addVehicleData: VehicleData = {
+    //     vehicleBrand: "BMW",
+    //     vehicleCarType: 1,
+    //     vehicleIdentificationNumber: "",
+    //     vehicleLicensePlate: "HU-MT7927",
+    //     vehicleModel: "330",
+    //     vehicleModelYear: 2024,
+    //     vehicleYearOfManufacture: "2023",
+    //     userId: '13',
+    // };
 
     const [brands, setBrands] = useState<Brands[]>([]);
     const [models, setModels] = useState<Models[]>([]);
@@ -170,7 +176,9 @@ function AddVehicleScreen() {
 
         const response = await vehicleService.create(addVehicleData);
 
-        console.log(response, `response`);
+        if (response.statusCode === "OK") {
+            navigation.dispatch(CommonActions.goBack());
+        }
     };
 
     return (
@@ -183,20 +191,22 @@ function AddVehicleScreen() {
                     {/* Vehicle Name/Model */}
 
                     {/* Brand Picker */}
-                    <View style={styles.pickerContainer}>
-                        <View style={styles.pickerWrapper}>
-                            <CustomPicker
-                                items={brands.map(
-                                    (brand) => brand.make_display
-                                )}
-                                selectedValue={selectedVehicleBrand}
-                                onValueChange={(value) =>
-                                    handlePickerChange("brand", value)
-                                }
-                                label="Vehicle Brand"
-                            />
+                    {brands.length > 0 && (
+                        <View style={styles.pickerContainer}>
+                            <View style={styles.pickerWrapper}>
+                                <CustomPicker
+                                    items={brands.map(
+                                        (brand) => brand.make_display
+                                    )}
+                                    selectedValue={selectedVehicleBrand}
+                                    onValueChange={(value) =>
+                                        handlePickerChange("brand", value)
+                                    }
+                                    label="Vehicle Brand"
+                                />
+                            </View>
                         </View>
-                    </View>
+                    )}
 
                     {/* Model Selection */}
                     <View style={styles.pickerContainer}>
@@ -235,7 +245,9 @@ function AddVehicleScreen() {
                     <View style={styles.pickerContainer}>
                         <View style={styles.pickerWrapper}>
                             <CustomPicker
-                                items={carTypesByShape.map(carType => carType.name)}
+                                items={carTypesByShape.map(
+                                    (carType) => carType.name
+                                )}
                                 selectedValue={selectedCarType}
                                 onValueChange={(value) =>
                                     handlePickerChange("carType", value)
