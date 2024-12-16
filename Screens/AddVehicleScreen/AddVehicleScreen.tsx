@@ -75,7 +75,8 @@ interface VehicleData {
     userId: string | null;
 }
 
-function AddVehicleScreen() {
+function AddVehicleScreen(props: any) {
+    const { vehicle, modalVisible, setModalVisible } = props;
     const navigation = useNavigation();
     const { authState } = useAuth();
     const { userId } = authState;
@@ -91,7 +92,7 @@ function AddVehicleScreen() {
     const [vehicleIdentificationNumber, setVehicleIdentificationNumber] =
         useState<string>("");
 
-    const addVehicleData: VehicleData = {
+    let addVehicleData: VehicleData = {
         vehicleBrand: selectedVehicleBrand,
         vehicleModel: selectedModel,
         vehicleModelYear: selectedYear,
@@ -287,6 +288,20 @@ function AddVehicleScreen() {
                                 handlePickerChange("vin", value)
                             }
                         />
+
+                        {/* Close Button */}
+                        {modalVisible === true && (
+                            <TouchableOpacity
+                                style={styles.saveButton && styles.closeButton}
+                                activeOpacity={0.65}
+                                onPress={() => setModalVisible(false)}
+                            >
+                                <Text style={styles.buttonText}>
+                                    Cancel Editting
+                                </Text>
+                            </TouchableOpacity>
+                        )}
+
                         {/* Submit Button */}
                         <TouchableOpacity
                             style={styles.saveButton}
@@ -349,6 +364,12 @@ const styles = StyleSheet.create({
     pickerMenu: {
         height: 50,
         color: "#333", // Text color inside the picker
+    },
+    closeButton: {
+        backgroundColor: "red",
+        padding: 15,
+        borderRadius: 8,
+        marginTop: 20,
     },
 });
 

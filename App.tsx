@@ -106,6 +106,7 @@ function AuthNavigator() {
                     options={{
                         headerRight: () => <LogoutButton />,
                         // headerShown: false,
+                        title: "Home",
                     }}
                 />
                 <AppStack.Screen

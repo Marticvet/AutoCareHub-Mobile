@@ -28,6 +28,14 @@ export class VehicleService extends RestService {
             "vehicles/userVehicles" + "/" + userId + "/" + vehicleId;
 
         return this.getAll();
+    }  
+    
+    // get all user's vehicles
+    editVehiclesById(userId: string | null, vehicleId: string | number, vehicle: object) {
+        this.resourceUrl =
+            "vehicles/userVehicles" + "/" + userId;
+
+        return this.update(vehicleId, vehicle);
     }
 
     // // get all models by manufacturer
