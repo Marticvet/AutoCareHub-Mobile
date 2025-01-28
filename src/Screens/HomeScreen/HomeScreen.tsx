@@ -8,12 +8,12 @@ import {
     ScrollView,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { useAuth } from "../../providers/authentication";
 import { UsersService } from "../../services/users.service";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { VehicleService } from "../../services/vehicle.service";
 import React from "react";
+import { useAuth } from "../../src/providers/AuthProvider";
 
 type IconType = "car" | "calendar" | "bag-add-outline" | "cloud-upload-outline";
 
@@ -37,10 +37,13 @@ interface UserVehicles {
 }
 
 function HomeScreen() {
+
+
     const navigation = useNavigation();
-    const { authState } = useAuth();
-    const { firstName, userId } = authState;
+    const {  session, loading, profile} = useAuth();
     const [userVehicles, setUserVehicles] = useState<UserVehicles[]>([]);
+
+    console.log(`here`);
 
     function quickActionHandler(buttonTxt: string, vehicleId: number | null) {
         if (buttonTxt === "Add Vehicle") {
@@ -57,21 +60,9 @@ function HomeScreen() {
     useFocusEffect(
         React.useCallback(() => {
             // Do something when the screen is focused
-            const vehicleService = new VehicleService();
-
-            (async () => {
-                const response = await vehicleService.getUserVehicles(userId);
-
-                if (response) {
-                    setUserVehicles(response);
-                }
-            })();
+           
         }, [])
     );
-
-    if (userVehicles.length === 0) {
-        return null;
-    }
 
     return (
         <ScrollView
@@ -81,7 +72,7 @@ function HomeScreen() {
             {/* Header */}
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>
-                    Welcome Back, {firstName}!
+                    Welcome Back, {"firstName"}!
                 </Text>
                 <Text style={styles.headerSubtitle}>
                     Keep track of your car's health

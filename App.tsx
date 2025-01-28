@@ -11,18 +11,9 @@ import {
     TouchableOpacity,
     Text,
 } from "react-native";
-import LoginScreen from "./Screens/LoginScreen/LoginScreen";
-import RegisterScreen from "./Screens/RegisterScreen/RegisterScreen";
-import HomeScreen from "./Screens/HomeScreen/HomeScreen";
-import { AuthProvider, useAuth } from "./providers/authentication";
-import { UsersService } from "./services/users.service";
-import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Keyboard } from "react-native";
 import { CommonActions } from "@react-navigation/native";
-import SettingsScreen from "./Screens/SettingsScreen/SettingsScreen";
-import AddVehicleScreen from "./Screens/AddVehicleScreen/AddVehicleScreen";
-import VehicleDetailScreen from "./Screens/VehicleDetailScreen/VehicleDetailScreen";
 // types.ts
 export type RootStackParamList = {
     Login: undefined; // No params for the Login screen
@@ -30,6 +21,14 @@ export type RootStackParamList = {
     HomeScreen: undefined; // No params for the HomeScreen screen
     SettingsScreen: undefined; // No params for the SettingsScreen screen
 };
+
+import AuthProvider, { useAuth } from "./src/providers/AuthProvider";
+import { supabase } from "./src/lib/supabase";
+import LoginScreen from "./src/Screens/LoginScreen/LoginScreen";
+import RegisterScreen from "./src/Screens/RegisterScreen/RegisterScreen";
+import HomeScreen from "./src/Screens/HomeScreen/HomeScreen";
+import AddVehicleScreen from "./src/Screens/AddVehicleScreen/AddVehicleScreen";
+import VehicleDetailScreen from "./src/Screens/VehicleDetailScreen/VehicleDetailScreen";
 
 const App = () => (
     <AuthProvider>
@@ -43,9 +42,9 @@ const AppStack = createStackNavigator();
 const AuthStack = createStackNavigator();
 
 function RootNavigator() {
-    const { authState } = useAuth();
+    const { session, loading } = useAuth();
 
-    if (authState.loading) {
+    if (loading === true) {
         return (
             <View style={styles.loadingContainer}>
                 <ActivityIndicator size="large" color="#0000ff" />
@@ -53,23 +52,12 @@ function RootNavigator() {
         );
     }
 
-    return authState.isLoggedIn ? <AuthNavigator /> : <NonAuthNavigator />;
+    return session?.access_token ? <AuthNavigator /> : <NonAuthNavigator />;
 }
 
 function LogoutButton() {
-    const { logout } = useAuth();
-
     async function logoutHandler() {
-        const userService = new UsersService();
-
-        try {
-            const response = await userService.logoutUser();
-            if (response && response.status === 200) {
-                logout();
-            }
-        } catch (error) {
-            console.error("Logout error:", error);
-        }
+        await supabase.auth.signOut();
     }
 
     return (
@@ -95,9 +83,9 @@ function NonAuthNavigator() {
 }
 
 function AuthNavigator() {
-    const { authState } = useAuth();
+    const { session } = useAuth();
 
-    if (authState.isLoggedIn) {
+    if (session?.access_token) {
         return (
             <AppStack.Navigator initialRouteName="HomeScreen">
                 <AppStack.Screen

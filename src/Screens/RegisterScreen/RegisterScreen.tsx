@@ -17,6 +17,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import { UsersService } from "../../services/users.service";
 import { useAuth } from "../../providers/authentication";
+import { supabase } from "../../src/lib/supabase";
 
 interface RegisterFormInterface {
     username: string;
@@ -60,14 +61,15 @@ function RegisterScreen() {
             const userService = new UsersService();
             const { username, password, firstName, lastName } = registerForm;
 
-            const response = await userService.registerUser({
-                username,
-                password,
-                firstName,
-                lastName,
-            });
+            const { error, data } = await supabase.auth.signUp({
+                email: "martigiant@gmail.com",
+                password: "Marticvet",
+                phone: "017656723368"
+              });
+            
+              if (error) Alert.alert(error.message);
 
-            if (response === undefined) {
+            if (false === undefined) {
                 Alert.alert("Registration Error", "Email already used!", [
                     {
                         text: "OK",
@@ -86,8 +88,8 @@ function RegisterScreen() {
 
                 return;
             } else {
-                const { token, userId } = response;
-                await login(token, userId, firstName, lastName); // Call the login function
+                // const { token, userId } = response;
+                // await login(token, userId, firstName, lastName); // Call the login function
 
                 setRegisterForm({
                     username: "",

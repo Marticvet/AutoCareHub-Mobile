@@ -15,8 +15,7 @@ import {
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation, CommonActions } from "@react-navigation/native";
-import { UsersService } from "../../services/users.service";
-import { useAuth } from "../../providers/authentication";
+import { supabase } from "../../src/lib/supabase";
 
 interface LoginFormInterface {
     username: string;
@@ -24,7 +23,6 @@ interface LoginFormInterface {
 }
 
 function LoginScreen() {
-    const { authState, login, logout } = useAuth();
     const navigation = useNavigation();
     const [loginForm, setLoginForm] = useState<LoginFormInterface>({
         username: "martigiant@gmail.com",
@@ -32,57 +30,19 @@ function LoginScreen() {
     });
 
     async function submitLoginFormHandler() {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const passwordRegex =
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        const { username, password } = loginForm;
 
-        const isEmailValid = emailRegex.test(loginForm.username);
-        const isPasswordValid = passwordRegex.test(loginForm.password);
+        const { error } = await supabase.auth.signInWithPassword({
+            email: "martigiant@gmail.com",
+            password: "Marticvet",
+        });
 
-        if (true) {
-            const { username, password } = loginForm;
+        if (error) Alert.alert(error.message);
 
-            try {
-                const userService = new UsersService();
-                const response = await userService.loginUser({
-                    username,
-                    password,
-                });
-
-                if (!response) {
-                    window.alert("Invalid username or password");
-                    return;
-                }
-                const { token, firstName, lastName, userId } = response;
-                await login(token, userId, firstName, lastName); // Call the login function
-                console.log("User logged in successfully");
-            } catch (error) {
-                console.error("Error during login:", error);
-            }
-
-            // setLoginForm({
-            //     username: "",
-            //     password: "",
-            // });
-        } else {
-            // Generate an appropriate error message
-            const errorMessage = !isEmailValid
-                ? "Please enter a valid username address."
-                : "Password must include at least 8 characters, an uppercase letter, a number, and a special character.";
-
-            Alert.alert("Validation Error", errorMessage, [
-                {
-                    text: "OK",
-                    onPress: () => console.log("OK Pressed"),
-                },
-            ]);
-
-            // Reset form and show alert
-            setLoginForm({
-                username: "",
-                password: "",
-            });
-        }
+        setLoginForm({
+            username: "",
+            password: "",
+        });
     }
 
     function loginFormHandler(field: string, value: string) {
