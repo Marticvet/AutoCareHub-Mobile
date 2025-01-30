@@ -15,7 +15,7 @@ import {
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation, CommonActions } from "@react-navigation/native";
-import { supabase } from "../../src/lib/supabase";
+import { supabase } from "../../lib/supabase";
 
 interface LoginFormInterface {
     username: string;
@@ -32,7 +32,7 @@ function LoginScreen() {
     async function submitLoginFormHandler() {
         const { username, password } = loginForm;
 
-        const { error } = await supabase.auth.signInWithPassword({
+        const { error, data } = await supabase.auth.signInWithPassword({
             email: "martigiant@gmail.com",
             password: "Marticvet",
         });

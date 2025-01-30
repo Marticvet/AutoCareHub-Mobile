@@ -15,9 +15,8 @@ import {
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation, CommonActions } from "@react-navigation/native";
-import { UsersService } from "../../services/users.service";
-import { useAuth } from "../../providers/authentication";
-import { supabase } from "../../src/lib/supabase";
+import { useAuth } from "../../providers/AuthProvider";
+import { supabase } from "../../lib/supabase";
 
 interface RegisterFormInterface {
     username: string;
@@ -35,7 +34,7 @@ interface RegisterFormInterface {
 //     confirmPassword: "123",
 // }
 function RegisterScreen() {
-    const { authState, login, logout } = useAuth();
+    // const { authState, login, logout } = useAuth();
     const navigation = useNavigation();
     const [registerForm, setRegisterForm] = useState<RegisterFormInterface>({
         username: "",
@@ -46,81 +45,32 @@ function RegisterScreen() {
     });
 
     async function submitRegisterFormHandler() {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const passwordRegex =
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        const { username, password, firstName, lastName } = registerForm;
 
-        const isEmailValid = emailRegex.test(registerForm.username);
-        const isPasswordValid = passwordRegex.test(registerForm.password);
-        const isConfirmedPasswordValid = passwordRegex.test(
-            registerForm.confirmPassword
-        );
+        const { error, data } = await supabase.auth.signUp({
+            email: "martigiant@gmail.com",
+            password: "Marticvet",
+            // phone: "017656723368",
+        });
 
-        // isEmailValid && isPasswordValid && isConfirmedPasswordValid
-        if (true) {
-            const userService = new UsersService();
-            const { username, password, firstName, lastName } = registerForm;
+        if (error) Alert.alert(error.message);
 
-            const { error, data } = await supabase.auth.signUp({
-                email: "martigiant@gmail.com",
-                password: "Marticvet",
-                phone: "017656723368"
-              });
-            
-              if (error) Alert.alert(error.message);
+        //     setRegisterForm({
+        //         username: "",
+        //         firstName: "",
+        //         lastName: "",
+        //         password: "",
+        //         confirmPassword: "",
+        // });
 
-            if (false === undefined) {
-                Alert.alert("Registration Error", "Email already used!", [
-                    {
-                        text: "OK",
-                        onPress: () => console.log("OK Pressed"),
-                    },
-                ]);
-
-                setRegisterForm((oldState) => {
-                    return {
-                        ...oldState,
-                        username: "",
-                        password: "",
-                        confirmPassword: "",
-                    };
-                });
-
-                return;
-            } else {
-                // const { token, userId } = response;
-                // await login(token, userId, firstName, lastName); // Call the login function
-
-                setRegisterForm({
-                    username: "",
-                    firstName: "",
-                    lastName: "",
-                    password: "",
-                    confirmPassword: "",
-                });
-            }
-        } else {
-            // Generate an appropriate error message
-            const errorMessage = !isEmailValid
-                ? "Please enter a valid email address."
-                : "Password must include at least 8 characters, an uppercase letter, a number, and a special character.";
-
-            Alert.alert("Validation Error", errorMessage, [
-                {
-                    text: "OK",
-                    onPress: () => console.log("OK Pressed"),
-                },
-            ]);
-
-            // Reset form and show alert
-            setRegisterForm({
-                username: "",
-                firstName: "",
-                lastName: "",
-                password: "",
-                confirmPassword: "",
-            });
-        }
+        // // Reset form and show alert
+        // setRegisterForm({
+        //     username: "",
+        //     firstName: "",
+        //     lastName: "",
+        //     password: "",
+        //     confirmPassword: "",
+        // });
     }
 
     function registerFormHandler(field: string, value: string) {

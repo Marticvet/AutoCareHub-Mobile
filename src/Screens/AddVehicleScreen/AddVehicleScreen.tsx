@@ -8,12 +8,12 @@ import {
     TouchableWithoutFeedback,
     Platform,
     KeyboardAvoidingView,
+    Alert,
 } from "react-native";
 import { useState, useEffect } from "react";
 import CustomPicker from "./CustomPicker";
-import { VehicleService } from "../../services/vehicle.service";
-import { useAuth } from "../../providers/authentication";
 import { CommonActions, useNavigation } from "@react-navigation/native";
+import { supabase } from "../../lib/supabase";
 
 const years = [
     // 1950, 1951, 1952, 1953, 1954, 1955, 1956, 1957, 1958, 1959, 1960, 1961,
@@ -65,21 +65,20 @@ interface Models {
 }
 
 interface VehicleData {
-    vehicleBrand: string;
-    vehicleModel: string;
-    vehicleModelYear: number;
-    vehicleCarType: number;
-    vehicleLicensePlate: string;
-    vehicleYearOfManufacture: string;
-    vehicleIdentificationNumber: string;
-    userId: string | null;
+    vehicle_brand: string;
+    vehicle_model: string;
+    vehicle_model_year: number;
+    vehicle_car_type: string;
+    vehicle_license_plate: string;
+    vehicle_year_of_manufacture: string;
+    vehicle_identification_number: string;
+    current_mileage: number;
+    user_id: string | null;
 }
 
 function AddVehicleScreen(props: any) {
     const { vehicle, modalVisible, setModalVisible } = props;
     const navigation = useNavigation();
-    const { authState } = useAuth();
-    const { userId } = authState;
     const [selectedVehicleBrand, setSelectedVehicleBrand] =
         useState<string>("");
     const [selectedModel, setSelectedModel] = useState<string>("");
@@ -91,30 +90,30 @@ function AddVehicleScreen(props: any) {
     const [yearOfManufacture, setYearOfManufacture] = useState<string>("");
     const [vehicleIdentificationNumber, setVehicleIdentificationNumber] =
         useState<string>("");
+    const [vehicleCurrentMileage, setVehicleCurrentMileage] =
+        useState<number>(0);
 
     let addVehicleData: VehicleData = {
-        vehicleBrand: selectedVehicleBrand,
-        vehicleModel: selectedModel,
-        vehicleModelYear: selectedYear,
-        vehicleCarType:
-            carTypesByShape.findIndex(
-                (carType) => carType.name === selectedCarType
-            ) + 1,
-        vehicleLicensePlate: vehicleLicensePlate,
-        vehicleYearOfManufacture: yearOfManufacture,
-        vehicleIdentificationNumber: vehicleIdentificationNumber,
-        userId: userId,
+        vehicle_brand: selectedVehicleBrand,
+        vehicle_model: selectedModel,
+        vehicle_car_type: selectedCarType,
+        vehicle_model_year: selectedYear,
+        vehicle_license_plate: vehicleLicensePlate,
+        vehicle_year_of_manufacture: yearOfManufacture,
+        vehicle_identification_number: vehicleIdentificationNumber,
+        current_mileage: vehicleCurrentMileage,
+        user_id: "1c2a5909-a055-4518-9ebe-49f793e15338",
     };
 
-    // const addVehicleData: VehicleData = {
-    //     vehicleBrand: "BMW",
-    //     vehicleCarType: 1,
-    //     vehicleIdentificationNumber: "",
-    //     vehicleLicensePlate: "HU-MT7927",
-    //     vehicleModel: "330",
-    //     vehicleModelYear: 2024,
-    //     vehicleYearOfManufacture: "2023",
-    //     userId: '13',
+    // const addVehicleData = {
+    //     vehicle_brand: "BMW",
+    //     vehicle_car_type: "Hatchback",
+    //     vehicle_identification_number: "",
+    //     vehicle_license_plate: "HU-MT7927",
+    //     vehicle_model: "330",
+    //     vehicle_model_year: 2024,
+    //     vehicle_year_of_manufacture: 2023,
+    //     user_id: '1c2a5909-a055-4518-9ebe-49f793e15338',
     // };
 
     const [brands, setBrands] = useState<Brands[]>([]);
@@ -169,17 +168,25 @@ function AddVehicleScreen(props: any) {
             setYearOfManufacture(value);
         } else if (field === "vin") {
             setVehicleIdentificationNumber(value);
+        } else if (field === "mileage") {
+            setVehicleCurrentMileage(Number(value));
         }
     };
 
     const addVehicleHandler = async () => {
-        const vehicleService = new VehicleService();
+        (async () => {
+            const { error, data } = await supabase
+                .from("vehicles")
+                .insert([addVehicleData]);
 
-        const response = await vehicleService.create(addVehicleData);
-
-        if (response.statusCode === "OK") {
-            navigation.dispatch(CommonActions.goBack());
-        }
+            if (error) {
+                console.error("❌ Error inserting vehicle:", error.message);
+                console.error("Error Details:", error);
+                Alert.alert(error.message);
+            } else {
+                navigation.goBack();
+            }
+        })();
     };
 
     return (
@@ -286,6 +293,17 @@ function AddVehicleScreen(props: any) {
                             placeholder="Enter your Vehicle Identification Number (VIN)"
                             onChangeText={(value) =>
                                 handlePickerChange("vin", value)
+                            }
+                        />
+
+                        <Text style={styles.label}>
+                            Vehicle Current Mileage: (Optional)
+                        </Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Enter your Vehicle Identification Number (VIN)"
+                            onChangeText={(value) =>
+                                handlePickerChange("mileage", value)
                             }
                         />
 

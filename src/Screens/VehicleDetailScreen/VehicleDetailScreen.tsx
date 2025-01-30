@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Pressable, Modal } from "react-native";
-import { useAuth } from "../../providers/authentication";
-import { VehicleService } from "../../services/vehicle.service";
 import { useFocusEffect } from "@react-navigation/native";
 import AddVehicleScreen from "../AddVehicleScreen/AddVehicleScreen";
 
@@ -45,8 +43,6 @@ const carTypesByShape: { name: string; type: number }[] = [
 
 const VehicleDetailScreen = ({ route }: any) => {
     const { vehicleId } = route.params;
-    const { authState } = useAuth();
-    const { userId } = authState;
     const [vehicle, setVehicle] = useState({
         user_id: 0,
         vehicle_brand: "",
@@ -62,19 +58,7 @@ const VehicleDetailScreen = ({ route }: any) => {
 
     useFocusEffect(
         React.useCallback(() => {
-            // Do something when the screen is focused
-            const vehicleService = new VehicleService();
-
-            (async () => {
-                const response = await vehicleService.getVehiclesById(
-                    userId,
-                    vehicleId
-                );
-
-                if (response) {
-                    setVehicle(response[0]);
-                }
-            })();
+       
         }, [vehicleId])
     );
 
@@ -85,27 +69,7 @@ const VehicleDetailScreen = ({ route }: any) => {
     function editVehicleDetaisHandler() {
         setModalVisible(!modalVisible);
 
-        const vehicleService = new VehicleService();
 
-        (async () => {
-            const response = await vehicleService.editVehiclesById(
-                userId,
-                vehicleId,
-                {
-                    ...vehicle,
-                    vehicle_car_type:
-                        carTypesByShape.findIndex(
-                            (carType) =>
-                                carType.name === vehicle.vehicle_car_type
-                        ) + 1,
-                }
-            );
-
-            if (response) {
-                setVehicle(response);
-                setModalVisible(!modalVisible);
-            }
-        })();
     }
 
     return (

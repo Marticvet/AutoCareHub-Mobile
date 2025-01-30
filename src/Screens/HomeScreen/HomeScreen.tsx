@@ -6,14 +6,13 @@ import {
     TouchableOpacity,
     FlatList,
     ScrollView,
+    Alert,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { UsersService } from "../../services/users.service";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { VehicleService } from "../../services/vehicle.service";
 import React from "react";
-import { useAuth } from "../../src/providers/AuthProvider";
+import { supabase } from "../../lib/supabase";
 
 type IconType = "car" | "calendar" | "bag-add-outline" | "cloud-upload-outline";
 
@@ -28,22 +27,18 @@ interface UserVehicles {
     user_id: number;
     vehicle_brand: string;
     vehicle_car_type: string;
-    vehicle_id: number;
+    id: number;
     vehicle_identification_number: string;
     vehicle_license_plate: string;
     vehicle_model: string;
     vehicle_model_year: number;
     vehicle_year_of_manufacture: number;
+    currentMileage: number;
 }
 
 function HomeScreen() {
-
-
     const navigation = useNavigation();
-    const {  session, loading, profile} = useAuth();
     const [userVehicles, setUserVehicles] = useState<UserVehicles[]>([]);
-
-    console.log(`here`);
 
     function quickActionHandler(buttonTxt: string, vehicleId: number | null) {
         if (buttonTxt === "Add Vehicle") {
@@ -60,7 +55,30 @@ function HomeScreen() {
     useFocusEffect(
         React.useCallback(() => {
             // Do something when the screen is focused
-           
+            (async () => {
+                try {
+                    const { data, error } = await supabase
+                        .from("vehicles")
+                        .select("*")
+                        .eq("user_id", '1c2a5909-a055-4518-9ebe-49f793e15338'); // Filter by user_id
+
+                    if (error) {
+                        Alert.alert("Error", error.message);
+                        console.error("Supabase Fetch Error:", error);
+                        return; // Prevent further execution
+                    }
+
+                    if (setUserVehicles) {
+                        setUserVehicles(data);
+                    } else {
+                        console.warn("setUserVehicles is not defined");
+                    }
+                } catch (err) {
+                    console.error("Unexpected Error:", err);
+                    // @ts-ignore
+                    Alert.alert("Unexpected Error", err.message);
+                }
+            })();
         }, [])
     );
 
@@ -124,7 +142,7 @@ function HomeScreen() {
                                     onPress={() =>
                                         quickActionHandler(
                                             "Get Vehicle By Id",
-                                            item.vehicle_id
+                                            item.id
                                         )
                                     }
                                 >
@@ -155,7 +173,7 @@ function HomeScreen() {
                                 </TouchableOpacity>
                             );
                         }}
-                        keyExtractor={(item) => item.vehicle_id.toString()}
+                        keyExtractor={(item) => item.id.toString()}
                         contentContainerStyle={styles.listContainer}
                         showsVerticalScrollIndicator={true}
                     />

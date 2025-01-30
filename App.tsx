@@ -42,7 +42,7 @@ const AppStack = createStackNavigator();
 const AuthStack = createStackNavigator();
 
 function RootNavigator() {
-    const { session, loading } = useAuth();
+    const { session, loading, profile } = useAuth();
 
     if (loading === true) {
         return (
