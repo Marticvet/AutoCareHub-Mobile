@@ -14,6 +14,7 @@ import { useState, useEffect } from "react";
 import CustomPicker from "./CustomPicker";
 import { CommonActions, useNavigation } from "@react-navigation/native";
 import { supabase } from "../../lib/supabase";
+import { useAuth } from "../../providers/AuthProvider";
 
 const years = [
     // 1950, 1951, 1952, 1953, 1954, 1955, 1956, 1957, 1958, 1959, 1960, 1961,
@@ -77,6 +78,7 @@ interface VehicleData {
 }
 
 function AddVehicleScreen(props: any) {
+    const {profile: {id: user_id}} = useAuth();
     const { vehicle, modalVisible, setModalVisible } = props;
     const navigation = useNavigation();
     const [selectedVehicleBrand, setSelectedVehicleBrand] =
@@ -93,28 +95,28 @@ function AddVehicleScreen(props: any) {
     const [vehicleCurrentMileage, setVehicleCurrentMileage] =
         useState<number>(0);
 
-    let addVehicleData: VehicleData = {
-        vehicle_brand: selectedVehicleBrand,
-        vehicle_model: selectedModel,
-        vehicle_car_type: selectedCarType,
-        vehicle_model_year: selectedYear,
-        vehicle_license_plate: vehicleLicensePlate,
-        vehicle_year_of_manufacture: yearOfManufacture,
-        vehicle_identification_number: vehicleIdentificationNumber,
-        current_mileage: vehicleCurrentMileage,
-        user_id: "1c2a5909-a055-4518-9ebe-49f793e15338",
-    };
-
-    // const addVehicleData = {
-    //     vehicle_brand: "BMW",
-    //     vehicle_car_type: "Hatchback",
-    //     vehicle_identification_number: "",
-    //     vehicle_license_plate: "HU-MT7927",
-    //     vehicle_model: "330",
-    //     vehicle_model_year: 2024,
-    //     vehicle_year_of_manufacture: 2023,
-    //     user_id: '1c2a5909-a055-4518-9ebe-49f793e15338',
+    // let addVehicleData: VehicleData = {
+    //     vehicle_brand: selectedVehicleBrand,
+    //     vehicle_model: selectedModel,
+    //     vehicle_car_type: selectedCarType,
+    //     vehicle_model_year: selectedYear,
+    //     vehicle_license_plate: vehicleLicensePlate,
+    //     vehicle_year_of_manufacture: yearOfManufacture,
+    //     vehicle_identification_number: vehicleIdentificationNumber,
+    //     current_mileage: vehicleCurrentMileage,
+    //     user_id: user_id,
     // };
+
+    const addVehicleData = {
+        vehicle_brand: "BMW",
+        vehicle_car_type: "Hatchback",
+        vehicle_identification_number: "",
+        vehicle_license_plate: "HU-MT7927",
+        vehicle_model: "330",
+        vehicle_model_year: 2024,
+        vehicle_year_of_manufacture: 2023,
+        user_id: user_id,
+    };
 
     const [brands, setBrands] = useState<Brands[]>([]);
     const [models, setModels] = useState<Models[]>([]);

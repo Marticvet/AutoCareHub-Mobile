@@ -10,6 +10,7 @@ import {
     StyleSheet,
     TouchableOpacity,
     Text,
+    Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Keyboard } from "react-native";
@@ -57,7 +58,19 @@ function RootNavigator() {
 
 function LogoutButton() {
     async function logoutHandler() {
-        await supabase.auth.signOut();
+        const { error: refreshError } = await supabase.auth.refreshSession();
+    
+        if (refreshError) {
+            console.warn("⚠ Failed to refresh session. Continuing logout...");
+        }
+    
+        const { error } = await supabase.auth.signOut();
+    
+        if (error) {
+            console.error("❌ Sign-out failed:", error.message);
+        } else {
+            console.log("✅ Successfully signed out!");
+        }
     }
 
     return (

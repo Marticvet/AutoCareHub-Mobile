@@ -13,6 +13,7 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import React from "react";
 import { supabase } from "../../lib/supabase";
+import { useAuth } from "../../providers/AuthProvider";
 
 type IconType = "car" | "calendar" | "bag-add-outline" | "cloud-upload-outline";
 
@@ -39,6 +40,8 @@ interface UserVehicles {
 function HomeScreen() {
     const navigation = useNavigation();
     const [userVehicles, setUserVehicles] = useState<UserVehicles[]>([]);
+    const {profile} = useAuth();
+    const {id} = profile;
 
     function quickActionHandler(buttonTxt: string, vehicleId: number | null) {
         if (buttonTxt === "Add Vehicle") {
@@ -60,7 +63,7 @@ function HomeScreen() {
                     const { data, error } = await supabase
                         .from("vehicles")
                         .select("*")
-                        .eq("user_id", '1c2a5909-a055-4518-9ebe-49f793e15338'); // Filter by user_id
+                        .eq("user_id", id); // Filter by user_id
 
                     if (error) {
                         Alert.alert("Error", error.message);

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, Pressable, Modal } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import AddVehicleScreen from "../AddVehicleScreen/AddVehicleScreen";
+import { useAuth } from "../../providers/AuthProvider";
+import { supabase } from "../../lib/supabase";
 
 interface Vehicle {
     user_id: number;
@@ -42,6 +44,9 @@ const carTypesByShape: { name: string; type: number }[] = [
 ];
 
 const VehicleDetailScreen = ({ route }: any) => {
+    const {profile} = useAuth();
+    const {id: userId} = profile;
+    
     const { vehicleId } = route.params;
     const [vehicle, setVehicle] = useState({
         user_id: 0,
@@ -58,7 +63,19 @@ const VehicleDetailScreen = ({ route }: any) => {
 
     useFocusEffect(
         React.useCallback(() => {
-       
+            (async () => {
+                const { data, error } = await supabase
+                    .from("vehicles")
+                    .select("*")
+                    .eq("user_id", userId)
+                    .eq("id", vehicleId)
+                    .single();
+                if (error) {
+                    throw new Error(error.message);
+                }
+
+                setVehicle(data);
+            })();
         }, [vehicleId])
     );
 
@@ -68,8 +85,6 @@ const VehicleDetailScreen = ({ route }: any) => {
 
     function editVehicleDetaisHandler() {
         setModalVisible(!modalVisible);
-
-
     }
 
     return (
@@ -113,8 +128,9 @@ const VehicleDetailScreen = ({ route }: any) => {
                 visible={modalVisible}
                 onRequestClose={() => setModalVisible(false)}
             >
-                <AddVehicleScreen {...{modalVisible, setModalVisible, vehicle}}/>
-
+                <AddVehicleScreen
+                    {...{ modalVisible, setModalVisible, vehicle }}
+                />
             </Modal>
         </View>
     );
