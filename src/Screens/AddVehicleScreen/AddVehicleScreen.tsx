@@ -15,6 +15,7 @@ import CustomPicker from "./CustomPicker";
 import { CommonActions, useNavigation } from "@react-navigation/native";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../providers/AuthProvider";
+import { useInsertVehicle } from "../../api/vehicles";
 
 const years = [
     // 1950, 1951, 1952, 1953, 1954, 1955, 1956, 1957, 1958, 1959, 1960, 1961,
@@ -71,14 +72,16 @@ interface VehicleData {
     vehicle_model_year: number;
     vehicle_car_type: string;
     vehicle_license_plate: string;
-    vehicle_year_of_manufacture: string;
+    vehicle_year_of_manufacture: string | number;
     vehicle_identification_number: string;
     current_mileage: number;
     user_id: string | null;
 }
 
 function AddVehicleScreen(props: any) {
-    const {profile: {id: user_id}} = useAuth();
+    const {
+        profile: { id: user_id },
+    } = useAuth();
     const { vehicle, modalVisible, setModalVisible } = props;
     const navigation = useNavigation();
     const [selectedVehicleBrand, setSelectedVehicleBrand] =
@@ -95,6 +98,9 @@ function AddVehicleScreen(props: any) {
     const [vehicleCurrentMileage, setVehicleCurrentMileage] =
         useState<number>(0);
 
+
+        const { mutate, isPending, error } = useInsertVehicle(); // ✅ Call Hook at the top level
+
     // let addVehicleData: VehicleData = {
     //     vehicle_brand: selectedVehicleBrand,
     //     vehicle_model: selectedModel,
@@ -107,7 +113,7 @@ function AddVehicleScreen(props: any) {
     //     user_id: user_id,
     // };
 
-    const addVehicleData = {
+    const addVehicleData: VehicleData = {
         vehicle_brand: "BMW",
         vehicle_car_type: "Hatchback",
         vehicle_identification_number: "",
@@ -115,6 +121,7 @@ function AddVehicleScreen(props: any) {
         vehicle_model: "330",
         vehicle_model_year: 2024,
         vehicle_year_of_manufacture: 2023,
+        current_mileage: 30121,
         user_id: user_id,
     };
 
@@ -175,20 +182,22 @@ function AddVehicleScreen(props: any) {
         }
     };
 
-    const addVehicleHandler = async () => {
-        (async () => {
-            const { error, data } = await supabase
-                .from("vehicles")
-                .insert([addVehicleData]);
-
-            if (error) {
-                console.error("❌ Error inserting vehicle:", error.message);
-                console.error("Error Details:", error);
-                Alert.alert(error.message);
-            } else {
+    
+    const addVehicleHandler = () => {
+        mutate(addVehicleData, {
+            onSuccess: () => {
+                console.log("✅ Vehicle added successfully!");
                 navigation.goBack();
-            }
-        })();
+            },
+            onError: (err) => {
+                console.error("❌ Error inserting vehicle:", err.message);
+                Alert.alert("Insertion Failed", err.message);
+            },
+        });
+
+        if (isPending) {
+            Alert.alert("⏳ Inserting vehicle...");
+        }
     };
 
     return (

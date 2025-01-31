@@ -30,6 +30,8 @@ import RegisterScreen from "./src/Screens/RegisterScreen/RegisterScreen";
 import HomeScreen from "./src/Screens/HomeScreen/HomeScreen";
 import AddVehicleScreen from "./src/Screens/AddVehicleScreen/AddVehicleScreen";
 import VehicleDetailScreen from "./src/Screens/VehicleDetailScreen/VehicleDetailScreen";
+import QueryProvider from "./src/providers/QueryProvider";
+import { Loader } from "./src/Screens/Loader/Loader";
 
 const App = () => (
     <AuthProvider>
@@ -46,11 +48,7 @@ function RootNavigator() {
     const { session, loading, profile } = useAuth();
 
     if (loading === true) {
-        return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#0000ff" />
-            </View>
-        );
+        return <Loader />;
     }
 
     return session?.access_token ? <AuthNavigator /> : <NonAuthNavigator />;
@@ -59,13 +57,13 @@ function RootNavigator() {
 function LogoutButton() {
     async function logoutHandler() {
         const { error: refreshError } = await supabase.auth.refreshSession();
-    
+
         if (refreshError) {
             console.warn("⚠ Failed to refresh session. Continuing logout...");
         }
-    
+
         const { error } = await supabase.auth.signOut();
-    
+
         if (error) {
             console.error("❌ Sign-out failed:", error.message);
         } else {
@@ -100,31 +98,33 @@ function AuthNavigator() {
 
     if (session?.access_token) {
         return (
-            <AppStack.Navigator initialRouteName="HomeScreen">
-                <AppStack.Screen
-                    name="HomeScreen"
-                    component={HomeScreen}
-                    options={{
-                        headerRight: () => <LogoutButton />,
-                        // headerShown: false,
-                        title: "Home",
-                    }}
-                />
-                <AppStack.Screen
-                    name="AddVehicleScreen"
-                    component={AddVehicleScreen}
-                    options={{
-                        title: "Add Vehicle",
-                    }}
-                />
-                <AppStack.Screen
-                    name="GetVehicleById"
-                    component={VehicleDetailScreen}
-                    options={{
-                        title: "Your Vehicle",
-                    }}
-                />
-            </AppStack.Navigator>
+            <QueryProvider>
+                <AppStack.Navigator initialRouteName="HomeScreen">
+                    <AppStack.Screen
+                        name="HomeScreen"
+                        component={HomeScreen}
+                        options={{
+                            headerRight: () => <LogoutButton />,
+                            // headerShown: false,
+                            title: "Home",
+                        }}
+                    />
+                    <AppStack.Screen
+                        name="AddVehicleScreen"
+                        component={AddVehicleScreen}
+                        options={{
+                            title: "Add Vehicle",
+                        }}
+                    />
+                    <AppStack.Screen
+                        name="GetVehicleById"
+                        component={VehicleDetailScreen}
+                        options={{
+                            title: "Your Vehicle",
+                        }}
+                    />
+                </AppStack.Navigator>
+            </QueryProvider>
         );
     }
 
@@ -137,11 +137,6 @@ function AuthNavigator() {
 }
 
 const styles = StyleSheet.create({
-    loadingContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-    },
     logoutButton: {
         marginRight: 15, // Add spacing to the right
     },

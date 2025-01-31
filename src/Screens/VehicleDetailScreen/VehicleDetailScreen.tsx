@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Pressable, Modal } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, Pressable, Modal, Alert } from "react-native";
 import AddVehicleScreen from "../AddVehicleScreen/AddVehicleScreen";
 import { useAuth } from "../../providers/AuthProvider";
-import { supabase } from "../../lib/supabase";
+import { useVehicle } from "../../api/vehicles";
+import { Loader } from "../Loader/Loader";
 
 interface Vehicle {
     user_id: number;
@@ -17,70 +17,35 @@ interface Vehicle {
     vehicle_year_of_manufacture: number;
 }
 
-const carTypesByShape: { name: string; type: number }[] = [
-    { name: "Sedan", type: 1 },
-    { name: "Hatchback", type: 2 },
-    { name: "SUV", type: 3 },
-    { name: "Convertible", type: 4 },
-    { name: "Station Wagon", type: 5 },
-    { name: "Pickup Truck", type: 6 },
-    { name: "Van", type: 7 },
-    { name: "Crossover", type: 8 },
-    { name: "Sports Car", type: 9 },
-    { name: "Luxury Car", type: 10 },
-    { name: "Roadster", type: 11 },
-    { name: "Off-Road Vehicle", type: 12 },
-    { name: "Compact Car", type: 13 },
-    { name: "Supercar", type: 14 },
-    { name: "Electric Vehicle", type: 15 },
-    { name: "Liftback", type: 16 },
-    { name: "Targa", type: 17 },
-    { name: "Ute (Utility Vehicle)", type: 18 },
-    { name: "Campervan", type: 19 },
-    { name: "Panel Van", type: 20 },
-    { name: "Coupe", type: 21 },
-    { name: "Minivan", type: 22 },
-    { name: "Microcar", type: 23 },
-];
-
 const VehicleDetailScreen = ({ route }: any) => {
-    const {profile} = useAuth();
-    const {id: userId} = profile;
-    
     const { vehicleId } = route.params;
-    const [vehicle, setVehicle] = useState({
-        user_id: 0,
-        vehicle_brand: "",
-        vehicle_car_type: "",
-        vehicle_id: 0,
-        vehicle_identification_number: "",
-        vehicle_license_plate: "",
-        vehicle_model: "",
-        vehicle_model_year: 0,
-        vehicle_year_of_manufacture: 0,
-    });
+    const { profile } = useAuth();
+    const [userId, setUserId] = useState<string | null>(null);
+
+    // ✅ Wait for `profile.id` before setting userId
+    useEffect(() => {
+        if (profile?.id) {
+            setUserId(profile.id);
+        }
+    }, [profile]);
+
+    // ✅ Fetch vehicle only when `userId` and vehicleId is available
+    const {
+        data,
+        isLoading,
+        error,
+    } = useVehicle(userId || "", vehicleId);
+    const vehicle: Vehicle = data;
     const [modalVisible, setModalVisible] = useState(false);
 
-    useFocusEffect(
-        React.useCallback(() => {
-            (async () => {
-                const { data, error } = await supabase
-                    .from("vehicles")
-                    .select("*")
-                    .eq("user_id", userId)
-                    .eq("id", vehicleId)
-                    .single();
-                if (error) {
-                    throw new Error(error.message);
-                }
+    if (isLoading) {
+        return <Loader />
+    }
 
-                setVehicle(data);
-            })();
-        }, [vehicleId])
-    );
-
-    if (vehicle.vehicle_id === 0) {
-        return null;
+    if (error) {
+        Alert.alert("Error", error.message);
+        console.error("Supabase Fetch Error:", error);
+        return; // Prevent further execution
     }
 
     function editVehicleDetaisHandler() {

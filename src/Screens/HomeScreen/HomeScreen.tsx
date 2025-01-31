@@ -7,13 +7,15 @@ import {
     FlatList,
     ScrollView,
     Alert,
+    ActivityIndicator,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import React from "react";
-import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../providers/AuthProvider";
+import { useVehicleList } from "../../api/vehicles";
+import { Loader } from "../Loader/Loader";
 
 type IconType = "car" | "calendar" | "bag-add-outline" | "cloud-upload-outline";
 
@@ -39,9 +41,35 @@ interface UserVehicles {
 
 function HomeScreen() {
     const navigation = useNavigation();
-    const [userVehicles, setUserVehicles] = useState<UserVehicles[]>([]);
-    const {profile} = useAuth();
-    const {id} = profile;
+    const { profile } = useAuth();
+    const [userId, setUserId] = useState<string | null>(null);
+
+    // ✅ Add loading check for profile
+    if (!profile || !profile.id) {
+        // return <Text>Loading profile...</Text>;
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+        );
+    }
+
+    // ✅ Wait for `profile.id` before setting userId
+    useEffect(() => {
+        if (profile?.id) {
+            setUserId(profile.id);
+        }
+    }, [profile]);
+
+    // ✅ Fetch vehicles only when `userId` is available
+    const { data, isLoading, error } = useVehicleList(userId || "");
+    const userVehicles: UserVehicles[] = data as UserVehicles[];
+
+    if (error) {
+        Alert.alert("Error", error.message);
+        console.error("Supabase Fetch Error:", error);
+        return; // Prevent further execution
+    }
 
     function quickActionHandler(buttonTxt: string, vehicleId: number | null) {
         if (buttonTxt === "Add Vehicle") {
@@ -54,36 +82,6 @@ function HomeScreen() {
             });
         }
     }
-
-    useFocusEffect(
-        React.useCallback(() => {
-            // Do something when the screen is focused
-            (async () => {
-                try {
-                    const { data, error } = await supabase
-                        .from("vehicles")
-                        .select("*")
-                        .eq("user_id", id); // Filter by user_id
-
-                    if (error) {
-                        Alert.alert("Error", error.message);
-                        console.error("Supabase Fetch Error:", error);
-                        return; // Prevent further execution
-                    }
-
-                    if (setUserVehicles) {
-                        setUserVehicles(data);
-                    } else {
-                        console.warn("setUserVehicles is not defined");
-                    }
-                } catch (err) {
-                    console.error("Unexpected Error:", err);
-                    // @ts-ignore
-                    Alert.alert("Unexpected Error", err.message);
-                }
-            })();
-        }, [])
-    );
 
     return (
         <ScrollView
@@ -135,7 +133,7 @@ function HomeScreen() {
                 horizontal={true}
                 contentContainerStyle={styles.vehicleContainerScrollView}
             >
-                {userVehicles.length > 0 && (
+                {isLoading === false && userVehicles.length > 0 ? (
                     <FlatList
                         style={styles.vehiclesContainer}
                         data={userVehicles}
@@ -180,6 +178,8 @@ function HomeScreen() {
                         contentContainerStyle={styles.listContainer}
                         showsVerticalScrollIndicator={true}
                     />
+                ) : (
+                    <Loader />
                 )}
             </ScrollView>
         </ScrollView>
@@ -298,6 +298,11 @@ const styles = StyleSheet.create({
     },
     vehicle: {
         height: 25,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
     },
 });
 
