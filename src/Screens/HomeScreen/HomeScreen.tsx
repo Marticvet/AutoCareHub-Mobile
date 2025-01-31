@@ -44,6 +44,13 @@ function HomeScreen() {
     const { profile } = useAuth();
     const [userId, setUserId] = useState<string | null>(null);
 
+    // ✅ Wait for `profile.id` before setting userId
+    useEffect(() => {
+        if (profile?.id) {
+            setUserId(profile.id);
+        }
+    }, [profile]);
+
     // ✅ Add loading check for profile
     if (!profile || !profile.id) {
         // return <Text>Loading profile...</Text>;
@@ -54,16 +61,12 @@ function HomeScreen() {
         );
     }
 
-    // ✅ Wait for `profile.id` before setting userId
-    useEffect(() => {
-        if (profile?.id) {
-            setUserId(profile.id);
-        }
-    }, [profile]);
-
     // ✅ Fetch vehicles only when `userId` is available
     const { data, isLoading, error } = useVehicleList(userId || "");
     const userVehicles: UserVehicles[] = data as UserVehicles[];
+
+    console.log(userVehicles);
+    
 
     if (error) {
         Alert.alert("Error", error.message);
@@ -133,7 +136,7 @@ function HomeScreen() {
                 horizontal={true}
                 contentContainerStyle={styles.vehicleContainerScrollView}
             >
-                {isLoading === false && userVehicles.length > 0 ? (
+                {isLoading === false && userVehicles.length > 0 && (
                     <FlatList
                         style={styles.vehiclesContainer}
                         data={userVehicles}
@@ -178,9 +181,9 @@ function HomeScreen() {
                         contentContainerStyle={styles.listContainer}
                         showsVerticalScrollIndicator={true}
                     />
-                ) : (
-                    <Loader />
                 )}
+
+                {isLoading === false && userVehicles.length === 0 && <Text>No available vehicles...</Text>}
             </ScrollView>
         </ScrollView>
     );

@@ -2,7 +2,6 @@ import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import {
     createStackNavigator,
-    StackNavigationProp,
 } from "@react-navigation/stack";
 import {
     ActivityIndicator,
@@ -12,8 +11,7 @@ import {
     Text,
     Alert,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Keyboard } from "react-native";
+
 import { CommonActions } from "@react-navigation/native";
 // types.ts
 export type RootStackParamList = {
@@ -45,7 +43,7 @@ const AppStack = createStackNavigator();
 const AuthStack = createStackNavigator();
 
 function RootNavigator() {
-    const { session, loading, profile } = useAuth();
+    const { session, loading } = useAuth();
 
     if (loading === true) {
         return <Loader />;

@@ -182,7 +182,6 @@ function AddVehicleScreen(props: any) {
         }
     };
 
-    
     const addVehicleHandler = () => {
         mutate(addVehicleData, {
             onSuccess: () => {
@@ -199,6 +198,10 @@ function AddVehicleScreen(props: any) {
             Alert.alert("⏳ Inserting vehicle...");
         }
     };
+
+    if(error){
+        Alert.alert(error.message);
+    }
 
     return (
         <TouchableWithoutFeedback>
