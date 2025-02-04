@@ -98,8 +98,7 @@ function AddVehicleScreen(props: any) {
     const [vehicleCurrentMileage, setVehicleCurrentMileage] =
         useState<number>(0);
 
-
-        const { mutate, isPending, error } = useInsertVehicle(); // ✅ Call Hook at the top level
+    const { mutate, isPending, error } = useInsertVehicle(); // ✅ Call Hook at the top level
 
     // let addVehicleData: VehicleData = {
     //     vehicle_brand: selectedVehicleBrand,
@@ -199,7 +198,7 @@ function AddVehicleScreen(props: any) {
         }
     };
 
-    if(error){
+    if (error) {
         Alert.alert(error.message);
     }
 

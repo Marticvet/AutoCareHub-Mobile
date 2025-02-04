@@ -71,6 +71,7 @@ export const useInsertVehicle = () => {
             const { error, data: newVehicle } = await supabase
                 .from(queryKey) // ✅ Corrected table name
                 .insert([vehicle])
+                .eq("user_id", vehicle.user_id)
                 .single();
 
             if (error) {
@@ -88,7 +89,7 @@ export const useInsertVehicle = () => {
     });
 };
 
-export const useUpdateProduct = () => {
+export const useUpdateVehicle = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
@@ -118,22 +119,27 @@ export const useUpdateProduct = () => {
     });
 };
 
-export const useDeleteProduct = () => {
+export const useDeleteVehicle = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        async mutationFn(id: string) {
+        async mutationFn({ vehicleId, userId }: { vehicleId: string; userId: string }) {
             const { error } = await supabase
-                .from(queryKey)
+                .from("vehicles")
                 .delete()
-                .eq("id", id);
+                .eq("id", vehicleId)
+                .eq("user_id", userId); // Ensures user owns the vehicle
+                // .eq("user_id", (await supabase.auth.getUser()).data.user?.id); // Ensures user owns the vehicle
+
             if (error) {
+                console.error("🚨 Error deleting vehicle:", error);
                 throw new Error(error.message);
             }
         },
-        async onSuccess() {
+        onSuccess: () => {
+            console.log("✅ Vehicle deleted! Refreshing data...");
             // @ts-ignore
-            await queryClient.invalidateQueries([queryKey]);
+            queryClient.invalidateQueries(["vehicles"]); // Refresh vehicle list
         },
     });
 };

@@ -35,7 +35,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
 
             setSession(session);
 
-            if (session) {
+            if (session && session.user.id) {
                 // fetch profile
                 const { data } = await supabase
                     .from("profiles")

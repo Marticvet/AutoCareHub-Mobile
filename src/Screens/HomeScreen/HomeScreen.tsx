@@ -49,7 +49,7 @@ function HomeScreen() {
         if (profile?.id) {
             setUserId(profile.id);
         }
-    }, [profile]);
+    }, [profile, profile.id]);
 
     // ✅ Add loading check for profile
     if (!profile || !profile.id) {
@@ -64,9 +64,6 @@ function HomeScreen() {
     // ✅ Fetch vehicles only when `userId` is available
     const { data, isLoading, error } = useVehicleList(userId || "");
     const userVehicles: UserVehicles[] = data as UserVehicles[];
-
-    console.log(userVehicles);
-    
 
     if (error) {
         Alert.alert("Error", error.message);
@@ -183,7 +180,9 @@ function HomeScreen() {
                     />
                 )}
 
-                {isLoading === false && userVehicles.length === 0 && <Text>No available vehicles...</Text>}
+                {isLoading === false && userVehicles.length === 0 && (
+                    <Text>No available vehicles...</Text>
+                )}
             </ScrollView>
         </ScrollView>
     );

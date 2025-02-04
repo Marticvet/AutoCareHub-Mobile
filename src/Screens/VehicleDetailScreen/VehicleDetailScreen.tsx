@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Pressable, Modal, Alert } from "react-native";
 import AddVehicleScreen from "../AddVehicleScreen/AddVehicleScreen";
 import { useAuth } from "../../providers/AuthProvider";
-import { useVehicle } from "../../api/vehicles";
+import { useDeleteVehicle, useVehicle } from "../../api/vehicles";
 import { Loader } from "../Loader/Loader";
+import { useNavigation } from "@react-navigation/native";
 
 interface Vehicle {
     user_id: number;
@@ -18,28 +19,26 @@ interface Vehicle {
 }
 
 const VehicleDetailScreen = ({ route }: any) => {
+    const navigation = useNavigation();
     const { vehicleId } = route.params;
     const { profile } = useAuth();
     const [userId, setUserId] = useState<string | null>(null);
+    const { mutate: deleteVehicle } = useDeleteVehicle();
 
     // ✅ Wait for `profile.id` before setting userId
     useEffect(() => {
         if (profile?.id) {
             setUserId(profile.id);
         }
-    }, [profile]);
+    }, [profile, profile.id]);
 
     // ✅ Fetch vehicle only when `userId` and vehicleId is available
-    const {
-        data,
-        isLoading,
-        error,
-    } = useVehicle(userId || "", vehicleId);
+    const { data, isLoading, error } = useVehicle(userId || "", vehicleId);
     const vehicle: Vehicle = data;
     const [modalVisible, setModalVisible] = useState(false);
 
     if (isLoading) {
-        return <Loader />
+        return <Loader />;
     }
 
     if (error) {
@@ -50,6 +49,48 @@ const VehicleDetailScreen = ({ route }: any) => {
 
     function editVehicleDetaisHandler() {
         setModalVisible(!modalVisible);
+    }
+
+    async function deleteVehicleHandler() {
+        Alert.alert(
+            "Delete Vehicle",
+            "Are you sure you want to delete this vehicle?",
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Delete",
+                    onPress: () => {
+                        if (!userId) {
+                            console.error(
+                                "🚨 User ID is missing. Cannot delete vehicle."
+                            );
+                            return;
+                        }
+
+                        deleteVehicle(
+                            { vehicleId, userId }, // ✅ Now passing userId as a parameter
+                            {
+                                onSuccess: () => {
+                                    navigation.goBack();
+
+                                    console.log(
+                                        "✅ Vehicle deleted successfully!"
+                                    );
+                                    // Optionally navigate back or refresh the list
+                                },
+                                onError: (error) => {
+                                    console.error(
+                                        "🚨 Error deleting vehicle:",
+                                        error
+                                    );
+                                },
+                            }
+                        );
+                    },
+                    style: "destructive",
+                },
+            ]
+        );
     }
 
     return (
@@ -86,6 +127,10 @@ const VehicleDetailScreen = ({ route }: any) => {
                     Edit Details
                 </Text>
             </View>
+
+            <Text style={styles.detailButton} onPress={deleteVehicleHandler}>
+                Delete
+            </Text>
 
             <Modal
                 animationType="slide"

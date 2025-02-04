@@ -47,13 +47,37 @@ function RegisterScreen() {
     async function submitRegisterFormHandler() {
         const { username, password, firstName, lastName } = registerForm;
 
-        const { error, data } = await supabase.auth.signUp({
-            email: "martigiant@gmail.com",
+        const {
+            error,
+            data: { user },
+        } = await supabase.auth.signUp({
+            email: "martigiant2@gmail.com",
             password: "Marticvet",
             // phone: "017656723368",
         });
 
         if (error) Alert.alert(error.message);
+
+        if (user !== null) {
+            const { error: profileError } = await supabase
+                .from("profiles")
+                .update({
+                    email: "martigiant@gmail.com",
+                    username: "Marticvet",
+                    first_name: "Martin",
+                    last_name: "Tsvetanov",
+                    phone_number: "0176567233",
+                    selected_vehicle_id: "",
+                    avatar_url: "avatar_url",
+                })
+                .eq("id", user.id);
+
+            if (profileError) {
+                console.log("profile error: " + profileError.message);
+            } else {
+                console.log("Profile inserted successfully!");
+            }
+        }
 
         //     setRegisterForm({
         //         username: "",
