@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Pressable, Modal, Alert } from "react-native";
 import AddVehicleScreen from "../AddVehicleScreen/AddVehicleScreen";
 import { useAuth } from "../../providers/AuthProvider";
-import { useDeleteVehicle, useVehicle } from "../../api/vehicles";
+import {
+    useDeleteVehicle,
+    useVehicle,
+    useUpdateVehicle,
+} from "../../api/vehicles";
 import { Loader } from "../Loader/Loader";
 import { useNavigation } from "@react-navigation/native";
 
@@ -24,6 +28,7 @@ const VehicleDetailScreen = ({ route }: any) => {
     const { profile } = useAuth();
     const [userId, setUserId] = useState<string | null>(null);
     const { mutate: deleteVehicle } = useDeleteVehicle();
+    const { mutate: updateVehicle } = useUpdateVehicle();
 
     // ✅ Wait for `profile.id` before setting userId
     useEffect(() => {
@@ -47,8 +52,29 @@ const VehicleDetailScreen = ({ route }: any) => {
         return; // Prevent further execution
     }
 
-    function editVehicleDetaisHandler() {
-        setModalVisible(!modalVisible);
+    function editVehicleDetailsHandler() {
+        if (!vehicle || !vehicleId || !userId) {
+            console.error("🚨 Missing required values. Cannot update vehicle.");
+            return;
+        }
+
+        updateVehicle(
+            {
+                // @ts-ignore
+                vehicle: {...vehicle, vehicle_model: '330d'},
+                vehicleId,
+                userId,
+            },
+            {
+                onSuccess: () => {
+                    console.log("✅ Vehicle updated successfully!");
+                    navigation.goBack(); // ✅ Navigate back after update
+                },
+                onError: (error) => {
+                    console.error("🚨 Error updating vehicle:", error);
+                },
+            }
+        );
     }
 
     async function deleteVehicleHandler() {
@@ -122,7 +148,7 @@ const VehicleDetailScreen = ({ route }: any) => {
                 <Text style={styles.detailButton}>Add Details</Text>
                 <Text
                     style={styles.detailButton}
-                    onPress={editVehicleDetaisHandler}
+                    onPress={editVehicleDetailsHandler}
                 >
                     Edit Details
                 </Text>

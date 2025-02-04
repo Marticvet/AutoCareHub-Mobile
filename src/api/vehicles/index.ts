@@ -15,6 +15,7 @@ interface UserVehicles {
 }
 
 interface VehicleData {
+    id: string;
     vehicle_brand: string;
     vehicle_model: string;
     vehicle_model_year: number;
@@ -93,28 +94,37 @@ export const useUpdateVehicle = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        async mutationFn(data: any) {
-            const { error, data: updatedProduct } = await supabase
-                .from(queryKey)
-                .update({
-                    name: data.name,
-                    image: data.image,
-                    price: data.price,
-                })
-                .eq("id", data.id)
+        mutationFn: async ({
+            vehicle,
+            vehicleId,
+            userId,
+        }: {
+            vehicle: VehicleData;
+            vehicleId: string;
+            userId: string;
+        }) => {
+            const { error, data: updatedVehicle } = await supabase
+                .from(queryKey) // ✅ Use correct table name
+                .update(vehicle) // ✅ Only update the fields inside `vehicle`
+                .eq("id", vehicleId) // ✅ Update only the selected vehicle
+                .eq("user_id", userId) // ✅ Ensure user is the owner
                 .select()
                 .single();
 
             if (error) {
                 throw new Error(error.message);
             }
-            return updatedProduct;
+
+            return updatedVehicle;
         },
-        async onSuccess(_, { id }) {
+        onSuccess: async (_, { vehicleId }) => {
+            console.log("✅ Vehicle updated successfully!");
+
+            // ✅ Refresh the list and the updated vehicle
             // @ts-ignore
-            await queryClient.invalidateQueries([queryKey]);
+            await queryClient.invalidateQueries(["vehicles"]); // Refresh all vehicles
             // @ts-ignore
-            await queryClient.invalidateQueries([queryKey, id]);
+            await queryClient.invalidateQueries(["vehicles", vehicleId]); // Refresh specific vehicle
         },
     });
 };
@@ -123,13 +133,19 @@ export const useDeleteVehicle = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        async mutationFn({ vehicleId, userId }: { vehicleId: string; userId: string }) {
+        async mutationFn({
+            vehicleId,
+            userId,
+        }: {
+            vehicleId: string;
+            userId: string;
+        }) {
             const { error } = await supabase
                 .from("vehicles")
                 .delete()
                 .eq("id", vehicleId)
                 .eq("user_id", userId); // Ensures user owns the vehicle
-                // .eq("user_id", (await supabase.auth.getUser()).data.user?.id); // Ensures user owns the vehicle
+            // .eq("user_id", (await supabase.auth.getUser()).data.user?.id); // Ensures user owns the vehicle
 
             if (error) {
                 console.error("🚨 Error deleting vehicle:", error);
