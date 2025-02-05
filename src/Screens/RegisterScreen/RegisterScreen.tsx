@@ -51,7 +51,7 @@ function RegisterScreen() {
             error,
             data: { user },
         } = await supabase.auth.signUp({
-            email: "martigiant2@gmail.com",
+            email: "martigiant@gmail.com",
             password: "Marticvet",
             // phone: "017656723368",
         });

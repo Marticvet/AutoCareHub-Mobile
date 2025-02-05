@@ -43,33 +43,42 @@ function HomeScreen() {
     const navigation = useNavigation();
     const { profile } = useAuth();
     const [userId, setUserId] = useState<string | null>(null);
+    const [email, setEmail] = useState<string>("");
+    const [userVehicles, setUserVehicles] = useState<UserVehicles[]>([]);
 
-    // ✅ Wait for `profile.id` before setting userId
+    // // ✅ Add loading check for profile
     useEffect(() => {
         if (profile?.id) {
-            setUserId(profile.id);
+            setUserId(profile.id); // ✅ Ensure userId updates with profile change
+            setEmail(profile.email);
         }
-    }, [profile, profile.id]);
+    }, [profile]); // ✅ Depend on `profile` so it updates when a new user logs in
 
-    // ✅ Add loading check for profile
-    if (!profile || !profile.id) {
-        // return <Text>Loading profile...</Text>;
-        return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#0000ff" />
-            </View>
-        );
-    }
+    // if (error) {
+    // Alert.alert("Error", error.message);
+    // console.error("Supabase Fetch Error:", error);
+    // return; // Prevent further execution
+    // }
 
     // ✅ Fetch vehicles only when `userId` is available
-    const { data, isLoading, error } = useVehicleList(userId || "");
-    const userVehicles: UserVehicles[] = data as UserVehicles[];
+    // @ts-ignore
+    const { data, isLoading, error } = useVehicleList(userId);
 
-    if (error) {
-        Alert.alert("Error", error.message);
-        console.error("Supabase Fetch Error:", error);
-        return; // Prevent further execution
-    }
+    useEffect(() => {
+        if (data) {
+            setUserVehicles(data);
+        } else {
+            setUserVehicles([]);
+        }
+    }, [userId]);
+
+    console.log(
+        userId,
+        `111111111111111111111111111111111111111111111111111111111111u1serIduserIduserIduserIduserIduserIduserIduserId`
+    );
+    console.log(userVehicles, `userVehicles`);
+
+    return;
 
     function quickActionHandler(buttonTxt: string, vehicleId: number | null) {
         if (buttonTxt === "Add Vehicle") {
@@ -90,9 +99,7 @@ function HomeScreen() {
         >
             {/* Header */}
             <View style={styles.header}>
-                <Text style={styles.headerTitle}>
-                    Welcome Back, {"firstName"}!
-                </Text>
+                <Text style={styles.headerTitle}>Welcome Back, {email}!</Text>
                 <Text style={styles.headerSubtitle}>
                     Keep track of your car's health
                 </Text>

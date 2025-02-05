@@ -21,8 +21,7 @@ export type RootStackParamList = {
     SettingsScreen: undefined; // No params for the SettingsScreen screen
 };
 
-import AuthProvider, { useAuth } from "./src/providers/AuthProvider";
-import { supabase } from "./src/lib/supabase";
+import { AuthProvider, useAuth } from "./src/providers/AuthProvider";
 import LoginScreen from "./src/Screens/LoginScreen/LoginScreen";
 import RegisterScreen from "./src/Screens/RegisterScreen/RegisterScreen";
 import HomeScreen from "./src/Screens/HomeScreen/HomeScreen";
@@ -52,25 +51,12 @@ function RootNavigator() {
     return session?.access_token ? <AuthNavigator /> : <NonAuthNavigator />;
 }
 
+
 function LogoutButton() {
-    async function logoutHandler() {
-        const { error: refreshError } = await supabase.auth.refreshSession();
-
-        if (refreshError) {
-            console.warn("⚠ Failed to refresh session. Continuing logout...");
-        }
-
-        const { error } = await supabase.auth.signOut();
-
-        if (error) {
-            console.error("❌ Sign-out failed:", error.message);
-        } else {
-            console.log("✅ Successfully signed out!");
-        }
-    }
+    const { logout } = useAuth(); // ✅ Get logout from AuthProvider
 
     return (
-        <TouchableOpacity style={styles.logoutButton} onPress={logoutHandler}>
+        <TouchableOpacity style={styles.logoutButton} onPress={logout}>
             <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
     );

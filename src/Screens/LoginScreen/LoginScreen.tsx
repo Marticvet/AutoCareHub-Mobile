@@ -25,7 +25,7 @@ interface LoginFormInterface {
 function LoginScreen() {
     const navigation = useNavigation();
     const [loginForm, setLoginForm] = useState<LoginFormInterface>({
-        username: "martigiant@gmail.com",
+        username: "martigiant2@gmail.com",
         password: "Marticvet",
     });
 
@@ -33,8 +33,10 @@ function LoginScreen() {
         const { username, password } = loginForm;
 
         const { error, data } = await supabase.auth.signInWithPassword({
-            email: "martigiant@gmail.com",
-            password: "Marticvet",
+            email: username,
+            password
+            // email: "martigiant@gmail.com",
+            // password: "Marticvet",
         });
 
         if (error) Alert.alert(error.message);
