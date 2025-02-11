@@ -44,41 +44,6 @@ function HomeScreen() {
     const { profile } = useAuth();
     const [userId, setUserId] = useState<string | null>(null);
     const [email, setEmail] = useState<string>("");
-    const [userVehicles, setUserVehicles] = useState<UserVehicles[]>([]);
-
-    // // ✅ Add loading check for profile
-    useEffect(() => {
-        if (profile?.id) {
-            setUserId(profile.id); // ✅ Ensure userId updates with profile change
-            setEmail(profile.email);
-        }
-    }, [profile]); // ✅ Depend on `profile` so it updates when a new user logs in
-
-    // if (error) {
-    // Alert.alert("Error", error.message);
-    // console.error("Supabase Fetch Error:", error);
-    // return; // Prevent further execution
-    // }
-
-    // ✅ Fetch vehicles only when `userId` is available
-    // @ts-ignore
-    const { data, isLoading, error } = useVehicleList(userId);
-
-    useEffect(() => {
-        if (data) {
-            setUserVehicles(data);
-        } else {
-            setUserVehicles([]);
-        }
-    }, [userId]);
-
-    console.log(
-        userId,
-        `111111111111111111111111111111111111111111111111111111111111u1serIduserIduserIduserIduserIduserIduserIduserId`
-    );
-    console.log(userVehicles, `userVehicles`);
-
-    return;
 
     function quickActionHandler(buttonTxt: string, vehicleId: number | null) {
         if (buttonTxt === "Add Vehicle") {
@@ -140,56 +105,6 @@ function HomeScreen() {
                 horizontal={true}
                 contentContainerStyle={styles.vehicleContainerScrollView}
             >
-                {isLoading === false && userVehicles.length > 0 && (
-                    <FlatList
-                        style={styles.vehiclesContainer}
-                        data={userVehicles}
-                        renderItem={({ item }) => {
-                            return (
-                                <TouchableOpacity
-                                    onPress={() =>
-                                        quickActionHandler(
-                                            "Get Vehicle By Id",
-                                            item.id
-                                        )
-                                    }
-                                >
-                                    <View style={styles.vehicleContainer}>
-                                        <Text style={styles.vehicle}>
-                                            Vehicle Brand: {item.vehicle_brand}
-                                        </Text>
-                                        <Text style={styles.vehicle}>
-                                            Vehicle Type:{" "}
-                                            {item.vehicle_car_type}
-                                        </Text>
-                                        <Text style={styles.vehicle}>
-                                            Vehicle License Plate:{" "}
-                                            {item.vehicle_license_plate}
-                                        </Text>
-                                        <Text style={styles.vehicle}>
-                                            Vehicle Model: {item.vehicle_model}
-                                        </Text>
-                                        <Text style={styles.vehicle}>
-                                            Vehicle Model Year:{" "}
-                                            {item.vehicle_model_year}
-                                        </Text>
-                                        <Text style={styles.vehicle}>
-                                            Vehicle Year Of Manufacture:{" "}
-                                            {item.vehicle_year_of_manufacture}
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-                            );
-                        }}
-                        keyExtractor={(item) => item.id.toString()}
-                        contentContainerStyle={styles.listContainer}
-                        showsVerticalScrollIndicator={true}
-                    />
-                )}
-
-                {isLoading === false && userVehicles.length === 0 && (
-                    <Text>No available vehicles...</Text>
-                )}
             </ScrollView>
         </ScrollView>
     );
@@ -316,3 +231,90 @@ const styles = StyleSheet.create({
 });
 
 export default HomeScreen;
+
+// {isLoading === false && userVehicles.length > 0 && (
+//     <FlatList
+//         style={styles.vehiclesContainer}
+//         data={userVehicles}
+//         renderItem={({ item }) => {
+//             return (
+//                 <TouchableOpacity
+//                     onPress={() =>
+//                         quickActionHandler(
+//                             "Get Vehicle By Id",
+//                             item.id
+//                         )
+//                     }
+//                 >
+//                     <View style={styles.vehicleContainer}>
+//                         <Text style={styles.vehicle}>
+//                             Vehicle Brand: {item.vehicle_brand}
+//                         </Text>
+//                         <Text style={styles.vehicle}>
+//                             Vehicle Type:{" "}
+//                             {item.vehicle_car_type}
+//                         </Text>
+//                         <Text style={styles.vehicle}>
+//                             Vehicle License Plate:{" "}
+//                             {item.vehicle_license_plate}
+//                         </Text>
+//                         <Text style={styles.vehicle}>
+//                             Vehicle Model: {item.vehicle_model}
+//                         </Text>
+//                         <Text style={styles.vehicle}>
+//                             Vehicle Model Year:{" "}
+//                             {item.vehicle_model_year}
+//                         </Text>
+//                         <Text style={styles.vehicle}>
+//                             Vehicle Year Of Manufacture:{" "}
+//                             {item.vehicle_year_of_manufacture}
+//                         </Text>
+//                     </View>
+//                 </TouchableOpacity>
+//             );
+//         }}
+//         keyExtractor={(item) => item.id.toString()}
+//         contentContainerStyle={styles.listContainer}
+//         showsVerticalScrollIndicator={true}
+//     />
+// )}
+
+// {isLoading === false && userVehicles.length === 0 && (
+//     <Text>No available vehicles...</Text>
+// )}
+
+// const [userVehicles, setUserVehicles] = useState<UserVehicles[]>([]);
+
+// // // ✅ Add loading check for profile
+// useEffect(() => {
+//     if (profile?.id) {
+//         setUserId(profile.id); // ✅ Ensure userId updates with profile change
+//         setEmail(profile.email);
+//     }
+// }, [profile]); // ✅ Depend on `profile` so it updates when a new user logs in
+
+// // if (error) {
+// // Alert.alert("Error", error.message);
+// // console.error("Supabase Fetch Error:", error);
+// // return; // Prevent further execution
+// // }
+
+// // ✅ Fetch vehicles only when `userId` is available
+// // @ts-ignore
+// const { data, isLoading, error } = useVehicleList(userId);
+
+// // useEffect(() => {
+// //     if (data) {
+// //         setUserVehicles(data);
+// //     } else {
+// //         setUserVehicles([]);
+// //     }
+// // }, [userId]);
+
+// // console.log(
+// //     userId,
+// //     `111111111111111111111111111111111111111111111111111111111111u1serIduserIduserIduserIduserIduserIduserIduserId`
+// // );
+// // console.log(userVehicles, `userVehicles`);
+
+// // return;
