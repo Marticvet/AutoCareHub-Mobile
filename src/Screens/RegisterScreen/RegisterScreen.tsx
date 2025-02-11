@@ -19,9 +19,8 @@ import { useAuth } from "../../providers/AuthProvider";
 import { supabase } from "../../lib/supabase";
 
 interface RegisterFormInterface {
-    username: string;
-    firstName: string;
-    lastName: string;
+    email: string;
+    fullName: string;
     password: string;
     confirmPassword: string;
 }
@@ -37,15 +36,14 @@ function RegisterScreen() {
     // const { authState, login, logout } = useAuth();
     const navigation = useNavigation();
     const [registerForm, setRegisterForm] = useState<RegisterFormInterface>({
-        username: "",
-        firstName: "",
-        lastName: "",
+        email: "",
         password: "",
         confirmPassword: "",
+        fullName: "",
     });
 
     async function submitRegisterFormHandler() {
-        const { username, password, firstName, lastName } = registerForm;
+        const { email, password, confirmPassword, fullName } = registerForm;
 
         const {
             error,
@@ -63,11 +61,7 @@ function RegisterScreen() {
                 .from("profiles")
                 .update({
                     email: "martigiant@gmail.com",
-                    username: "Marticvet",
-                    first_name: "Martin",
-                    last_name: "Tsvetanov",
-                    phone_number: "0176567233",
-                    selected_vehicle_id: "",
+                    fullName: "Martin Tsvetanov",
                     avatar_url: "avatar_url",
                 })
                 .eq("id", user.id);
@@ -79,17 +73,9 @@ function RegisterScreen() {
             }
         }
 
-        //     setRegisterForm({
-        //         username: "",
-        //         firstName: "",
-        //         lastName: "",
-        //         password: "",
-        //         confirmPassword: "",
-        // });
-
         // // Reset form and show alert
         // setRegisterForm({
-        //     username: "",
+        //     email: "",
         //     firstName: "",
         //     lastName: "",
         //     password: "",
@@ -120,283 +106,243 @@ function RegisterScreen() {
 
     return (
         <View style={styles.appContainer}>
-            <ScrollView
-                contentContainerStyle={styles.scrollContent}
-                keyboardShouldPersistTaps="handled"
-            >
-                <KeyboardAvoidingView
-                    behavior={Platform.OS === "ios" ? "padding" : "height"}
-                    style={styles.scrollContent}
-                >
-                    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                        <View style={styles.container}>
-                            {/* <Text style={styles.welcome}>Welcome in AutoCare-Hub!</Text> */}
-                            <View style={styles.registerInsideContainer}>
-                                <View style={styles.registerWithContainer}>
-                                    <View style={styles.registerTextContainer}>
-                                        <Text style={styles.registerText}>
-                                            Register With
-                                        </Text>
-                                    </View>
-                                    <View style={styles.registerIcons}>
-                                        <View style={styles.registerIcon}>
-                                            <Entypo
-                                                name="facebook"
-                                                size={24}
-                                                color="black"
-                                            />
-                                        </View>
+            <View style={styles.innerKeyboardContainer}>
+                <View style={styles.registerContainer}>
+                    <View style={styles.registerLabelContainer}>
+                        <Text style={styles.registerLabelContainerTop}>
+                            Sign Up
+                        </Text>
+                        <Text style={styles.registerLabelContainerBottm}>
+                            Sign up to continue...
+                        </Text>
+                    </View>
 
-                                        <View style={styles.registerIcon}>
-                                            <AntDesign
-                                                name="google"
-                                                size={24}
-                                                color="black"
-                                            />
-                                        </View>
+                    <View style={styles.registerInformationContainer}>
+                        <Text style={styles.registerTextLabel}>
+                            Email Address
+                        </Text>
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder="example@domain.com"
+                            placeholderTextColor="#aaa"
+                            onChangeText={(value) =>
+                                registerFormHandler("email", value)
+                            }
+                            value={registerForm.email}
+                            autoCorrect={false}
+                            autoCapitalize="none"
+                        />
 
-                                        <View style={styles.registerIcon}>
-                                            <AntDesign
-                                                name="apple1"
-                                                size={24}
-                                                color="black"
-                                            />
-                                        </View>
-                                    </View>
+                        <Text style={styles.registerTextLabel}>Password</Text>
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder="Enter your password"
+                            placeholderTextColor="#aaa"
+                            onChangeText={(value) =>
+                                registerFormHandler("password", value)
+                            }
+                            value={registerForm.password}
+                            secureTextEntry
+                        />
 
-                                    <View style={styles.dividerContainer}>
-                                        <View style={styles.line} />
-                                        <Text style={styles.text}>or</Text>
-                                        <View style={styles.line} />
-                                    </View>
+                        <Text style={styles.registerTextLabel}>
+                            Confirm Password
+                        </Text>
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder="Confirm your password"
+                            placeholderTextColor="#aaa"
+                            onChangeText={(value) =>
+                                registerFormHandler("confirmPassword", value)
+                            }
+                            value={registerForm.confirmPassword}
+                            secureTextEntry
+                        />
+
+                        <Text style={styles.registerTextLabel}>Full Name</Text>
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder="Enter your full name"
+                            placeholderTextColor="#aaa"
+                            onChangeText={(value) =>
+                                registerFormHandler("fullName", value)
+                            }
+                            value={registerForm.fullName}
+                            secureTextEntry
+                        />
+                    </View>
+
+                    <View style={styles.buttonContainer}>
+                        <Pressable
+                            onPress={submitRegisterFormHandler}
+                            style={({ pressed }) =>
+                                pressed
+                                    ? styles.pressedRegisterButton
+                                    : styles.registerButton
+                            }
+                        >
+                            <Text style={styles.registerButtonText}>
+                                Register
+                            </Text>
+                        </Pressable>
+
+                        <View style={styles.registerOptionContainer}>
+                            <Text style={styles.registerOuterText}>
+                                Do you have an account?
+                            </Text>
+                            <Text
+                                style={styles.registerInnerText}
+                                onPress={navigateCreateAcountHandler}
+                            >
+                                Sign In
+                            </Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.registerInsideContainer}>
+                        <View style={styles.registerWithContainer}>
+                            <View style={styles.dividerContainer}>
+                                <View style={styles.line} />
+                                <Text style={styles.text}>OR SIGN UP WITH</Text>
+                                <View style={styles.line} />
+                            </View>
+
+                            <View style={styles.loginIcons}>
+                                <View style={styles.loginIcon}>
+                                    <Entypo
+                                        name="facebook"
+                                        size={28}
+                                        color="white"
+                                    />
                                 </View>
 
-                                <View style={styles.registerForm}>
-                                    <View
-                                        style={
-                                            styles.registerInformationContainer
-                                        }
-                                    >
-                                        <Text style={styles.registerTextLabel}>
-                                            Email Adress:
-                                        </Text>
-                                        <TextInput
-                                            style={styles.textInput}
-                                            placeholder="Enter your email"
-                                            placeholderTextColor="#aaa"
-                                            onChangeText={(value) =>
-                                                registerFormHandler(
-                                                    "username",
-                                                    value
-                                                )
-                                            }
-                                            value={registerForm.username}
-                                            autoCorrect={false}
-                                            autoCapitalize="none"
-                                        />
-                                    </View>
+                                <View style={styles.loginIcon}>
+                                    <AntDesign
+                                        name="google"
+                                        size={28}
+                                        color="white"
+                                    />
+                                </View>
 
-                                    <View
-                                        style={
-                                            styles.registerInformationContainer
-                                        }
-                                    >
-                                        <Text style={styles.registerTextLabel}>
-                                            First Name:
-                                        </Text>
-                                        <TextInput
-                                            style={styles.textInput}
-                                            placeholder="Enter your first name"
-                                            placeholderTextColor="#aaa"
-                                            onChangeText={(value) =>
-                                                registerFormHandler(
-                                                    "firstName",
-                                                    value
-                                                )
-                                            }
-                                            value={registerForm.firstName}
-                                            autoCorrect={false}
-                                        />
-                                    </View>
-
-                                    <View
-                                        style={
-                                            styles.registerInformationContainer
-                                        }
-                                    >
-                                        <Text style={styles.registerTextLabel}>
-                                            Last Name:
-                                        </Text>
-                                        <TextInput
-                                            style={styles.textInput}
-                                            placeholder="Enter your last name"
-                                            placeholderTextColor="#aaa"
-                                            onChangeText={(value) =>
-                                                registerFormHandler(
-                                                    "lastName",
-                                                    value
-                                                )
-                                            }
-                                            value={registerForm.lastName}
-                                            autoCorrect={false}
-                                        />
-                                    </View>
-
-                                    <View
-                                        style={
-                                            styles.registerInformationContainer
-                                        }
-                                    >
-                                        <Text style={styles.registerTextLabel}>
-                                            Password:
-                                        </Text>
-                                        <TextInput
-                                            style={styles.textInput}
-                                            placeholder="Enter your password"
-                                            placeholderTextColor="#aaa"
-                                            onChangeText={(value) =>
-                                                registerFormHandler(
-                                                    "password",
-                                                    value
-                                                )
-                                            }
-                                            value={registerForm.password}
-                                            secureTextEntry
-                                        />
-                                    </View>
-
-                                    <View
-                                        style={
-                                            styles.registerInformationContainer
-                                        }
-                                    >
-                                        <Text style={styles.registerTextLabel}>
-                                            Confirm Password:
-                                        </Text>
-                                        <TextInput
-                                            style={styles.textInput}
-                                            placeholder="Confirm your password"
-                                            placeholderTextColor="#aaa"
-                                            onChangeText={(value) =>
-                                                registerFormHandler(
-                                                    "confirmPassword",
-                                                    value
-                                                )
-                                            }
-                                            value={registerForm.confirmPassword}
-                                            secureTextEntry
-                                        />
-                                    </View>
-
-                                    <View style={styles.buttonContainer}>
-                                        <Pressable
-                                            onPress={submitRegisterFormHandler}
-                                            style={({ pressed }) =>
-                                                pressed
-                                                    ? styles.pressedRegisterButton
-                                                    : styles.registerButton
-                                            }
-                                        >
-                                            <Text
-                                                style={
-                                                    styles.registerButtonText
-                                                }
-                                            >
-                                                Register
-                                            </Text>
-                                        </Pressable>
-
-                                        <View
-                                            style={
-                                                styles.registerOptionContainer
-                                            }
-                                        >
-                                            <Text
-                                                style={styles.registerInnerText}
-                                                onPress={
-                                                    navigateCreateAcountHandler
-                                                }
-                                            >
-                                                Do you have account?
-                                            </Text>
-                                        </View>
-                                    </View>
+                                <View style={styles.loginIcon}>
+                                    <AntDesign
+                                        name="apple1"
+                                        size={28}
+                                        color="white"
+                                    />
                                 </View>
                             </View>
                         </View>
-                    </TouchableWithoutFeedback>
-                </KeyboardAvoidingView>
-            </ScrollView>
+                    </View>
+                </View>
+            </View>
         </View>
     );
 }
 
+const whiteColor = "white";
+
 const styles = StyleSheet.create({
     appContainer: {
         flex: 1,
-        width: "100%",
-        height: "100%",
-        backgroundColor: "white",
-    },
-    keyboardView: {
-        height: "90%",
-    },
-    container: {
-        flex: 1,
         justifyContent: "center",
-        alignItems: "center",
-        paddingBottom: 80,
-        height: "100%",
-        backgroundColor: "white",
+        backgroundColor: "#212640",
     },
-    scrollContent: {
+    innerKeyboardContainer: {
         flex: 1,
-        height: "100%",
     },
-    welcome: {
-        fontSize: 24,
-        paddingBottom: 18,
+    registerContainer: {
+        justifyContent: "center",
+        flex: 1,
+        borderTopRightRadius: 28,
+        borderTopLeftRadius: 28,
+        paddingHorizontal: 24,
+    },
+    registerInformationContainer: {
+        // height: 168,
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "space-around",
+    },
+    registerTextLabel: {
+        width: "100%",
+        color: whiteColor,
+        paddingLeft: 2,
+    },
+    textInput: {
+        width: "100%",
+        color: whiteColor,
+        backgroundColor: "#4B4D5C",
+        borderRadius: 12,
+        height: 42,
+        paddingLeft: 8,
+        marginBottom: 8,
+    },
+    registerLabelContainer: {
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: 24,
+    },
+    registerLabelContainerTop: {
+        fontSize: 48,
+        fontWeight: "600",
+        color: whiteColor,
+    },
+    registerLabelContainerBottm: {
+        fontSize: 16,
+        color: whiteColor,
+        fontWeight: "400",
+    },
+    buttonContainer: {
+        marginTop: 24,
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    registerButton: {
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
+        height: 42,
+        backgroundColor: "#4942CD",
+        borderRadius: 12,
+    },
+    pressedRegisterButton: {
+        backgroundColor: "#625be7",
+        width: "100%",
+        height: 42,
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 12,
+    },
+    registerButtonText: {
+        fontSize: 28,
+        color: whiteColor,
+        fontWeight: 500,
     },
     registerInsideContainer: {
         borderRadius: 12,
-        height: "80%",
-        flex: 1,
-        width: "85%",
     },
-    registerForm: {
-        flex: 1,
+    registerOptionContainer: {
+        alignItems: "center",
+        justifyContent: "space-between",
+        width: 238,
+        flexDirection: "row",
+        marginTop: 32,
+    },
+    registerOuterText: {
+        fontSize: 16,
+        color: "white",
+    },
+    registerInnerText: {
+        fontSize: 16,
+        // color: "#6b6e82",
+        color: "#CCCCCC",
     },
     registerWithContainer: {
         alignItems: "center",
         justifyContent: "center",
-        width: "100%",
-        height: "35%",
-        paddingHorizontal: 12,
-    },
-    registerIcons: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        width: "100%",
-        padding: 8,
-    },
-    registerIcon: {
-        width: 68,
-        height: 48,
-        // borderColor: "red",
-        borderWidth: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        paddingHorizontal: 8,
-    },
-    registerTextContainer: {
-        height: "35%",
-        alignItems: "center",
-        justifyContent: "center",
-        width: "100%",
-    },
-    registerText: {
-        fontSize: 24,
+        marginTop: 32,
     },
     dividerContainer: {
         flexDirection: "row",
@@ -409,68 +355,24 @@ const styles = StyleSheet.create({
         backgroundColor: "#ccc", // Adjust for line color
         marginHorizontal: 8, // Adjust spacing around "or"
     },
+    loginIcons: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 8,
+        paddingTop: 16,
+    },
+    loginIcon: {
+        width: 68,
+        height: 48,
+        borderColor: "transparent",
+        borderWidth: 1,
+        alignItems: "center",
+        justifyContent: "center",
+    },
     text: {
         fontSize: 16,
-        color: "#888", // Adjust for text color
-    },
-    textInput: {
-        borderWidth: 1,
-        borderColor: "lightgrey",
-        minHeight: 38,
-        paddingHorizontal: 10,
-        textAlignVertical: "center",
-        marginBottom: 12,
-        fontSize: 16,
-        borderRadius: 8,
-    },
-    registerInformationContainer: {
-        width: "100%",
-        justifyContent: "center",
-        paddingHorizontal: 16,
-    },
-    registerTextLabel: {
-        fontSize: 16,
-        marginBottom: 6,
-    },
-    buttonContainer: {
-        flex: 1,
-        alignItems: "center",
-        marginTop: 24,
-    },
-    registerButton: {
-        backgroundColor: "#4FD15B",
-        width: "80%",
-        height: 42,
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: 16,
-    },
-    pressedRegisterButton: {
-        backgroundColor: "#7ad784",
-        width: "80%",
-        height: 42,
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: 16,
-    },
-    registerButtonText: {
-        color: "white",
-        fontSize: 24,
-        textAlign: "center",
-    },
-    registerOptionContainer: {
-        alignItems: "center",
-        justifyContent: "space-around",
-        width: "75%",
-        flexDirection: "row",
-        marginTop: 16,
-    },
-    registerOuterText: {
-        fontSize: 16,
-    },
-    registerInnerText: {
-        fontSize: 16,
-        color: "#64D673",
+        color: whiteColor, // Adjust for text color
     },
 });
 

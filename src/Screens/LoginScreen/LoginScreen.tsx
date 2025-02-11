@@ -77,7 +77,7 @@ function LoginScreen() {
         >
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={styles.innerKeyboardContainer}>
-                    <View style={styles.topContainer}></View>
+                    {/* <View style={styles.topContainer}></View> */}
 
                     <View style={styles.loginContainer}>
                         <View style={styles.loginLabelContainer}>
@@ -91,7 +91,7 @@ function LoginScreen() {
 
                         <View style={styles.loginInformationContainer}>
                             <Text style={styles.loginTextLabel}>
-                                Email Adress:
+                                Email Address
                             </Text>
                             <TextInput
                                 style={styles.textInput}
@@ -105,7 +105,7 @@ function LoginScreen() {
                                 autoCapitalize="none"
                             />
 
-                            <Text style={styles.loginTextLabel}>Password:</Text>
+                            <Text style={styles.loginTextLabel}>Password</Text>
                             <TextInput
                                 style={styles.textInput}
                                 placeholder="Enter your password"
@@ -134,13 +134,13 @@ function LoginScreen() {
 
                             <View style={styles.registerOptionContainer}>
                                 <Text style={styles.registerOuterText}>
-                                    Don't have account?
+                                Don't have an account?
                                 </Text>
                                 <Text
                                     style={styles.registerInnerText}
                                     onPress={navigateCreateAcountHandler}
                                 >
-                                    Create an account
+                                    Sign Up
                                 </Text>
                             </View>
                         </View>
@@ -197,22 +197,20 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         // backgroundColor: whiteColor,
         backgroundColor: "#212640",
-
     },
     innerKeyboardContainer: {
         flex: 1,
     },
-    topContainer: {
-    },
+    topContainer: {},
     loginContainer: {
-        justifyContent: 'center',
+        justifyContent: "center",
         flex: 1,
         borderTopRightRadius: 28,
         borderTopLeftRadius: 28,
         paddingHorizontal: 24,
     },
     loginInformationContainer: {
-        height: 168,
+        height: 142,
         width: "100%",
         alignItems: "center",
         justifyContent: "space-around",
@@ -220,6 +218,7 @@ const styles = StyleSheet.create({
     loginTextLabel: {
         width: "100%",
         color: whiteColor,
+        paddingLeft: 2
     },
     textInput: {
         width: "100%",
@@ -227,7 +226,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#4B4D5C",
         borderRadius: 12,
         height: 42,
-        paddingLeft: 8
+        paddingLeft: 8,
     },
     loginLabelContainer: {
         alignItems: "center",
@@ -277,23 +276,24 @@ const styles = StyleSheet.create({
     registerOptionContainer: {
         alignItems: "center",
         justifyContent: "space-between",
-        width: "76%",
+        // width: "65%",
+        width: 232,
         flexDirection: "row",
         marginTop: 32,
     },
     registerOuterText: {
         fontSize: 16,
-        color: 'white'
+        color: "white",
     },
     registerInnerText: {
         fontSize: 16,
-        color: "#6b6e82",
+        // color: "#6b6e82",
+        color: "#CCCCCC",
     },
     loginWithContainer: {
         alignItems: "center",
         justifyContent: "center",
         marginTop: 32,
-    
     },
     dividerContainer: {
         flexDirection: "row",
@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         padding: 8,
-        paddingTop: 16
+        paddingTop: 16,
     },
     loginIcon: {
         width: 68,
