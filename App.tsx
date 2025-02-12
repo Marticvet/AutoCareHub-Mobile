@@ -4,23 +4,11 @@ import {
     createStackNavigator,
 } from "@react-navigation/stack";
 import {
-    ActivityIndicator,
-    View,
     StyleSheet,
     TouchableOpacity,
     Text,
     Alert,
 } from "react-native";
-
-import { CommonActions } from "@react-navigation/native";
-// types.ts
-export type RootStackParamList = {
-    Login: undefined; // No params for the Login screen
-    Register: undefined; // No params for the Register screen
-    HomeScreen: undefined; // No params for the HomeScreen screen
-    SettingsScreen: undefined; // No params for the SettingsScreen screen
-};
-
 import { AuthProvider, useAuth } from "./src/providers/AuthProvider";
 import LoginScreen from "./src/Screens/LoginScreen/LoginScreen";
 import RegisterScreen from "./src/Screens/RegisterScreen/RegisterScreen";
@@ -29,6 +17,13 @@ import AddVehicleScreen from "./src/Screens/AddVehicleScreen/AddVehicleScreen";
 import VehicleDetailScreen from "./src/Screens/VehicleDetailScreen/VehicleDetailScreen";
 import QueryProvider from "./src/providers/QueryProvider";
 import { Loader } from "./src/Screens/Loader/Loader";
+
+export type RootStackParamList = {
+    Login: undefined; // No params for the Login screen
+    Register: undefined; // No params for the Register screen
+    HomeScreen: undefined; // No params for the HomeScreen screen
+    SettingsScreen: undefined; // No params for the SettingsScreen screen
+};
 
 const App = () => (
     <AuthProvider>
