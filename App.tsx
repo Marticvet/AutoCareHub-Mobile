@@ -1,7 +1,7 @@
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { StyleSheet, TouchableOpacity, Text, Alert } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import { AuthProvider, useAuth } from "./src/providers/AuthProvider";
 import LoginScreen from "./src/Screens/LoginScreen/LoginScreen";
 import RegisterScreen from "./src/Screens/RegisterScreen/RegisterScreen";
@@ -9,14 +9,14 @@ import HomeScreen from "./src/Screens/HomeScreen/HomeScreen";
 import AddVehicleScreen from "./src/Screens/AddVehicleScreen/AddVehicleScreen";
 import VehicleDetailScreen from "./src/Screens/VehicleDetailScreen/VehicleDetailScreen";
 import QueryProvider from "./src/providers/QueryProvider";
-import { Loader } from "./src/Screens/Loader/Loader";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import HomeDashboard from "./src/Screens/HomeDashboard/HomeDashboard";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 
 const Tab = createBottomTabNavigator();
 const AppStack = createStackNavigator();
 const AuthStack = createStackNavigator();
+const Drawer = createDrawerNavigator();
 
 const App = () => (
     <AuthProvider>
@@ -27,11 +27,7 @@ const App = () => (
 );
 
 function RootNavigator() {
-    const { session, loading } = useAuth();
-
-    if (loading === true) {
-        return <Loader />;
-    }
+    const { session, logout } = useAuth();
 
     return session?.access_token ? <AppTabs /> : <NonAuthNavigator />;
 }
@@ -81,7 +77,7 @@ function AppTabs() {
                 {/* Logout Button (Not a Screen, Just a Clickable Tab) */}
                 <Tab.Screen
                     name="Logout"
-                    component={() => null} // Don't render a screen
+                    component={LogoutButton} // ✅ Use a named component
                     options={{
                         tabBarIcon: ({ color, size }) => (
                             <Ionicons
@@ -103,14 +99,42 @@ function AppTabs() {
     );
 }
 
-function LogoutButton() {
-    const { logout } = useAuth(); // ✅ Get logout from AuthProvider
-
+function SidebarNavigator() {
     return (
-        <TouchableOpacity style={styles.logoutButton} onPress={logout}>
-            <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
+        <Drawer.Navigator
+            screenOptions={{
+                drawerStyle: { backgroundColor: "#212640", width: 250 },
+                drawerActiveTintColor: "#ffffff",
+                drawerInactiveTintColor: "#888",
+                headerShown: true, // Show header only in HomeScreen
+            }}
+        >
+            <Drawer.Screen
+                name="Dashboard"
+                component={HomeScreen}
+                options={({ navigation }) => ({
+                    title: "Home",
+                    headerLeft: () => (
+                        <TouchableOpacity onPress={() => navigation.openDrawer()} style={{ marginLeft: 15 }}>
+                            <Ionicons name="menu" size={24} color="white" />
+                        </TouchableOpacity>
+                    ),
+                    headerStyle: { backgroundColor: "#212640" },
+                    headerTintColor: "#ffffff",
+                })}
+            />
+        </Drawer.Navigator>
     );
+}
+
+
+function LogoutButton() {
+    return null;
+    // return (
+    //     <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+    //         <Text style={styles.logoutText}>Logout</Text>
+    //     </TouchableOpacity>
+    // );
 }
 
 function NonAuthNavigator() {
@@ -129,45 +153,29 @@ function NonAuthNavigator() {
 }
 
 function AuthNavigator() {
-    const { session } = useAuth();
-
-    if (session?.access_token) {
-        return (
-            <QueryProvider>
-                <AppStack.Navigator initialRouteName="HomeScreen">
-                    <AppStack.Screen
-                        name="HomeScreen"
-                        component={HomeScreen}
-                        options={{
-                            // headerRight: () => <LogoutButton />,
-                            // headerShown: false,
-                            title: "Home",
-                        }}
-                    />
-                    <AppStack.Screen
-                        name="AddVehicleScreen"
-                        component={AddVehicleScreen}
-                        options={{
-                            title: "Add Vehicle",
-                        }}
-                    />
-                    <AppStack.Screen
-                        name="GetVehicleById"
-                        component={VehicleDetailScreen}
-                        options={{
-                            title: "Your Vehicle",
-                        }}
-                    />
-                </AppStack.Navigator>
-            </QueryProvider>
-        );
-    }
-
     return (
-        <AppStack.Navigator initialRouteName="Login">
-            <AppStack.Screen name="Login" component={LoginScreen} />
-            <AppStack.Screen name="Register" component={RegisterScreen} />
-        </AppStack.Navigator>
+        <QueryProvider>
+            <AppStack.Navigator initialRouteName="HomeDrawer">
+                {/* Wrap HomeScreen inside DrawerNavigator */}
+                <AppStack.Screen
+                    name="HomeDrawer" // Renamed to avoid conflict
+                    component={SidebarNavigator}
+                    options={{
+                        headerShown: false,
+                    }}
+                />
+                <AppStack.Screen
+                    name="AddVehicleScreen"
+                    component={AddVehicleScreen}
+                    options={{ title: "Add Vehicle" }}
+                />
+                <AppStack.Screen
+                    name="GetVehicleById"
+                    component={VehicleDetailScreen}
+                    options={{ title: "Your Vehicle" }}
+                />
+            </AppStack.Navigator>
+        </QueryProvider>
     );
 }
 
