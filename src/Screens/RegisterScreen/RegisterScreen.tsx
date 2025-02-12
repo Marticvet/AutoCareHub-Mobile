@@ -110,7 +110,8 @@ function RegisterScreen() {
                 <View style={styles.registerContainer}>
                     <View style={styles.registerLabelContainer}>
                         <Text style={styles.registerLabelContainerTop}>
-                            Sign Up
+                            Register
+                            {/* Create new Account */}
                         </Text>
                         <Text style={styles.registerLabelContainerBottm}>
                             Sign up to continue...
