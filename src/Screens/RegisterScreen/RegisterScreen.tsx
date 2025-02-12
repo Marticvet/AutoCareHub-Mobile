@@ -20,7 +20,7 @@ import { supabase } from "../../lib/supabase";
 
 interface RegisterFormInterface {
     email: string;
-    fullName: string;
+    full_name: string;
     password: string;
     confirmPassword: string;
 }
@@ -32,17 +32,17 @@ function RegisterScreen() {
         email: "",
         password: "",
         confirmPassword: "",
-        fullName: "",
+        full_name: "",
     });
 
     async function submitRegisterFormHandler() {
-        const { email, password, confirmPassword, fullName } = registerForm;
+        const { email, password, confirmPassword, full_name } = registerForm;
 
         if (
             email.trim().length === 0 ||
             password.trim().length === 0 ||
             confirmPassword.trim().length === 0 ||
-            fullName.trim().length === 0
+            full_name.trim().length === 0
         ) {
             Alert.alert("There's empty field. Please fill all fields!");
 
@@ -127,139 +127,159 @@ function RegisterScreen() {
     }
 
     return (
-        <View style={styles.appContainer}>
-            <View style={styles.innerKeyboardContainer}>
-                <View style={styles.registerContainer}>
-                    <View style={styles.registerLabelContainer}>
-                        <Text style={styles.registerLabelContainerTop}>
-                            Register
-                            {/* Create new Account */}
-                        </Text>
-                        <Text style={styles.registerLabelContainerBottm}>
-                            Sign up to continue...
-                        </Text>
-                    </View>
-
-                    <View style={styles.registerInformationContainer}>
-                        <Text style={styles.registerTextLabel}>
-                            Email Address
-                        </Text>
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="example@domain.com"
-                            placeholderTextColor="#aaa"
-                            onChangeText={(value) =>
-                                registerFormHandler("email", value)
-                            }
-                            value={registerForm.email}
-                            autoCorrect={false}
-                            autoCapitalize="none"
-                        />
-
-                        <Text style={styles.registerTextLabel}>Password</Text>
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="Enter your password"
-                            placeholderTextColor="#aaa"
-                            onChangeText={(value) =>
-                                registerFormHandler("password", value)
-                            }
-                            value={registerForm.password}
-                            secureTextEntry
-                        />
-
-                        <Text style={styles.registerTextLabel}>
-                            Confirm Password
-                        </Text>
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="Confirm your password"
-                            placeholderTextColor="#aaa"
-                            onChangeText={(value) =>
-                                registerFormHandler("confirmPassword", value)
-                            }
-                            value={registerForm.confirmPassword}
-                            secureTextEntry
-                        />
-
-                        <Text style={styles.registerTextLabel}>Full Name</Text>
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="Enter your full name"
-                            placeholderTextColor="#aaa"
-                            onChangeText={(value) =>
-                                registerFormHandler("fullName", value)
-                            }
-                            value={registerForm.fullName}
-                            secureTextEntry
-                        />
-                    </View>
-
-                    <View style={styles.buttonContainer}>
-                        <Pressable
-                            onPress={submitRegisterFormHandler}
-                            style={({ pressed }) =>
-                                pressed
-                                    ? styles.pressedRegisterButton
-                                    : styles.registerButton
-                            }
-                        >
-                            <Text style={styles.registerButtonText}>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
+            style={styles.appContainer}
+            keyboardVerticalOffset={10}
+        >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <View style={styles.innerKeyboardContainer}>
+                    <View style={styles.registerContainer}>
+                        <View style={styles.registerLabelContainer}>
+                            <Text style={styles.registerLabelContainerTop}>
                                 Register
+                                {/* Create new Account */}
                             </Text>
-                        </Pressable>
-
-                        <View style={styles.registerOptionContainer}>
-                            <Text style={styles.registerOuterText}>
-                                Do you have an account?
-                            </Text>
-                            <Text
-                                style={styles.registerInnerText}
-                                onPress={navigateCreateAcountHandler}
-                            >
-                                Sign In
+                            <Text style={styles.registerLabelContainerBottm}>
+                                Sign up to continue...
                             </Text>
                         </View>
-                    </View>
 
-                    <View style={styles.registerInsideContainer}>
-                        <View style={styles.registerWithContainer}>
-                            <View style={styles.dividerContainer}>
-                                <View style={styles.line} />
-                                <Text style={styles.text}>OR SIGN UP WITH</Text>
-                                <View style={styles.line} />
+                        <View style={styles.registerInformationContainer}>
+                            <Text style={styles.registerTextLabel}>
+                                Email Address
+                            </Text>
+                            <TextInput
+                                style={styles.textInput}
+                                placeholder="example@domain.com"
+                                placeholderTextColor="#aaa"
+                                onChangeText={(value) =>
+                                    registerFormHandler("email", value)
+                                }
+                                value={registerForm.email}
+                                autoCorrect={false}
+                                autoCapitalize="none"
+                                clearButtonMode={'always'}
+                            />
+
+                            <Text style={styles.registerTextLabel}>
+                                Password
+                            </Text>
+                            <TextInput
+                                style={styles.textInput}
+                                secureTextEntry={true} 
+                                placeholder="Enter your password"
+                                placeholderTextColor="#aaa"
+                                onChangeText={(value) =>
+                                    registerFormHandler("password", value)
+                                }
+                                value={registerForm.password}
+                                clearButtonMode={'always'}
+                                textContentType={'oneTimeCode'}
+                            />
+
+                            <Text style={styles.registerTextLabel}>
+                                Confirm Password
+                            </Text>
+                            <TextInput
+                                style={styles.textInput}
+                                placeholder="Confirm your password"
+                                placeholderTextColor="#aaa"
+                                onChangeText={(value) =>
+                                    registerFormHandler(
+                                        "confirmPassword",
+                                        value
+                                    )
+                                }
+                                value={registerForm.confirmPassword}
+                                secureTextEntry={true} 
+                                clearButtonMode={'always'}
+                                textContentType={'oneTimeCode'}
+                            />
+
+                            <Text style={styles.registerTextLabel}>
+                                Full Name
+                            </Text>
+                            <TextInput
+                                style={styles.textInput}
+                                placeholder="Enter your full name"
+                                placeholderTextColor="#aaa"
+                                onChangeText={(value) =>
+                                    registerFormHandler("full_name", value)
+                                }
+                                value={registerForm.full_name}
+                                clearButtonMode={'always'}
+                            />
+                        </View>
+
+                        <View style={styles.buttonContainer}>
+                            <Pressable
+                                onPress={submitRegisterFormHandler}
+                                style={({ pressed }) =>
+                                    pressed
+                                        ? styles.pressedRegisterButton
+                                        : styles.registerButton
+                                }
+                            >
+                                <Text style={styles.registerButtonText}>
+                                    Register
+                                </Text>
+                            </Pressable>
+
+                            <View style={styles.registerOptionContainer}>
+                                <Text style={styles.registerOuterText}>
+                                    Do you have an account?
+                                </Text>
+                                <Text
+                                    style={styles.registerInnerText}
+                                    onPress={navigateCreateAcountHandler}
+                                >
+                                    Sign In
+                                </Text>
                             </View>
+                        </View>
 
-                            <View style={styles.loginIcons}>
-                                <View style={styles.loginIcon}>
-                                    <Entypo
-                                        name="facebook"
-                                        size={28}
-                                        color="white"
-                                    />
+                        <View style={styles.registerInsideContainer}>
+                            <View style={styles.registerWithContainer}>
+                                <View style={styles.dividerContainer}>
+                                    <View style={styles.line} />
+                                    <Text style={styles.text}>
+                                        OR SIGN UP WITH
+                                    </Text>
+                                    <View style={styles.line} />
                                 </View>
 
-                                <View style={styles.loginIcon}>
-                                    <AntDesign
-                                        name="google"
-                                        size={28}
-                                        color="white"
-                                    />
-                                </View>
+                                <View style={styles.loginIcons}>
+                                    <View style={styles.loginIcon}>
+                                        <Entypo
+                                            name="facebook"
+                                            size={28}
+                                            color="white"
+                                        />
+                                    </View>
 
-                                <View style={styles.loginIcon}>
-                                    <AntDesign
-                                        name="apple1"
-                                        size={28}
-                                        color="white"
-                                    />
+                                    <View style={styles.loginIcon}>
+                                        <AntDesign
+                                            name="google"
+                                            size={28}
+                                            color="white"
+                                        />
+                                    </View>
+
+                                    <View style={styles.loginIcon}>
+                                        <AntDesign
+                                            name="apple1"
+                                            size={28}
+                                            color="white"
+                                        />
+                                    </View>
                                 </View>
                             </View>
                         </View>
                     </View>
                 </View>
-            </View>
-        </View>
+            </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
     );
 }
 

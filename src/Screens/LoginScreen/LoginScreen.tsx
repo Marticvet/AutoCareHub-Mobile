@@ -71,7 +71,7 @@ function LoginScreen() {
 
     return (
         <KeyboardAvoidingView
-            behavior={"padding"}
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
             style={styles.container}
             keyboardVerticalOffset={20}
         >
@@ -103,6 +103,7 @@ function LoginScreen() {
                                 value={loginForm.email}
                                 autoCorrect={false}
                                 autoCapitalize="none"
+                                clearButtonMode={'always'}
                             />
 
                             <Text style={styles.loginTextLabel}>Password</Text>
@@ -114,7 +115,9 @@ function LoginScreen() {
                                     loginFormHandler("password", value)
                                 }
                                 value={loginForm.password}
-                                secureTextEntry
+                                secureTextEntry={true} 
+                                clearButtonMode={'always'}
+                                textContentType={'oneTimeCode'}
                             />
                         </View>
 
@@ -134,7 +137,7 @@ function LoginScreen() {
 
                             <View style={styles.registerOptionContainer}>
                                 <Text style={styles.registerOuterText}>
-                                Don't have an account?
+                                    Don't have an account?
                                 </Text>
                                 <Text
                                     style={styles.registerInnerText}
@@ -218,7 +221,7 @@ const styles = StyleSheet.create({
     loginTextLabel: {
         width: "100%",
         color: whiteColor,
-        paddingLeft: 2
+        paddingLeft: 2,
     },
     textInput: {
         width: "100%",
