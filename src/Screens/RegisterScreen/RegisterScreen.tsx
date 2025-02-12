@@ -25,13 +25,6 @@ interface RegisterFormInterface {
     confirmPassword: string;
 }
 
-// {
-//     username: "ddasdas@gmsada.com",
-//     firstName: "Marton",
-//     lastName: "Cvet",
-//     password: "123",
-//     confirmPassword: "123",
-// }
 function RegisterScreen() {
     // const { authState, login, logout } = useAuth();
     const navigation = useNavigation();
@@ -45,23 +38,61 @@ function RegisterScreen() {
     async function submitRegisterFormHandler() {
         const { email, password, confirmPassword, fullName } = registerForm;
 
+        if (
+            email.trim().length === 0 ||
+            password.trim().length === 0 ||
+            confirmPassword.trim().length === 0 ||
+            fullName.trim().length === 0
+        ) {
+            Alert.alert("There's empty field. Please fill all fields!");
+
+            // Reset form and show alert
+            setRegisterForm({
+                ...registerForm,
+                password: "",
+                confirmPassword: "",
+            });
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            Alert.alert("Your password doesn't match!");
+
+            // Reset form and show alert
+            setRegisterForm({
+                ...registerForm,
+                password: "",
+                confirmPassword: "",
+            });
+            return;
+        }
+
         const {
             error,
             data: { user },
         } = await supabase.auth.signUp({
             email: "martigiant@gmail.com",
             password: "Marticvet",
-            // phone: "017656723368",
         });
 
-        if (error) Alert.alert(error.message);
+        if (error) {
+            Alert.alert(error.message);
+
+            // Reset form and show alert
+            setRegisterForm({
+                ...registerForm,
+                password: "",
+                confirmPassword: "",
+            });
+            return;
+        }
 
         if (user !== null) {
             const { error: profileError } = await supabase
                 .from("profiles")
                 .update({
                     email: "martigiant@gmail.com",
-                    fullName: "Martin Tsvetanov",
+                    full_name: "Martin Tsvetanov",
                     avatar_url: "avatar_url",
                 })
                 .eq("id", user.id);
@@ -72,15 +103,6 @@ function RegisterScreen() {
                 console.log("Profile inserted successfully!");
             }
         }
-
-        // // Reset form and show alert
-        // setRegisterForm({
-        //     email: "",
-        //     firstName: "",
-        //     lastName: "",
-        //     password: "",
-        //     confirmPassword: "",
-        // });
     }
 
     function registerFormHandler(field: string, value: string) {
@@ -278,7 +300,7 @@ const styles = StyleSheet.create({
         height: 42,
         paddingLeft: 8,
         marginBottom: 8,
-        marginTop: 4
+        marginTop: 4,
     },
     registerLabelContainer: {
         alignItems: "center",
