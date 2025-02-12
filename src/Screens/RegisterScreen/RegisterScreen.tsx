@@ -277,6 +277,7 @@ const styles = StyleSheet.create({
         height: 42,
         paddingLeft: 8,
         marginBottom: 8,
+        marginTop: 4
     },
     registerLabelContainer: {
         alignItems: "center",
