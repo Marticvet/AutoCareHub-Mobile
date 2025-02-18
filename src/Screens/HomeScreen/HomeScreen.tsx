@@ -45,16 +45,12 @@ function HomeScreen() {
     const [userId, setUserId] = useState<string | null>(null);
     const [email, setEmail] = useState<string>("");
 
-    function quickActionHandler(buttonTxt: string, vehicleId: number | null) {
-        if (buttonTxt === "Add Vehicle") {
-            // @ts-ignore
-            navigation.navigate("AddVehicleScreen");
-        } else if (buttonTxt === "Get Vehicle By Id") {
-            // @ts-ignore
-            navigation.navigate("GetVehicleById", {
-                vehicleId: vehicleId,
-            });
-        }
+    function navigateTo() {
+        // @ts-ignore
+        // navigation.navigate("ReportsScreen");
+
+        navigation.navigate("ReminderScreen");
+
     }
 
     return (
@@ -62,50 +58,9 @@ function HomeScreen() {
             contentContainerStyle={styles.container}
             nestedScrollEnabled={true}
         >
-            {/* Header */}
-            <View style={styles.header}>
-                <Text style={styles.headerTitle}>Welcome Back, {email}!</Text>
-                <Text style={styles.headerSubtitle}>
-                    Keep track of your car's health
-                </Text>
+            <View style={styles.selectCarContainer}>
+                <Text onPress={() => navigateTo()}>Select a car from your existing</Text>
             </View>
-
-            {/* Search Bar */}
-            <View style={styles.searchContainer}>
-                <Ionicons name="search" size={20} color="#888" />
-                <TextInput
-                    placeholder="Search..."
-                    placeholderTextColor="#aaa"
-                    style={styles.searchInput}
-                />
-            </View>
-
-            {/* Quick Actions */}
-            <Text style={styles.sectionTitle}>Quick Actions</Text>
-            <View style={styles.quickActionsContainer}>
-                {quickActions.map((action) => (
-                    <TouchableOpacity
-                        key={action.id}
-                        style={styles.quickAction}
-                        activeOpacity={0.65}
-                        onPress={() => quickActionHandler(action.name, null)}
-                    >
-                        <Ionicons name={action.icon} size={24} color="#fff" />
-                        <Text style={styles.quickActionText}>
-                            {action.name}
-                        </Text>
-                    </TouchableOpacity>
-                ))}
-            </View>
-
-            {/* Recent Items */}
-            <Text style={styles.sectionTitle}>Your Vehicles</Text>
-            <ScrollView
-                nestedScrollEnabled={true}
-                horizontal={true}
-                contentContainerStyle={styles.vehicleContainerScrollView}
-            >
-            </ScrollView>
         </ScrollView>
     );
 }
@@ -114,119 +69,11 @@ const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
         backgroundColor: "#f5f5f5",
-        padding: 16,
-        paddingTop: 60,
-        paddingHorizontal: 25,
     },
-    header: {
-        marginBottom: 20,
-    },
-    headerTitle: {
-        fontSize: 24,
-        fontWeight: "bold",
-        color: "#333",
-    },
-    headerSubtitle: {
-        fontSize: 16,
-        color: "#555",
-    },
-    searchContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "#fff",
-        borderRadius: 8,
-        paddingLeft: 10,
-        height: 40,
-        elevation: 2,
-        shadowColor: "#000",
-        marginBottom: 20,
-    },
-    searchInput: {
-        marginLeft: 8,
-        flex: 1,
-        color: "#333",
-        fontSize: 16,
-    },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: "bold",
-        color: "#333",
-        marginVertical: 10,
-    },
-    quickActionsContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginBottom: 20,
-        flexWrap: "wrap",
-        marginVertical: 10,
-    },
-    quickAction: {
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#4CAF50",
-        paddingVertical: 5,
-        borderRadius: 8,
-        width: 100,
-        height: 100,
-        marginVertical: 10,
-    },
-    quickActionText: {
-        marginTop: 8,
-        color: "#fff",
-        fontSize: 14,
-        fontWeight: "500",
-        textAlign: "center",
-    },
-    listContainer: {
-        paddingVertical: 10,
-    },
-    listItem: {
-        backgroundColor: "#fff",
-        padding: 15,
-        borderRadius: 8,
-        marginBottom: 10,
-        elevation: 1,
-        shadowColor: "#ccc",
-    },
-    listItemTitle: {
-        fontSize: 16,
-        fontWeight: "bold",
-        color: "#333",
-    },
-    listItemDate: {
-        fontSize: 14,
-        color: "#666",
-        marginTop: 5,
-    },
-    vehicleContainerScrollView: {
+    selectCarContainer: {
+        height: 48,
         width: "100%",
-        flex: 1,
-    },
-    vehiclesContainer: {
-        width: "100%",
-        flex: 1,
-    },
-    vehicleContainer: {
-        borderRadius: 8,
-        padding: 8,
-        backgroundColor: "white",
-        height: 160,
-        marginVertical: 15,
-        // flexDirection: 'row',
-        // width: '99%',
-        width: "100%",
-        shadowColor: "black",
-        // borderWidth: 1,
-        shadowRadius: 2,
-        elevation: 1,
-    },
-    vehicle: {
-        height: 25,
-    },
-    loadingContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
+        backgroundColor: "red",
     },
 });
 
@@ -318,3 +165,184 @@ export default HomeScreen;
 // // console.log(userVehicles, `userVehicles`);
 
 // // return;
+
+{
+    /* <View style={styles.header}>
+<Text style={styles.headerTitle}>Welcome Back, {email}!</Text>
+<Text style={styles.headerSubtitle}>
+    Keep track of your car's health
+</Text>
+</View> */
+}
+
+{
+    /* Search Bar */
+}
+{
+    /* <View style={styles.searchContainer}>
+<Ionicons name="search" size={20} color="#888" />
+<TextInput
+    placeholder="Search..."
+    placeholderTextColor="#aaa"
+    style={styles.searchInput}
+/>
+</View> */
+}
+
+{
+    /* Quick Actions */
+}
+{
+    /* <Text style={styles.sectionTitle}>Quick Actions</Text>
+<View style={styles.quickActionsContainer}>
+{quickActions.map((action) => (
+    <TouchableOpacity
+        key={action.id}
+        style={styles.quickAction}
+        activeOpacity={0.65}
+        onPress={() => quickActionHandler(action.name, null)}
+    >
+        <Ionicons name={action.icon} size={24} color="#fff" />
+        <Text style={styles.quickActionText}>
+            {action.name}
+        </Text>
+    </TouchableOpacity>
+))}
+</View> */
+}
+
+{
+    /* Recent Items */
+}
+{
+    /* <Text style={styles.sectionTitle}>Your Vehicles</Text>
+<ScrollView
+nestedScrollEnabled={true}
+horizontal={true}
+contentContainerStyle={styles.vehicleContainerScrollView}
+>
+</ScrollView> */
+}
+
+// function quickActionHandler(buttonTxt: string, vehicleId: number | null) {
+//     if (buttonTxt === "Add Vehicle") {
+//         // @ts-ignore
+//         navigation.navigate("AddVehicleScreen");
+//     } else if (buttonTxt === "Get Vehicle By Id") {
+//         // @ts-ignore
+//         navigation.navigate("GetVehicleById", {
+//             vehicleId: vehicleId,
+//         });
+//     }
+// }
+
+// header: {
+//     marginBottom: 20,
+// },
+// headerTitle: {
+//     fontSize: 24,
+//     fontWeight: "bold",
+//     color: "#333",
+// },
+// headerSubtitle: {
+//     fontSize: 16,
+//     color: "#555",
+// },
+// searchContainer: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     backgroundColor: "#fff",
+//     borderRadius: 8,
+//     paddingLeft: 10,
+//     height: 40,
+//     elevation: 2,
+//     shadowColor: "#000",
+//     marginBottom: 20,
+// },
+// searchInput: {
+//     marginLeft: 8,
+//     flex: 1,
+//     color: "#333",
+//     fontSize: 16,
+// },
+// sectionTitle: {
+//     fontSize: 18,
+//     fontWeight: "bold",
+//     color: "#333",
+//     marginVertical: 10,
+// },
+// quickActionsContainer: {
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     marginBottom: 20,
+//     flexWrap: "wrap",
+//     marginVertical: 10,
+// },
+// quickAction: {
+//     alignItems: "center",
+//     justifyContent: "center",
+//     backgroundColor: "#4CAF50",
+//     paddingVertical: 5,
+//     borderRadius: 8,
+//     width: 100,
+//     height: 100,
+//     marginVertical: 10,
+// },
+// quickActionText: {
+//     marginTop: 8,
+//     color: "#fff",
+//     fontSize: 14,
+//     fontWeight: "500",
+//     textAlign: "center",
+// },
+// listContainer: {
+//     paddingVertical: 10,
+// },
+// listItem: {
+//     backgroundColor: "#fff",
+//     padding: 15,
+//     borderRadius: 8,
+//     marginBottom: 10,
+//     elevation: 1,
+//     shadowColor: "#ccc",
+// },
+// listItemTitle: {
+//     fontSize: 16,
+//     fontWeight: "bold",
+//     color: "#333",
+// },
+// listItemDate: {
+//     fontSize: 14,
+//     color: "#666",
+//     marginTop: 5,
+// },
+// vehicleContainerScrollView: {
+//     width: "100%",
+//     flex: 1,
+// },
+// vehiclesContainer: {
+//     width: "100%",
+//     flex: 1,
+// },
+// vehicleContainer: {
+//     borderRadius: 8,
+//     padding: 8,
+//     backgroundColor: "white",
+//     height: 160,
+//     marginVertical: 15,
+//     // flexDirection: 'row',
+//     // width: '99%',
+//     width: "100%",
+//     shadowColor: "black",
+//     // borderWidth: 1,
+//     shadowRadius: 2,
+//     elevation: 1,
+// },
+// vehicle: {
+//     height: 25,
+// },
+// loadingContainer: {
+//     flex: 1,
+//     justifyContent: "center",
+//     alignItems: "center",
+// },
