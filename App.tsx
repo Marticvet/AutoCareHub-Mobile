@@ -13,7 +13,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import ReportsScreen from "./src/Screens/ReportsScreen";
-import ServiceScreen from "./src/Screens/ServiceScreen";
+import ServiceScreen from "./src/Screens/ServiceExpensesScreen";
 import ReminderScreen from "./src/Screens/ReminderScreen";
 import { useState } from "react";
 
@@ -165,39 +165,34 @@ function AppTabs() {
                                 onPress={() => setModalVisible(false)} // Close modal when clicking outside
                             >
                                 <View style={styles.modalContainer}>
-                                    <Text
-                                        style={{
-                                            color: "white",
-                                            fontSize: 18,
-                                            marginBottom: 10,
-                                        }}
-                                    >
-                                        Select an Action
-                                    </Text>
                                     {[
                                         {
-                                            title: "Refueling",
-                                            screen: "RefuelingScreen",
+                                            title: "Fuel Expenses",
+                                            screen: "FuelExpensesScreen",
                                         },
                                         {
-                                            title: "Expense",
-                                            screen: "ExpenseScreen",
+                                            title: "Insurance Expespenses",
+                                            screen: "InsuranceExpensesScreen",
                                         },
                                         {
-                                            title: "Income",
-                                            screen: "IncomeScreen",
+                                            title: "Oil Expenses",
+                                            screen: "OilExpensesScreen",
                                         },
                                         {
-                                            title: "Service",
-                                            screen: "ServiceScreen",
+                                            title: "Service Expenses",
+                                            screen: "ServiceExpensesScreen",
                                         },
                                         {
-                                            title: "Route",
-                                            screen: "RouteScreen",
+                                            title: "Service Reminders",
+                                            screen: "ServiceRemindersScreen",
                                         },
                                         {
-                                            title: "Checklist",
-                                            screen: "ChecklistScreen",
+                                            title: "Car Expenses",
+                                            screen: "CarExpensesScreen",
+                                        },
+                                        {
+                                            title: "Reports",
+                                            screen: "ReportsScreen",
                                         },
                                         {
                                             title: "Reminder",
@@ -431,9 +426,15 @@ const styles = StyleSheet.create({
     },
     cancelButton: {
         padding: 15,
-        marginTop: 10,
+        marginTop: 24,
         backgroundColor: "#ddd",
-        borderRadius: 5,
+        borderRadius: 8,
+        width: "100%",
+        height: 50,
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
     },
     cancelText: {
         textAlign: "center",
@@ -457,12 +458,12 @@ const styles = StyleSheet.create({
     },
     modalContainer: {
         position: "absolute",
-        bottom: 80, // Ensures it's above the bottom tab bar
+        bottom: 85, // Ensures it's above the bottom tab bar
         width: "90%", // Responsive width
         maxHeight: "70%", // Prevents modal from being too large
         backgroundColor: "#212640",
         padding: 20,
-        borderRadius: 15,
+        borderRadius: 16,
         alignItems: "center",
         justifyContent: "center",
         zIndex: 110, // Higher than the modalWrapper to stay on top
