@@ -151,7 +151,82 @@ function AppTabs() {
 
                 {/* ✅ Modal for Selecting Actions */}
 
+                {/* ✅ Modal for Selecting Actions */}
                 {modalVisible && (
+                    <View style={styles.modalWrapper}>
+                        <Modal
+                            transparent
+                            visible={modalVisible}
+                            animationType="slide"
+                            onRequestClose={() => setModalVisible(false)}
+                        >
+                            <TouchableOpacity
+                                style={styles.overlay}
+                                activeOpacity={1}
+                                onPress={() => setModalVisible(false)}
+                            >
+                                <View style={styles.modalContainer}>
+                                    {[
+                                        {
+                                            title: "Fuel Expenses",
+                                            screen: "FuelExpensesScreen",
+                                        },
+                                        {
+                                            title: "Insurance Expenses",
+                                            screen: "InsuranceExpensesScreen",
+                                        },
+                                        {
+                                            title: "Oil Expenses",
+                                            screen: "OilExpensesScreen",
+                                        },
+                                        {
+                                            title: "Service Expenses",
+                                            screen: "ServiceExpensesScreen",
+                                        },
+                                        {
+                                            title: "Service Reminders",
+                                            screen: "ServiceRemindersScreen",
+                                        },
+                                        {
+                                            title: "Car Expenses",
+                                            screen: "CarExpensesScreen",
+                                        },
+                                        {
+                                            title: "Reports",
+                                            screen: "ReportsScreen",
+                                        },
+                                        {
+                                            title: "Reminder",
+                                            screen: "ReminderScreen",
+                                        },
+                                    ].map((item, index) => (
+                                        <TouchableOpacity
+                                            key={index}
+                                            style={styles.option}
+                                            onPress={() =>
+                                                handleSelection(item.screen)
+                                            }
+                                        >
+                                            <Text style={styles.optionText}>
+                                                {item.title}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                    <TouchableOpacity
+                                        style={styles.cancelButton}
+                                        onPress={() => setModalVisible(false)}
+                                    >
+                                        <Text style={styles.cancelText}>
+                                            Cancel
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </TouchableOpacity>
+                        </Modal>
+                    </View>
+                )}
+
+                {/* {modalVisible && (
                     <View style={styles.modalWrapper}>
                         <Modal
                             transparent
@@ -223,7 +298,7 @@ function AppTabs() {
                             </TouchableOpacity>
                         </Modal>
                     </View>
-                )}
+                )} */}
             </View>
         </QueryProvider>
     );
@@ -416,36 +491,7 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         transform: [{ translateY: -10 }], // Moves up for a floating effect
     },
-    option: {
-        padding: 15,
-        borderBottomWidth: 1,
-        borderBottomColor: "#ddd",
-    },
-    optionText: {
-        fontSize: 18,
-    },
-    cancelButton: {
-        padding: 15,
-        marginTop: 24,
-        backgroundColor: "#ddd",
-        borderRadius: 8,
-        width: "100%",
-        height: 50,
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        textAlign: 'center',
-    },
-    cancelText: {
-        textAlign: "center",
-        fontSize: 16,
-    },
-    overlay: {
-        flex: 1,
-        backgroundColor: "rgba(0,0,0,0.5)",
-        justifyContent: "center", // Centers the modal vertically
-        alignItems: "center", // Centers the modal horizontally
-    },
+
     modalWrapper: {
         position: "absolute",
         width: "100%",
@@ -454,25 +500,127 @@ const styles = StyleSheet.create({
         left: 0,
         justifyContent: "center",
         alignItems: "center",
-        zIndex: 100, // Ensures it's above everything else
+        zIndex: 100,
     },
+
+    overlay: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.5)",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+
     modalContainer: {
         position: "absolute",
-        bottom: 85, // Ensures it's above the bottom tab bar
-        width: "90%", // Responsive width
-        maxHeight: "70%", // Prevents modal from being too large
+        bottom: 85,
+        width: "90%",
+        maxHeight: "70%",
         backgroundColor: "#212640",
         padding: 20,
         borderRadius: 16,
         alignItems: "center",
         justifyContent: "center",
-        zIndex: 110, // Higher than the modalWrapper to stay on top
+        zIndex: 110,
         elevation: 10,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 5,
     },
+
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: "bold",
+        color: "#fff",
+        marginBottom: 15,
+    },
+
+    option: {
+        width: "100%",
+        paddingVertical: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: "#444",
+        alignItems: "center",
+    },
+
+    optionText: {
+        fontSize: 18,
+        color: "#fff",
+    },
+
+    cancelButton: {
+        width: "100%",
+        paddingVertical: 15,
+        backgroundColor: "#fff",
+        alignItems: "center",
+        borderTopWidth: 1,
+        borderTopColor: "#ddd",
+        marginTop: 10,
+        borderRadius: 10,
+    },
+
+    cancelText: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "#007AFF",
+    },
+    // option: {
+    //     padding: 15,
+    //     borderBottomWidth: 1,
+    //     borderBottomColor: "#ddd",
+    // },
+    // optionText: {
+    //     fontSize: 18,
+    // },
+    // cancelButton: {
+    //     padding: 15,
+    //     marginTop: 24,
+    //     backgroundColor: "#ddd",
+    //     borderRadius: 8,
+    //     width: "100%",
+    //     height: 50,
+    //     flex: 1,
+    //     alignItems: 'center',
+    //     justifyContent: 'center',
+    //     textAlign: 'center',
+    // },
+    // cancelText: {
+    //     textAlign: "center",
+    //     fontSize: 16,
+    // },
+    // overlay: {
+    //     flex: 1,
+    //     backgroundColor: "rgba(0,0,0,0.5)",
+    //     justifyContent: "center", // Centers the modal vertically
+    //     alignItems: "center", // Centers the modal horizontally
+    // },
+    // modalWrapper: {
+    //     position: "absolute",
+    //     width: "100%",
+    //     height: "100%",
+    //     top: 0,
+    //     left: 0,
+    //     justifyContent: "center",
+    //     alignItems: "center",
+    //     zIndex: 100, // Ensures it's above everything else
+    // },
+    // modalContainer: {
+    //     position: "absolute",
+    //     bottom: 85, // Ensures it's above the bottom tab bar
+    //     width: "90%", // Responsive width
+    //     maxHeight: "70%", // Prevents modal from being too large
+    //     backgroundColor: "#212640",
+    //     padding: 20,
+    //     borderRadius: 16,
+    //     alignItems: "center",
+    //     justifyContent: "center",
+    //     zIndex: 110, // Higher than the modalWrapper to stay on top
+    //     elevation: 10,
+    //     shadowColor: "#000",
+    //     shadowOffset: { width: 0, height: 4 },
+    //     shadowOpacity: 0.3,
+    //     shadowRadius: 5,
+    // },
 });
 
 export default App;
