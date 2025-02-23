@@ -27,7 +27,7 @@ interface VehicleData {
     user_id: string | null;
 }
 
-let queryKey: any = "vehicles";
+let queryKey: string = "vehicles";
 
 export const useVehicleList = (id: string) => {
     return useQuery({

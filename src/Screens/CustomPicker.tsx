@@ -9,7 +9,7 @@ import {
 } from "react-native";
 
 interface CustomPickerProps {
-    items: string[];
+    items: string[] | string;
     selectedValue: string;
     onValueChange: (value: string) => void;
     label: string;

@@ -13,7 +13,7 @@ import {
     Keyboard,
 } from "react-native";
 import { useState, useEffect } from "react";
-import CustomPicker from "./CustomPicker";
+import CustomPicker from "../CustomPicker";
 import { CommonActions, useNavigation } from "@react-navigation/native";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../providers/AuthProvider";
@@ -81,15 +81,17 @@ interface VehicleData {
 }
 
 function AddVehicleScreen(props: any) {
-   const { session } = useAuth();
-    const user = session?.user;
-    const [userId, setUserId] = useState<null | string>(null);
+   const { profile } = useAuth();
+    const {id} = profile;
+    const [userId, setUserId] = useState<string>('');
 
     useEffect(() => {
-        if(user){
-            setUserId(user.id);
+        if(id){
+            setUserId(id);
         }
-    }, [session]);
+    }, [id]);
+    
+    console.log(userId);
 
     const { vehicle, modalVisible, setModalVisible } = props;
     const navigation = useNavigation();

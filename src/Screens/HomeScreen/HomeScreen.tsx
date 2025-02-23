@@ -16,6 +16,9 @@ import React from "react";
 import { useAuth } from "../../providers/AuthProvider";
 import { useVehicleList } from "../../api/vehicles";
 import { Loader } from "../Loader/Loader";
+import CustomPicker from "../CustomPicker";
+import { useProfile } from "../../api/profiles";
+import HomeScreenDropdown from "../HomeScreenDropdown";
 
 type IconType = "car" | "calendar" | "bag-add-outline" | "cloud-upload-outline";
 
@@ -39,18 +42,44 @@ interface UserVehicles {
     currentMileage: number;
 }
 
+interface Profile {
+    id: string;
+    updated_at: null | Date;
+    email: string;
+    avatar_url: string;
+    first_name: string;
+    last_name: string;
+    full_name: string | null;
+    selected_vehicle_id: string;
+    phone_number: string;
+}
+
 function HomeScreen() {
     const navigation = useNavigation();
     const { profile } = useAuth();
-    const [userId, setUserId] = useState<string | null>(null);
+    const [userId, setUserId] = useState<string>("");
     const [email, setEmail] = useState<string>("");
+
+    useEffect(() => {
+        if (profile) {
+            const { id } = profile;
+
+            if (id) {
+                setUserId(id);
+            }
+        }
+    }, [profile]);
+
+    // ✅ Fetch profile's data only when `user_id` is available
+    const { data, isLoading, error } = useProfile(userId || "", userId);
+    const userProfile: Profile = data;
+
+     // Sample static vehicle list; replace with dynamic data if available.
+  const vehicles = ["Car A", "Car B", "Car C"];
 
     function navigateTo() {
         // @ts-ignore
-        // navigation.navigate("ReportsScreen");
-
         navigation.navigate("ReminderScreen");
-
     }
 
     return (
@@ -58,8 +87,22 @@ function HomeScreen() {
             contentContainerStyle={styles.container}
             nestedScrollEnabled={true}
         >
-            <View style={styles.selectCarContainer}>
-                <Text onPress={() => navigateTo()}>Select a car from your existing</Text>
+            {/* Dropdown at the top */}
+            <View style={styles.dropdownContainer}>
+                <HomeScreenDropdown
+                    data={vehicles}
+                    // selectedValue={selectedVehicle}
+                    // onValueChange={setSelectedVehicle}
+                    placeholder="Select your vehicle"
+                />
+            </View>
+
+            {/* Rest of your screen */}
+            <View style={styles.contentContainer}>
+                <Text style={styles.infoText}>
+                    Selected Vehicle: Model name
+                </Text>
+                {/* Other components, such as pickers or buttons, can go here */}
             </View>
         </ScrollView>
     );
@@ -67,15 +110,21 @@ function HomeScreen() {
 
 const styles = StyleSheet.create({
     container: {
-        flexGrow: 1,
-        backgroundColor: "#f5f5f5",
+      flexGrow: 1,
+      padding: 16,
+      backgroundColor: "#f5f5f5",
     },
-    selectCarContainer: {
-        height: 48,
-        width: "100%",
-        backgroundColor: "red",
+    dropdownContainer: {
+      marginBottom: 20,
     },
-});
+    contentContainer: {
+      // Additional styling for the remaining content
+    },
+    infoText: {
+      fontSize: 18,
+      color: "#333",
+    },
+  });
 
 export default HomeScreen;
 
