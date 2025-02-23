@@ -12,7 +12,7 @@ type AuthData = {
     session: Session | null;
     profile: any;
     loading: boolean;
-    logout: () => Promise<void>
+    logout: () => Promise<void>;
     // isAdmin: boolean;
 };
 
@@ -20,7 +20,7 @@ const AuthContext = createContext<AuthData>({
     session: null,
     loading: true,
     profile: null,
-    logout: async () => {}
+    logout: async () => {},
     // isAdmin: false,
 });
 
@@ -91,6 +91,9 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         // ✅ Reset navigation stack to Login screen
 
         console.log("✅ Successfully logged out!");
+
+        // Place the token refresher hook here so it runs when session changes
+        useTokenRefresher(session, logout);
     };
 
     return (
@@ -107,6 +110,34 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     );
 };
 
+import jwtDecode from "jwt-decode";
+
+const useTokenRefresher = (session: any, logout: () => Promise<void>) => {
+    useEffect(() => {
+        const checkTokenExpiration = async () => {
+            if (session?.access_token) {
+                try {
+                    // @ts-ignore
+                    const decoded: any = jwtDecode(session.access_token);
+                    const currentTime = Math.floor(Date.now() / 1000);
+                    // If token is going to expire within 5 minutes, refresh it
+                    if (decoded.exp - currentTime < 60) {
+                        // Call getSession() to trigger auto-refresh, or perform your logic here
+                        await supabase.auth.getSession();
+                    }
+                } catch (error) {
+                    console.error("Error decoding token:", error);
+                }
+            }
+        };
+
+        // Check every minute
+        const interval = setInterval(checkTokenExpiration, 60 * 1000);
+
+        return () => clearInterval(interval);
+    }, [session, logout]);
+};
+
 // export default function AuthProvider({ children }: PropsWithChildren) {
 //     const [session, setSession] = useState<Session | null>(null);
 //     const [profile, setProfile] = useState(null);
@@ -117,7 +148,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 //             const {
 //                 data: { session }
 //             } = await supabase.auth.getSession();
-            
+
 //             setSession(session);
 
 //             if (session && session.user.id) {

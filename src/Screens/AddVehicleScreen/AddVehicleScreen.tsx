@@ -9,6 +9,8 @@ import {
     Platform,
     KeyboardAvoidingView,
     Alert,
+    SafeAreaView,
+    Keyboard,
 } from "react-native";
 import { useState, useEffect } from "react";
 import CustomPicker from "./CustomPicker";
@@ -79,9 +81,16 @@ interface VehicleData {
 }
 
 function AddVehicleScreen(props: any) {
-    const {
-        profile: { id: user_id },
-    } = useAuth();
+   const { session } = useAuth();
+    const user = session?.user;
+    const [userId, setUserId] = useState<null | string>(null);
+
+    useEffect(() => {
+        if(user){
+            setUserId(user.id);
+        }
+    }, [session]);
+
     const { vehicle, modalVisible, setModalVisible } = props;
     const navigation = useNavigation();
     const [selectedVehicleBrand, setSelectedVehicleBrand] =
@@ -121,7 +130,7 @@ function AddVehicleScreen(props: any) {
         vehicle_model_year: 2024,
         vehicle_year_of_manufacture: 2023,
         current_mileage: 30121,
-        user_id: user_id,
+        user_id: userId,
     };
 
     const [brands, setBrands] = useState<Brands[]>([]);
@@ -182,6 +191,7 @@ function AddVehicleScreen(props: any) {
     };
 
     const addVehicleHandler = () => {
+        // @ts-ignore
         mutate(addVehicleData, {
             onSuccess: () => {
                 console.log("✅ Vehicle added successfully!");
@@ -203,148 +213,127 @@ function AddVehicleScreen(props: any) {
     }
 
     return (
-        <TouchableWithoutFeedback>
-            <KeyboardAvoidingView
-                behavior="position"
-                keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
-            >
-                <ScrollView contentContainerStyle={styles.container}>
-                    {/* Vehicle Name/Model */}
+        <SafeAreaView style={{ flex: 1 }}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
+          style={{ flex: 1 }}
+        >
+          <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+            {/* Brand Picker */}
+            {brands.length > 0 && (
+              <View style={styles.pickerContainer}>
+                <View style={styles.pickerWrapper}>
+                  <CustomPicker
+                    items={brands.map(brand => brand.make_display)}
+                    selectedValue={selectedVehicleBrand}
+                    onValueChange={(value) => handlePickerChange('brand', value)}
+                    label="Vehicle Brand"
+                  />
+                </View>
+              </View>
+            )}
 
-                    {/* Brand Picker */}
-                    {brands.length > 0 && (
-                        <View style={styles.pickerContainer}>
-                            <View style={styles.pickerWrapper}>
-                                <CustomPicker
-                                    items={brands.map(
-                                        (brand) => brand.make_display
-                                    )}
-                                    selectedValue={selectedVehicleBrand}
-                                    onValueChange={(value) =>
-                                        handlePickerChange("brand", value)
-                                    }
-                                    label="Vehicle Brand"
-                                />
-                            </View>
-                        </View>
-                    )}
+            {/* Model Picker */}
+            <View style={styles.pickerContainer}>
+              <View style={styles.pickerWrapper}>
+                <CustomPicker
+                  items={models.map(model => model.model_name || 'Unknown')}
+                  selectedValue={selectedModel}
+                  onValueChange={(value) => handlePickerChange('model', value)}
+                  label="Model"
+                />
+              </View>
+            </View>
 
-                    {/* Model Selection */}
-                    <View style={styles.pickerContainer}>
-                        <View style={styles.pickerWrapper}>
-                            <CustomPicker
-                                items={models.map(
-                                    (model) => model.model_name || "Unknown"
-                                )}
-                                selectedValue={selectedModel}
-                                onValueChange={(value) =>
-                                    handlePickerChange("model", value)
-                                }
-                                label="Model"
-                            />
-                        </View>
-                    </View>
+            {/* Year Picker */}
+            <View style={styles.pickerContainer}>
+              <View style={styles.pickerWrapper}>
+                <CustomPicker
+                  items={years.reverse().map(year => year.toString())}
+                  selectedValue={selectedYear.toString()}
+                  onValueChange={(value) => handlePickerChange('year', value)}
+                  label="Year"
+                />
+              </View>
+            </View>
 
-                    {/* Model Selection */}
-                    <View style={styles.pickerContainer}>
-                        {/* <Text style={styles.label}>Year:</Text> */}
-                        <View style={styles.pickerWrapper}>
-                            <CustomPicker
-                                items={years
-                                    .reverse()
-                                    .map((year) => year.toString())}
-                                selectedValue={selectedYear.toString()}
-                                onValueChange={(value) =>
-                                    handlePickerChange("year", value)
-                                }
-                                label="Year"
-                            />
-                        </View>
-                    </View>
+            {/* Vehicle Type Picker */}
+            <View style={styles.pickerContainer}>
+              <View style={styles.pickerWrapper}>
+                <CustomPicker
+                  items={carTypesByShape.map(carType => carType.name)}
+                  selectedValue={selectedCarType}
+                  onValueChange={(value) => handlePickerChange('carType', value)}
+                  label="Vehicle Type"
+                />
+              </View>
+            </View>
 
-                    {/* Vehicle Type: Dropdown or options like car, motorcycle, truck, etc */}
-                    <View style={styles.pickerContainer}>
-                        <View style={styles.pickerWrapper}>
-                            <CustomPicker
-                                items={carTypesByShape.map(
-                                    (carType) => carType.name
-                                )}
-                                selectedValue={selectedCarType}
-                                onValueChange={(value) =>
-                                    handlePickerChange("carType", value)
-                                }
-                                label="Vehicle Type"
-                            />
-                        </View>
-                    </View>
+            {/* Additional Inputs */}
+            <View style={styles.additionalInputsContainer}>
+              <Text style={styles.label}>Vehicle License Plate:</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter License Plate"
+                onChangeText={(value) => handlePickerChange('vehicleLicense', value)}
+                autoCapitalize="characters"
+              />
 
-                    {/* Additional Inputs  */}
-                    <View style={styles.additionalInputsContainer}>
-                        <Text style={styles.label}>Vehicle License Plate:</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Enter License Plate"
-                            onChangeText={(value) =>
-                                handlePickerChange("vehicleLicense", value)
-                            }
-                        />
-                        <Text style={styles.label}>Year of Manufacture:</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Enter a Year Of Manufacturing"
-                            keyboardType="numeric"
-                            onChangeText={(value) =>
-                                handlePickerChange("yearOfManufacture", value)
-                            }
-                        />
+              <Text style={styles.label}>Year of Manufacture:</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter a Year Of Manufacturing"
+                keyboardType="numeric"
+                onChangeText={(value) => handlePickerChange('yearOfManufacture', value)}
+              />
 
-                        <Text style={styles.label}>
-                            Vehicle Identification Number (VIN): (Optional)
-                        </Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Enter your Vehicle Identification Number (VIN)"
-                            onChangeText={(value) =>
-                                handlePickerChange("vin", value)
-                            }
-                        />
+              <Text style={styles.label}>
+                Vehicle Identification Number (VIN): (Optional)
+              </Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter your VIN"
+                onChangeText={(value) => handlePickerChange('vin', value)}
+                autoCapitalize="none"
+              />
 
-                        <Text style={styles.label}>
-                            Vehicle Current Mileage: (Optional)
-                        </Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Enter your Vehicle Identification Number (VIN)"
-                            onChangeText={(value) =>
-                                handlePickerChange("mileage", value)
-                            }
-                        />
+              <Text style={styles.label}>
+                Vehicle Current Mileage: (Optional)
+              </Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter your mileage"
+                keyboardType="numeric"
+                onChangeText={(value) => handlePickerChange('mileage', value)}
+              />
 
-                        {/* Close Button */}
-                        {modalVisible === true && (
-                            <TouchableOpacity
-                                style={styles.saveButton && styles.closeButton}
-                                activeOpacity={0.65}
-                                onPress={() => setModalVisible(false)}
-                            >
-                                <Text style={styles.buttonText}>
-                                    Cancel Editting
-                                </Text>
-                            </TouchableOpacity>
-                        )}
+              {/* Close Button */}
+              {modalVisible && (
+                <TouchableOpacity
+                  style={[styles.saveButton, styles.closeButton]}
+                  activeOpacity={0.65}
+                  onPress={() => setModalVisible(false)}
+                >
+                  <Text style={styles.buttonText}>Cancel Editing</Text>
+                </TouchableOpacity>
+              )}
 
-                        {/* Submit Button */}
-                        <TouchableOpacity
-                            style={styles.saveButton}
-                            activeOpacity={0.65}
-                            onPress={addVehicleHandler}
-                        >
-                            <Text style={styles.buttonText}>Save Vehicle</Text>
-                        </TouchableOpacity>
-                    </View>
-                </ScrollView>
-            </KeyboardAvoidingView>
-        </TouchableWithoutFeedback>
+              {/* Submit Button */}
+              <TouchableOpacity
+                style={styles.saveButton}
+                activeOpacity={0.65}
+                onPress={addVehicleHandler}
+              >
+                <Text style={styles.buttonText}>Save Vehicle</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
+    </SafeAreaView>
+        
     );
 }
 
@@ -377,7 +366,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
     },
     saveButton: {
-        backgroundColor: "#4FD15B",
+        backgroundColor: "#625be7",
         padding: 15,
         borderRadius: 8,
         marginTop: 20,
