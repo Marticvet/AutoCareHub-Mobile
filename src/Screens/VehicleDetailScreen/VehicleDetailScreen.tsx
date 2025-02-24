@@ -9,18 +9,7 @@ import {
 } from "../../api/vehicles";
 import { Loader } from "../Loader/Loader";
 import { useNavigation } from "@react-navigation/native";
-
-interface Vehicle {
-    user_id: number;
-    vehicle_brand: string;
-    vehicle_car_type: string;
-    vehicle_id: number;
-    vehicle_identification_number: string;
-    vehicle_license_plate: string;
-    vehicle_model: string;
-    vehicle_model_year: number;
-    vehicle_year_of_manufacture: number;
-}
+import { VehicleData } from "../../../types/vehicle";
 
 const VehicleDetailScreen = ({ route }: any) => {
     const navigation = useNavigation();
@@ -39,7 +28,7 @@ const VehicleDetailScreen = ({ route }: any) => {
 
     // ✅ Fetch vehicle only when `userId` and vehicleId is available
     const { data, isLoading, error } = useVehicle(userId || "", vehicleId);
-    const vehicle: Vehicle = data;
+    const vehicle: VehicleData = data;
     const [modalVisible, setModalVisible] = useState(false);
 
     if (isLoading) {

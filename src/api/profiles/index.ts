@@ -15,14 +15,14 @@ interface Profile {
     phone_number: string;
 }
 
-export const useProfile = (id: string, vehicleId: string) => {
+export const useProfile = (id: string) => {
     return useQuery({
-        queryKey: [queryKey, id, vehicleId],
+        queryKey: [queryKey, id],
         queryFn: async () => {
             const { data, error } = await supabase
                 .from(queryKey)
                 .select("*")
-                .eq("id", vehicleId)
+                .eq("id", id)
                 .single();
 
             if (error) {

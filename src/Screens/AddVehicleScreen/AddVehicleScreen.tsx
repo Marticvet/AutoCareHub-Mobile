@@ -18,6 +18,7 @@ import { CommonActions, useNavigation } from "@react-navigation/native";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../providers/AuthProvider";
 import { useInsertVehicle } from "../../api/vehicles";
+import { VehicleData } from "../../../types/vehicle";
 
 const years = [
     // 1950, 1951, 1952, 1953, 1954, 1955, 1956, 1957, 1958, 1959, 1960, 1961,
@@ -68,29 +69,17 @@ interface Models {
     model_name: string | null;
 }
 
-interface VehicleData {
-    vehicle_brand: string;
-    vehicle_model: string;
-    vehicle_model_year: number;
-    vehicle_car_type: string;
-    vehicle_license_plate: string;
-    vehicle_year_of_manufacture: string | number;
-    vehicle_identification_number: string;
-    current_mileage: number;
-    user_id: string | null;
-}
-
 function AddVehicleScreen(props: any) {
-   const { profile } = useAuth();
-    const {id} = profile;
-    const [userId, setUserId] = useState<string>('');
+    const { profile } = useAuth();
+    const { id } = profile;
+    const [userId, setUserId] = useState<string>("");
 
     useEffect(() => {
-        if(id){
+        if (id) {
             setUserId(id);
         }
     }, [id]);
-    
+
     console.log(userId);
 
     const { vehicle, modalVisible, setModalVisible } = props;
@@ -124,6 +113,7 @@ function AddVehicleScreen(props: any) {
     // };
 
     const addVehicleData: VehicleData = {
+        id: "",
         vehicle_brand: "BMW",
         vehicle_car_type: "Hatchback",
         vehicle_identification_number: "",
@@ -216,126 +206,166 @@ function AddVehicleScreen(props: any) {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
-          style={{ flex: 1 }}
-        >
-          <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-            {/* Brand Picker */}
-            {brands.length > 0 && (
-              <View style={styles.pickerContainer}>
-                <View style={styles.pickerWrapper}>
-                  <CustomPicker
-                    items={brands.map(brand => brand.make_display)}
-                    selectedValue={selectedVehicleBrand}
-                    onValueChange={(value) => handlePickerChange('brand', value)}
-                    label="Vehicle Brand"
-                  />
-                </View>
-              </View>
-            )}
-
-            {/* Model Picker */}
-            <View style={styles.pickerContainer}>
-              <View style={styles.pickerWrapper}>
-                <CustomPicker
-                  items={models.map(model => model.model_name || 'Unknown')}
-                  selectedValue={selectedModel}
-                  onValueChange={(value) => handlePickerChange('model', value)}
-                  label="Model"
-                />
-              </View>
-            </View>
-
-            {/* Year Picker */}
-            <View style={styles.pickerContainer}>
-              <View style={styles.pickerWrapper}>
-                <CustomPicker
-                  items={years.reverse().map(year => year.toString())}
-                  selectedValue={selectedYear.toString()}
-                  onValueChange={(value) => handlePickerChange('year', value)}
-                  label="Year"
-                />
-              </View>
-            </View>
-
-            {/* Vehicle Type Picker */}
-            <View style={styles.pickerContainer}>
-              <View style={styles.pickerWrapper}>
-                <CustomPicker
-                  items={carTypesByShape.map(carType => carType.name)}
-                  selectedValue={selectedCarType}
-                  onValueChange={(value) => handlePickerChange('carType', value)}
-                  label="Vehicle Type"
-                />
-              </View>
-            </View>
-
-            {/* Additional Inputs */}
-            <View style={styles.additionalInputsContainer}>
-              <Text style={styles.label}>Vehicle License Plate:</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter License Plate"
-                onChangeText={(value) => handlePickerChange('vehicleLicense', value)}
-                autoCapitalize="characters"
-              />
-
-              <Text style={styles.label}>Year of Manufacture:</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter a Year Of Manufacturing"
-                keyboardType="numeric"
-                onChangeText={(value) => handlePickerChange('yearOfManufacture', value)}
-              />
-
-              <Text style={styles.label}>
-                Vehicle Identification Number (VIN): (Optional)
-              </Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your VIN"
-                onChangeText={(value) => handlePickerChange('vin', value)}
-                autoCapitalize="none"
-              />
-
-              <Text style={styles.label}>
-                Vehicle Current Mileage: (Optional)
-              </Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your mileage"
-                keyboardType="numeric"
-                onChangeText={(value) => handlePickerChange('mileage', value)}
-              />
-
-              {/* Close Button */}
-              {modalVisible && (
-                <TouchableOpacity
-                  style={[styles.saveButton, styles.closeButton]}
-                  activeOpacity={0.65}
-                  onPress={() => setModalVisible(false)}
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === "ios" ? "padding" : "height"}
+                    keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
+                    style={{ flex: 1 }}
                 >
-                  <Text style={styles.buttonText}>Cancel Editing</Text>
-                </TouchableOpacity>
-              )}
+                    <ScrollView
+                        contentContainerStyle={styles.container}
+                        keyboardShouldPersistTaps="handled"
+                    >
+                        {/* Brand Picker */}
+                        {brands.length > 0 && (
+                            <View style={styles.pickerContainer}>
+                                <View style={styles.pickerWrapper}>
+                                    <CustomPicker
+                                        items={brands.map(
+                                            (brand) => brand.make_display
+                                        )}
+                                        selectedValue={selectedVehicleBrand}
+                                        onValueChange={(value) =>
+                                            handlePickerChange("brand", value)
+                                        }
+                                        label="Vehicle Brand"
+                                    />
+                                </View>
+                            </View>
+                        )}
 
-              {/* Submit Button */}
-              <TouchableOpacity
-                style={styles.saveButton}
-                activeOpacity={0.65}
-                onPress={addVehicleHandler}
-              >
-                <Text style={styles.buttonText}>Save Vehicle</Text>
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </TouchableWithoutFeedback>
-    </SafeAreaView>
-        
+                        {/* Model Picker */}
+                        <View style={styles.pickerContainer}>
+                            <View style={styles.pickerWrapper}>
+                                <CustomPicker
+                                    items={models.map(
+                                        (model) => model.model_name || "Unknown"
+                                    )}
+                                    selectedValue={selectedModel}
+                                    onValueChange={(value) =>
+                                        handlePickerChange("model", value)
+                                    }
+                                    label="Model"
+                                />
+                            </View>
+                        </View>
+
+                        {/* Year Picker */}
+                        <View style={styles.pickerContainer}>
+                            <View style={styles.pickerWrapper}>
+                                <CustomPicker
+                                    items={years
+                                        .reverse()
+                                        .map((year) => year.toString())}
+                                    selectedValue={selectedYear.toString()}
+                                    onValueChange={(value) =>
+                                        handlePickerChange("year", value)
+                                    }
+                                    label="Year"
+                                />
+                            </View>
+                        </View>
+
+                        {/* Vehicle Type Picker */}
+                        <View style={styles.pickerContainer}>
+                            <View style={styles.pickerWrapper}>
+                                <CustomPicker
+                                    items={carTypesByShape.map(
+                                        (carType) => carType.name
+                                    )}
+                                    selectedValue={selectedCarType}
+                                    onValueChange={(value) =>
+                                        handlePickerChange("carType", value)
+                                    }
+                                    label="Vehicle Type"
+                                />
+                            </View>
+                        </View>
+
+                        {/* Additional Inputs */}
+                        <View style={styles.additionalInputsContainer}>
+                            <Text style={styles.label}>
+                                Vehicle License Plate:
+                            </Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Enter License Plate"
+                                onChangeText={(value) =>
+                                    handlePickerChange("vehicleLicense", value)
+                                }
+                                autoCapitalize="characters"
+                            />
+
+                            <Text style={styles.label}>
+                                Year of Manufacture:
+                            </Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Enter a Year Of Manufacturing"
+                                keyboardType="numeric"
+                                onChangeText={(value) =>
+                                    handlePickerChange(
+                                        "yearOfManufacture",
+                                        value
+                                    )
+                                }
+                            />
+
+                            <Text style={styles.label}>
+                                Vehicle Identification Number (VIN): (Optional)
+                            </Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Enter your VIN"
+                                onChangeText={(value) =>
+                                    handlePickerChange("vin", value)
+                                }
+                                autoCapitalize="none"
+                            />
+
+                            <Text style={styles.label}>
+                                Vehicle Current Mileage: (Optional)
+                            </Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Enter your mileage"
+                                keyboardType="numeric"
+                                onChangeText={(value) =>
+                                    handlePickerChange("mileage", value)
+                                }
+                            />
+
+                            {/* Close Button */}
+                            {modalVisible && (
+                                <TouchableOpacity
+                                    style={[
+                                        styles.saveButton,
+                                        styles.closeButton,
+                                    ]}
+                                    activeOpacity={0.65}
+                                    onPress={() => setModalVisible(false)}
+                                >
+                                    <Text style={styles.buttonText}>
+                                        Cancel Editing
+                                    </Text>
+                                </TouchableOpacity>
+                            )}
+
+                            {/* Submit Button */}
+                            <TouchableOpacity
+                                style={styles.saveButton}
+                                activeOpacity={0.65}
+                                onPress={addVehicleHandler}
+                            >
+                                <Text style={styles.buttonText}>
+                                    Save Vehicle
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </ScrollView>
+                </KeyboardAvoidingView>
+            </TouchableWithoutFeedback>
+        </SafeAreaView>
     );
 }
 

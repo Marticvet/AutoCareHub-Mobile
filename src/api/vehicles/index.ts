@@ -1,31 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../../lib/supabase";
-
-interface UserVehicles {
-    user_id: number;
-    vehicle_brand: string;
-    vehicle_car_type: string;
-    id: number;
-    vehicle_identification_number: string;
-    vehicle_license_plate: string;
-    vehicle_model: string;
-    vehicle_model_year: number;
-    vehicle_year_of_manufacture: number;
-    currentMileage: number;
-}
-
-interface VehicleData {
-    id: string;
-    vehicle_brand: string;
-    vehicle_model: string;
-    vehicle_model_year: number;
-    vehicle_car_type: string;
-    vehicle_license_plate: string;
-    vehicle_year_of_manufacture: string | number;
-    vehicle_identification_number: string;
-    current_mileage: number;
-    user_id: string | null;
-}
+import { VehicleData } from "../../../types/vehicle";
 
 let queryKey: string = "vehicles";
 

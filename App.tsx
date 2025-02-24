@@ -16,6 +16,7 @@ import ReportsScreen from "./src/Screens/ReportsScreen";
 import ServiceScreen from "./src/Screens/ServiceExpensesScreen";
 import ReminderScreen from "./src/Screens/ReminderScreen";
 import { useState } from "react";
+import { ProfileDataProvider } from "./src/providers/ProfileDataProvider";
 
 const Tab = createBottomTabNavigator();
 const AppStack = createStackNavigator();
@@ -23,12 +24,16 @@ const AuthStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 const App = () => (
-    <AuthProvider>
-        <NavigationContainer>
+    <QueryProvider>
+      <AuthProvider>
+        <ProfileDataProvider>
+          <NavigationContainer>
             <RootNavigator />
-        </NavigationContainer>
-    </AuthProvider>
-);
+          </NavigationContainer>
+        </ProfileDataProvider>
+      </AuthProvider>
+    </QueryProvider>
+  );
 
 function RootNavigator() {
     const { session } = useAuth();
@@ -48,259 +53,179 @@ function AppTabs() {
         navigation.navigate(screen);
     };
     return (
-        <QueryProvider>
-            <View style={{ flex: 1, position: "relative" }}>
-                <Tab.Navigator
-                    screenOptions={{
-                        headerShown: false,
-                        tabBarStyle: { backgroundColor: "#212640" },
-                        tabBarActiveTintColor: "#ffffff",
-                        tabBarInactiveTintColor: "#888",
+        <View style={{ flex: 1, position: "relative" }}>
+            <Tab.Navigator
+                screenOptions={{
+                    headerShown: false,
+                    tabBarStyle: { backgroundColor: "#212640" },
+                    tabBarActiveTintColor: "#ffffff",
+                    tabBarInactiveTintColor: "#888",
+                }}
+            >
+                <Tab.Screen
+                    name="Home"
+                    component={AuthNavigator} // Use AuthNavigator for Home Navigation
+                    options={{
+                        tabBarIcon: ({ color, size }) => (
+                            <Ionicons
+                                name="home-outline"
+                                size={size}
+                                color={color}
+                            />
+                        ),
                     }}
-                >
-                    <Tab.Screen
-                        name="Home"
-                        component={AuthNavigator} // Use AuthNavigator for Home Navigation
-                        options={{
-                            tabBarIcon: ({ color, size }) => (
-                                <Ionicons
-                                    name="home-outline"
-                                    size={size}
-                                    color={color}
-                                />
-                            ),
-                        }}
-                    />
-                    <Tab.Screen
-                        name="AddVehicleScreen"
-                        component={AddVehicleScreen}
-                        options={{
-                            title: "Add Vehicle",
-                            tabBarIcon: ({ color, size }) => (
-                                <Ionicons
-                                    name="car-outline"
-                                    size={size}
-                                    color={color}
-                                />
-                            ),
-                        }}
-                    />
+                />
+                <Tab.Screen
+                    name="AddVehicleScreen"
+                    component={AddVehicleScreen}
+                    options={{
+                        title: "Add Vehicle",
+                        tabBarIcon: ({ color, size }) => (
+                            <Ionicons
+                                name="car-outline"
+                                size={size}
+                                color={color}
+                            />
+                        ),
+                    }}
+                />
 
-                    {/* ✅ Floating Action Button (FAB) in the Center */}
-                    <Tab.Screen
-                        name="Plus"
-                        component={HomeScreen} // Dummy component
-                        options={{
-                            tabBarButton: () => (
+                {/* ✅ Floating Action Button (FAB) in the Center */}
+                <Tab.Screen
+                    name="Plus"
+                    component={HomeScreen} // Dummy component
+                    options={{
+                        tabBarButton: () => (
+                            <TouchableOpacity
+                                style={styles.fabButton}
+                                onPress={() => setModalVisible(true)}
+                            >
+                                <Ionicons name="add" size={32} color="white" />
+                            </TouchableOpacity>
+                        ),
+                    }}
+                    listeners={{
+                        tabPress: (e) => {
+                            e.preventDefault(); // Prevent navigation
+                            setModalVisible(true);
+                        },
+                    }}
+                />
+
+                <Tab.Screen
+                    name="ReminderScreen"
+                    component={ReminderScreen}
+                    options={{
+                        title: "Reminders",
+                        tabBarIcon: ({ color, size }) => (
+                            <Ionicons
+                                name="car-outline"
+                                size={size}
+                                color={color}
+                            />
+                        ),
+                    }}
+                />
+
+                {/* Logout Button (Not a Screen, Just a Clickable Tab) */}
+                <Tab.Screen
+                    name="Logout"
+                    component={LogoutButton} // ✅ Use a named component
+                    options={{
+                        tabBarIcon: ({ color, size }) => (
+                            <Ionicons
+                                name="log-out-outline"
+                                size={size}
+                                color={color}
+                            />
+                        ),
+                    }}
+                    listeners={({ navigation }) => ({
+                        tabPress: (e) => {
+                            e.preventDefault(); // Prevent navigation
+                            logout(); // Call the logout function
+                        },
+                    })}
+                />
+            </Tab.Navigator>
+
+            {/* ✅ Modal for Selecting Actions */}
+
+            {/* ✅ Modal for Selecting Actions */}
+            {modalVisible && (
+                <View style={styles.modalWrapper}>
+                    <Modal
+                        transparent
+                        visible={modalVisible}
+                        animationType="slide"
+                        onRequestClose={() => setModalVisible(false)}
+                    >
+                        <TouchableOpacity
+                            style={styles.overlay}
+                            activeOpacity={1}
+                            onPress={() => setModalVisible(false)}
+                        >
+                            <View style={styles.modalContainer}>
+                                {[
+                                    {
+                                        title: "Fuel Expenses",
+                                        screen: "FuelExpensesScreen",
+                                    },
+                                    {
+                                        title: "Insurance Expenses",
+                                        screen: "InsuranceExpensesScreen",
+                                    },
+                                    {
+                                        title: "Oil Expenses",
+                                        screen: "OilExpensesScreen",
+                                    },
+                                    {
+                                        title: "Service Expenses",
+                                        screen: "ServiceExpensesScreen",
+                                    },
+                                    {
+                                        title: "Service Reminders",
+                                        screen: "ServiceRemindersScreen",
+                                    },
+                                    {
+                                        title: "Car Expenses",
+                                        screen: "CarExpensesScreen",
+                                    },
+                                    {
+                                        title: "Reports",
+                                        screen: "ReportsScreen",
+                                    },
+                                    {
+                                        title: "Reminder",
+                                        screen: "ReminderScreen",
+                                    },
+                                ].map((item, index) => (
+                                    <TouchableOpacity
+                                        key={index}
+                                        style={styles.option}
+                                        onPress={() =>
+                                            handleSelection(item.screen)
+                                        }
+                                    >
+                                        <Text style={styles.optionText}>
+                                            {item.title}
+                                        </Text>
+                                    </TouchableOpacity>
+                                ))}
                                 <TouchableOpacity
-                                    style={styles.fabButton}
-                                    onPress={() => setModalVisible(true)}
+                                    style={styles.cancelButton}
+                                    onPress={() => setModalVisible(false)}
                                 >
-                                    <Ionicons
-                                        name="add"
-                                        size={32}
-                                        color="white"
-                                    />
+                                    <Text style={styles.cancelText}>
+                                        Cancel
+                                    </Text>
                                 </TouchableOpacity>
-                            ),
-                        }}
-                        listeners={{
-                            tabPress: (e) => {
-                                e.preventDefault(); // Prevent navigation
-                                setModalVisible(true);
-                            },
-                        }}
-                    />
-
-                    <Tab.Screen
-                        name="ReminderScreen"
-                        component={ReminderScreen}
-                        options={{
-                            title: "Reminders",
-                            tabBarIcon: ({ color, size }) => (
-                                <Ionicons
-                                    name="car-outline"
-                                    size={size}
-                                    color={color}
-                                />
-                            ),
-                        }}
-                    />
-
-                    {/* Logout Button (Not a Screen, Just a Clickable Tab) */}
-                    <Tab.Screen
-                        name="Logout"
-                        component={LogoutButton} // ✅ Use a named component
-                        options={{
-                            tabBarIcon: ({ color, size }) => (
-                                <Ionicons
-                                    name="log-out-outline"
-                                    size={size}
-                                    color={color}
-                                />
-                            ),
-                        }}
-                        listeners={({ navigation }) => ({
-                            tabPress: (e) => {
-                                e.preventDefault(); // Prevent navigation
-                                logout(); // Call the logout function
-                            },
-                        })}
-                    />
-                </Tab.Navigator>
-
-                {/* ✅ Modal for Selecting Actions */}
-
-                {/* ✅ Modal for Selecting Actions */}
-                {modalVisible && (
-                    <View style={styles.modalWrapper}>
-                        <Modal
-                            transparent
-                            visible={modalVisible}
-                            animationType="slide"
-                            onRequestClose={() => setModalVisible(false)}
-                        >
-                            <TouchableOpacity
-                                style={styles.overlay}
-                                activeOpacity={1}
-                                onPress={() => setModalVisible(false)}
-                            >
-                                <View style={styles.modalContainer}>
-                                    {[
-                                        {
-                                            title: "Fuel Expenses",
-                                            screen: "FuelExpensesScreen",
-                                        },
-                                        {
-                                            title: "Insurance Expenses",
-                                            screen: "InsuranceExpensesScreen",
-                                        },
-                                        {
-                                            title: "Oil Expenses",
-                                            screen: "OilExpensesScreen",
-                                        },
-                                        {
-                                            title: "Service Expenses",
-                                            screen: "ServiceExpensesScreen",
-                                        },
-                                        {
-                                            title: "Service Reminders",
-                                            screen: "ServiceRemindersScreen",
-                                        },
-                                        {
-                                            title: "Car Expenses",
-                                            screen: "CarExpensesScreen",
-                                        },
-                                        {
-                                            title: "Reports",
-                                            screen: "ReportsScreen",
-                                        },
-                                        {
-                                            title: "Reminder",
-                                            screen: "ReminderScreen",
-                                        },
-                                    ].map((item, index) => (
-                                        <TouchableOpacity
-                                            key={index}
-                                            style={styles.option}
-                                            onPress={() =>
-                                                handleSelection(item.screen)
-                                            }
-                                        >
-                                            <Text style={styles.optionText}>
-                                                {item.title}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    ))}
-                                    <TouchableOpacity
-                                        style={styles.cancelButton}
-                                        onPress={() => setModalVisible(false)}
-                                    >
-                                        <Text style={styles.cancelText}>
-                                            Cancel
-                                        </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </TouchableOpacity>
-                        </Modal>
-                    </View>
-                )}
-
-                {/* {modalVisible && (
-                    <View style={styles.modalWrapper}>
-                        <Modal
-                            transparent
-                            visible={modalVisible}
-                            animationType="slide"
-                            onRequestClose={() => setModalVisible(false)}
-                        >
-                            <TouchableOpacity
-                                style={styles.overlay}
-                                activeOpacity={1}
-                                onPress={() => setModalVisible(false)} // Close modal when clicking outside
-                            >
-                                <View style={styles.modalContainer}>
-                                    {[
-                                        {
-                                            title: "Fuel Expenses",
-                                            screen: "FuelExpensesScreen",
-                                        },
-                                        {
-                                            title: "Insurance Expespenses",
-                                            screen: "InsuranceExpensesScreen",
-                                        },
-                                        {
-                                            title: "Oil Expenses",
-                                            screen: "OilExpensesScreen",
-                                        },
-                                        {
-                                            title: "Service Expenses",
-                                            screen: "ServiceExpensesScreen",
-                                        },
-                                        {
-                                            title: "Service Reminders",
-                                            screen: "ServiceRemindersScreen",
-                                        },
-                                        {
-                                            title: "Car Expenses",
-                                            screen: "CarExpensesScreen",
-                                        },
-                                        {
-                                            title: "Reports",
-                                            screen: "ReportsScreen",
-                                        },
-                                        {
-                                            title: "Reminder",
-                                            screen: "ReminderScreen",
-                                        },
-                                    ].map((item, index) => (
-                                        <TouchableOpacity
-                                            key={index}
-                                            style={styles.option}
-                                            onPress={() =>
-                                                handleSelection(item.screen)
-                                            }
-                                        >
-                                            <Text style={styles.optionText}>
-                                                {item.title}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    ))}
-                                    <TouchableOpacity
-                                        style={styles.cancelButton}
-                                        onPress={() => setModalVisible(false)}
-                                    >
-                                        <Text style={styles.cancelText}>
-                                            Cancel
-                                        </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </TouchableOpacity>
-                        </Modal>
-                    </View>
-                )} */}
-            </View>
-        </QueryProvider>
+                            </View>
+                        </TouchableOpacity>
+                    </Modal>
+                </View>
+            )}
+        </View>
     );
 }
 

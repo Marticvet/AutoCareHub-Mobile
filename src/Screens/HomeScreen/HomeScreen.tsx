@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import React from "react";
 import { useAuth } from "../../providers/AuthProvider";
 import { useVehicleList } from "../../api/vehicles";
@@ -19,6 +19,9 @@ import { Loader } from "../Loader/Loader";
 import CustomPicker from "../CustomPicker";
 import { useProfile } from "../../api/profiles";
 import HomeScreenDropdown from "../HomeScreenDropdown";
+import { Profile } from "../../../types/profile";
+import { VehicleData } from "../../../types/vehicle";
+import { ProfileContext } from "../../providers/ProfileDataProvider";
 
 type IconType = "car" | "calendar" | "bag-add-outline" | "cloud-upload-outline";
 
@@ -29,53 +32,18 @@ const quickActions: { id: string; name: string; icon: IconType }[] = [
     { id: "4", name: "Upload Document", icon: "cloud-upload-outline" },
 ];
 
-interface UserVehicles {
-    user_id: number;
-    vehicle_brand: string;
-    vehicle_car_type: string;
-    id: number;
-    vehicle_identification_number: string;
-    vehicle_license_plate: string;
-    vehicle_model: string;
-    vehicle_model_year: number;
-    vehicle_year_of_manufacture: number;
-    currentMileage: number;
-}
-
-interface Profile {
-    id: string;
-    updated_at: null | Date;
-    email: string;
-    avatar_url: string;
-    first_name: string;
-    last_name: string;
-    full_name: string | null;
-    selected_vehicle_id: string;
-    phone_number: string;
-}
-
 function HomeScreen() {
     const navigation = useNavigation();
     const { profile } = useAuth();
-    const [userId, setUserId] = useState<string>("");
-    const [email, setEmail] = useState<string>("");
-
-    useEffect(() => {
-        if (profile) {
-            const { id } = profile;
-
-            if (id) {
-                setUserId(id);
-            }
-        }
-    }, [profile]);
-
-    // ✅ Fetch profile's data only when `user_id` is available
-    const { data, isLoading, error } = useProfile(userId || "", userId);
-    const userProfile: Profile = data;
-
-     // Sample static vehicle list; replace with dynamic data if available.
-  const vehicles = ["Car A", "Car B", "Car C"];
+    // Retrieve the values provided by ProfileDataProvider
+    const {
+        userProfile,
+        selectedVehicle,
+        vehicles,
+        isProfileLoading,
+        isVehiclesLoading,
+        setSelectedVehicle,
+    } = useContext(ProfileContext);
 
     function navigateTo() {
         // @ts-ignore
@@ -90,9 +58,10 @@ function HomeScreen() {
             {/* Dropdown at the top */}
             <View style={styles.dropdownContainer}>
                 <HomeScreenDropdown
+                    // @ts-ignore
                     data={vehicles}
-                    // selectedValue={selectedVehicle}
-                    // onValueChange={setSelectedVehicle}
+                    selectedValue={selectedVehicle}
+                    onValueChange={setSelectedVehicle}
                     placeholder="Select your vehicle"
                 />
             </View>
@@ -100,7 +69,7 @@ function HomeScreen() {
             {/* Rest of your screen */}
             <View style={styles.contentContainer}>
                 <Text style={styles.infoText}>
-                    Selected Vehicle: Model name
+                    Selected Vehicle: {selectedVehicle}
                 </Text>
                 {/* Other components, such as pickers or buttons, can go here */}
             </View>
@@ -110,21 +79,21 @@ function HomeScreen() {
 
 const styles = StyleSheet.create({
     container: {
-      flexGrow: 1,
-      padding: 16,
-      backgroundColor: "#f5f5f5",
+        flexGrow: 1,
+        padding: 16,
+        backgroundColor: "#f5f5f5",
     },
     dropdownContainer: {
-      marginBottom: 20,
+        marginBottom: 20,
     },
     contentContainer: {
-      // Additional styling for the remaining content
+        // Additional styling for the remaining content
     },
     infoText: {
-      fontSize: 18,
-      color: "#333",
+        fontSize: 18,
+        color: "#333",
     },
-  });
+});
 
 export default HomeScreen;
 
