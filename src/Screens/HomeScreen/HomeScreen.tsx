@@ -23,26 +23,13 @@ import { Profile } from "../../../types/profile";
 import { VehicleData } from "../../../types/vehicle";
 import { ProfileContext } from "../../providers/ProfileDataProvider";
 
-type IconType = "car" | "calendar" | "bag-add-outline" | "cloud-upload-outline";
-
-const quickActions: { id: string; name: string; icon: IconType }[] = [
-    { id: "1", name: "Add Vehicle", icon: "car" },
-    { id: "2", name: "Schedule Maintenance", icon: "calendar" },
-    { id: "3", name: "Add Expense", icon: "bag-add-outline" },
-    { id: "4", name: "Upload Document", icon: "cloud-upload-outline" },
-];
-
 function HomeScreen() {
     const navigation = useNavigation();
     const { profile } = useAuth();
     // Retrieve the values provided by ProfileDataProvider
     const {
-        userProfile,
         selectedVehicle,
         vehicles,
-        isProfileLoading,
-        isVehiclesLoading,
-        setSelectedVehicle,
     } = useContext(ProfileContext);
 
     function navigateTo() {
@@ -60,8 +47,6 @@ function HomeScreen() {
                 <HomeScreenDropdown
                     // @ts-ignore
                     data={vehicles}
-                    selectedValue={selectedVehicle}
-                    onValueChange={setSelectedVehicle}
                     placeholder="Select your vehicle"
                 />
             </View>
@@ -69,7 +54,7 @@ function HomeScreen() {
             {/* Rest of your screen */}
             <View style={styles.contentContainer}>
                 <Text style={styles.infoText}>
-                    Selected Vehicle: {selectedVehicle}
+                    Selected Vehicle: {selectedVehicle?.id}
                 </Text>
                 {/* Other components, such as pickers or buttons, can go here */}
             </View>

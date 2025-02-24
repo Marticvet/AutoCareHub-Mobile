@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useAuth } from "../providers/AuthProvider";
 import { ProfileContext } from "../providers/ProfileDataProvider";
+import { useUpdateProfile } from "../api/profiles";
 
 interface HomeScreenDropdownProps {
     data: string[];
@@ -25,41 +26,36 @@ const HomeScreenDropdown: React.FC<HomeScreenDropdownProps> = ({
     placeholder = "Select an vehicle",
 }) => {
     const [visible, setVisible] = useState(false);
-    const { profile } = useAuth();
     // Retrieve the values provided by ProfileDataProvider
     const {
         userProfile,
-        selectedVehicle,
-        vehicles,
-        isProfileLoading,
-        isVehiclesLoading,
-        setSelectedVehicle,
     } = useContext(ProfileContext);
-
-    const handleSelect = (item: string) => {
-        onValueChange(item);
+    const userId = userProfile?.id;
+    const {mutate: updateProfile} = useUpdateProfile();
+    
+    const handleSelect = (vehicleId: string) => {
         setVisible(false);
-        // if (!vehicle || !vehicleId || !userId) {
-        //     console.error("🚨 Missing required values. Cannot update vehicle.");
-        //     return;
-        // }
 
-        // updateProfile(
-        //     {
-        //         // @ts-ignore
-        //         profile: { ...userProfile, vehicle_model: "330d" },
-        //         userId,
-        //     },
-        //     {
-        //         onSuccess: () => {
-        //             console.log("✅ Profile updated successfully!");
-        //             // navigation.goBack(); // ✅ Navigate back after update
-        //         },
-        //         onError: (error) => {
-        //             console.error("🚨 Error updating Profile:", error);
-        //         },
-        //     }
-        // );
+        if (!vehicleId || !userId) {
+            console.error("🚨 Missing required values. Cannot update vehicle.");
+            return;
+        }
+
+        updateProfile(
+            {
+                // @ts-ignore
+                profile: { ...userProfile, selected_vehicle_id: vehicleId },
+                userId,
+            },
+            {
+                onSuccess: () => {
+                    console.log("✅ Profile updated successfully!");
+                },
+                onError: (error) => {
+                    console.error("🚨 Error updating Profile:", error);
+                },
+            }
+        );
     };
 
     return (

@@ -1,5 +1,6 @@
 export interface VehicleData {
     id: string;
+    selected_vehicle_id: string;
     vehicle_brand: string;
     vehicle_model: string;
     vehicle_model_year: number;
