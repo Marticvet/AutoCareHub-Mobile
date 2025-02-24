@@ -13,12 +13,11 @@ import {
     Keyboard,
 } from "react-native";
 import { useState, useEffect } from "react";
-import CustomPicker from "../CustomPicker";
 import { CommonActions, useNavigation } from "@react-navigation/native";
-import { supabase } from "../../lib/supabase";
-import { useAuth } from "../../providers/AuthProvider";
-import { useInsertVehicle } from "../../api/vehicles";
-import { VehicleData } from "../../../types/vehicle";
+import { useAuth } from "../providers/AuthProvider";
+import { useInsertVehicle } from "../api/vehicles";
+import { VehicleData } from "../../types/vehicle";
+import CustomPicker from "./CustomPicker";
 
 const years = [
     // 1950, 1951, 1952, 1953, 1954, 1955, 1956, 1957, 1958, 1959, 1960, 1961,
@@ -121,6 +120,7 @@ function AddVehicleScreen(props: any) {
         vehicle_model: "330",
         vehicle_model_year: 2024,
         vehicle_year_of_manufacture: 2023,
+        selected_vehicle_id: '',
         current_mileage: 30121,
         user_id: userId,
     };
@@ -189,6 +189,7 @@ function AddVehicleScreen(props: any) {
                 console.log("✅ Vehicle added successfully!");
                 navigation.goBack();
             },
+            // @ts-ignore
             onError: (err) => {
                 console.error("❌ Error inserting vehicle:", err.message);
                 Alert.alert("Insertion Failed", err.message);
@@ -225,7 +226,7 @@ function AddVehicleScreen(props: any) {
                                             (brand) => brand.make_display
                                         )}
                                         selectedValue={selectedVehicleBrand}
-                                        onValueChange={(value) =>
+                                        onValueChange={(value: string) =>
                                             handlePickerChange("brand", value)
                                         }
                                         label="Vehicle Brand"
@@ -242,7 +243,7 @@ function AddVehicleScreen(props: any) {
                                         (model) => model.model_name || "Unknown"
                                     )}
                                     selectedValue={selectedModel}
-                                    onValueChange={(value) =>
+                                    onValueChange={(value: string) =>
                                         handlePickerChange("model", value)
                                     }
                                     label="Model"
@@ -258,7 +259,7 @@ function AddVehicleScreen(props: any) {
                                         .reverse()
                                         .map((year) => year.toString())}
                                     selectedValue={selectedYear.toString()}
-                                    onValueChange={(value) =>
+                                    onValueChange={(value: string) =>
                                         handlePickerChange("year", value)
                                     }
                                     label="Year"
@@ -274,7 +275,7 @@ function AddVehicleScreen(props: any) {
                                         (carType) => carType.name
                                     )}
                                     selectedValue={selectedCarType}
-                                    onValueChange={(value) =>
+                                    onValueChange={(value: string) =>
                                         handlePickerChange("carType", value)
                                     }
                                     label="Vehicle Type"

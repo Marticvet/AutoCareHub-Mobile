@@ -13,15 +13,9 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import { useContext, useEffect, useState } from "react";
 import React from "react";
-import { useAuth } from "../../providers/AuthProvider";
-import { useVehicleList } from "../../api/vehicles";
-import { Loader } from "../Loader/Loader";
-import CustomPicker from "../CustomPicker";
-import { useProfile } from "../../api/profiles";
-import HomeScreenDropdown from "../HomeScreenDropdown";
-import { Profile } from "../../../types/profile";
-import { VehicleData } from "../../../types/vehicle";
-import { ProfileContext } from "../../providers/ProfileDataProvider";
+import { useAuth } from "../providers/AuthProvider";
+import { ProfileContext } from "../providers/ProfileDataProvider";
+import HomeScreenDropdown from "./HomeScreenDropdown";
 
 function HomeScreen() {
     const navigation = useNavigation();

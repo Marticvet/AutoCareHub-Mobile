@@ -15,8 +15,7 @@ import {
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation, CommonActions } from "@react-navigation/native";
-import { useAuth } from "../../providers/AuthProvider";
-import { supabase } from "../../lib/supabase";
+import { supabase } from "../lib/supabase";
 
 interface RegisterFormInterface {
     email: string;

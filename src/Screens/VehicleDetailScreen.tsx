@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Pressable, Modal, Alert } from "react-native";
-import AddVehicleScreen from "../AddVehicleScreen/AddVehicleScreen";
-import { useAuth } from "../../providers/AuthProvider";
+import { useAuth } from "../providers/AuthProvider";
 import {
     useDeleteVehicle,
     useVehicle,
     useUpdateVehicle,
-} from "../../api/vehicles";
-import { Loader } from "../Loader/Loader";
+} from "../api/vehicles";
+import { Loader } from "./Loader";
 import { useNavigation } from "@react-navigation/native";
-import { VehicleData } from "../../../types/vehicle";
+import { VehicleData } from "../../types/vehicle";
+import AddVehicleScreen from "./AddVehicleScreen";
 
 const VehicleDetailScreen = ({ route }: any) => {
     const navigation = useNavigation();

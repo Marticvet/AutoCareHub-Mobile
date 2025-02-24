@@ -14,7 +14,7 @@ import {
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation, CommonActions } from "@react-navigation/native";
-import { supabase } from "../../lib/supabase";
+import { supabase } from "../lib/supabase";
 
 interface LoginFormInterface {
     email: string;
