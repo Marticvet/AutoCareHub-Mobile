@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
     View,
     Text,
@@ -6,8 +6,14 @@ import {
     TouchableOpacity,
     StyleSheet,
     ScrollView,
+    SafeAreaView,
+    KeyboardAvoidingView,
+    Platform,
+    TouchableWithoutFeedback,
+    Keyboard,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { ProfileContext } from "../providers/ProfileDataProvider";
 
 const ServiceScreen = () => {
     const [odometer, setOdometer] = useState("");
@@ -17,139 +23,186 @@ const ServiceScreen = () => {
     const [paymentMethod, setPaymentMethod] = useState("");
     const [notes, setNotes] = useState("");
 
+    // Retrieve the values provided by ProfileDataProvider
+    const { selectedVehicle } = useContext(ProfileContext);
+
+    console.log(selectedVehicle, `selectedVehicle`);
+
     return (
-        <View style={styles.container}>
-            <ScrollView style={styles.content}>
-                <View style={styles.row}>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
+            style={styles.container}
+            keyboardVerticalOffset={20}
+        >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <View style={styles.innerKeyboardContainer}>
+                <ScrollView style={styles.content}>
+                    <View style={styles.dateTimeContainer}>
+                        <View style={styles.dateTimeInputContainer}>
+                            <Ionicons
+                                name="calendar"
+                                size={20}
+                                color="gray"
+                                style={styles.icon}
+                            />
+                            <TextInput
+                                placeholder="17/02/2025"
+                                style={styles.dateTimeInputField}
+                                // editable={false}
+                            />
+                        </View>
+                        <View style={styles.dateTimeInputContainer}>
+                            <Ionicons
+                                name="time"
+                                size={20}
+                                color="gray"
+                                style={styles.icon}
+                            />
+                            <TextInput
+                                placeholder="19:16"
+                                style={styles.dateTimeInputField}
+                                // editable={false}
+                            />
+                        </View>
+                    </View>
+
                     <View style={styles.inputContainer}>
                         <Ionicons
-                            name="calendar"
+                            name="speedometer"
                             size={20}
                             color="gray"
                             style={styles.icon}
                         />
                         <TextInput
-                            placeholder="17/02/2025"
+                            placeholder="Odometer (km)"
+                            value={odometer}
+                            onChangeText={setOdometer}
+                            keyboardType="numeric"
                             style={styles.input}
-                            editable={false}
                         />
                     </View>
+                    <Text style={styles.hint}>
+                        Last odometer: {selectedVehicle?.current_mileage} km
+                    </Text>
+
                     <View style={styles.inputContainer}>
                         <Ionicons
-                            name="time"
+                            name="construct"
                             size={20}
                             color="gray"
                             style={styles.icon}
                         />
                         <TextInput
-                            placeholder="19:16"
+                            placeholder="Type of service"
+                            value={serviceType}
+                            onChangeText={setServiceType}
                             style={styles.input}
-                            editable={false}
                         />
                     </View>
-                </View>
 
-                <View style={styles.inputContainer}>
-                    <Ionicons
-                        name="speedometer"
-                        size={20}
-                        color="gray"
-                        style={styles.icon}
-                    />
+                    <View style={styles.inputContainer}>
+                        <Ionicons
+                            name="location"
+                            size={20}
+                            color="gray"
+                            style={styles.icon}
+                        />
+                        <TextInput
+                            placeholder="Place"
+                            value={place}
+                            onChangeText={setPlace}
+                            style={styles.input}
+                        />
+                    </View>
+
+                    <View style={styles.inputContainer}>
+                        <Ionicons
+                            name="person"
+                            size={20}
+                            color="gray"
+                            style={styles.icon}
+                        />
+                        <TextInput
+                            placeholder="Driver"
+                            value={driver}
+                            onChangeText={setDriver}
+                            style={styles.input}
+                        />
+                    </View>
+
+                    <View style={styles.inputContainer}>
+                        <Ionicons
+                            name="cash"
+                            size={20}
+                            color="gray"
+                            style={styles.icon}
+                        />
+                        <TextInput
+                            placeholder="Payment method"
+                            value={paymentMethod}
+                            onChangeText={setPaymentMethod}
+                            style={styles.input}
+                        />
+                    </View>
+
+                    <TouchableOpacity style={styles.attachFile}>
+                        <Text style={styles.attachText}>+ Attach file</Text>
+                    </TouchableOpacity>
+
                     <TextInput
-                        placeholder="Odometer (km)"
-                        value={odometer}
-                        onChangeText={setOdometer}
-                        keyboardType="numeric"
-                        style={styles.input}
+                        placeholder="Notes"
+                        value={notes}
+                        onChangeText={setNotes}
+                        style={[styles.input, styles.notesInput]}
+                        multiline
                     />
+
+                    <TouchableOpacity style={styles.saveButton}>
+                        <Text style={styles.saveButtonText}>SAVE</Text>
+                    </TouchableOpacity>
+                </ScrollView>
                 </View>
-                <Text style={styles.hint}>Last odometer: 34444</Text>
+            </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
 
-                <View style={styles.inputContainer}>
-                    <Ionicons
-                        name="construct"
-                        size={20}
-                        color="gray"
-                        style={styles.icon}
-                    />
-                    <TextInput
-                        placeholder="Type of service"
-                        value={serviceType}
-                        onChangeText={setServiceType}
-                        style={styles.input}
-                    />
-                </View>
+        // <SafeAreaView style={styles.container}>
 
-                <View style={styles.inputContainer}>
-                    <Ionicons
-                        name="location"
-                        size={20}
-                        color="gray"
-                        style={styles.icon}
-                    />
-                    <TextInput
-                        placeholder="Place"
-                        value={place}
-                        onChangeText={setPlace}
-                        style={styles.input}
-                    />
-                </View>
-
-                <View style={styles.inputContainer}>
-                    <Ionicons
-                        name="person"
-                        size={20}
-                        color="gray"
-                        style={styles.icon}
-                    />
-                    <TextInput
-                        placeholder="Driver"
-                        value={driver}
-                        onChangeText={setDriver}
-                        style={styles.input}
-                    />
-                </View>
-
-                <View style={styles.inputContainer}>
-                    <Ionicons
-                        name="cash"
-                        size={20}
-                        color="gray"
-                        style={styles.icon}
-                    />
-                    <TextInput
-                        placeholder="Payment method"
-                        value={paymentMethod}
-                        onChangeText={setPaymentMethod}
-                        style={styles.input}
-                    />
-                </View>
-
-                <TouchableOpacity style={styles.attachFile}>
-                    <Text style={styles.attachText}>+ Attach file</Text>
-                </TouchableOpacity>
-
-                <TextInput
-                    placeholder="Notes"
-                    value={notes}
-                    onChangeText={setNotes}
-                    style={[styles.input, styles.notesInput]}
-                    multiline
-                />
-
-                <TouchableOpacity style={styles.saveButton}>
-                    <Text style={styles.saveButtonText}>SAVE</Text>
-                </TouchableOpacity>
-            </ScrollView>
-        </View>
+        // </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#F8F8F8" },
-    content: { padding: 15 },
-    row: { flexDirection: "row", justifyContent: "space-between" },
+    container: {
+        flex: 1,
+        backgroundColor: "#F8F8F8",
+    },
+    content: {
+        padding: 15,
+    },
+    dateTimeContainer: {
+        flex: 1,
+        flexDirection: "row",
+        width: "100%",
+        justifyContent: "space-between",
+    },
+    dateTimeInputContainer: {
+        flexDirection: "row",
+        // flex: 0.5,
+        width: "48%",
+        backgroundColor: "white",
+        alignItems: "center",
+        padding: 10,
+        marginVertical: 5,
+        borderRadius: 5,
+        borderBottomWidth: 1,
+        borderBottomColor: "#DDD",
+    },
+    dateTimeInputField: {},
+
+    row: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+    },
     inputContainer: {
         flexDirection: "row",
         alignItems: "center",
@@ -162,11 +215,22 @@ const styles = StyleSheet.create({
     },
     icon: { marginRight: 10 },
     input: { flex: 1, fontSize: 16, color: "black" },
-    hint: { fontSize: 12, color: "gray", marginLeft: 10, marginBottom: 5 },
+    hint: {
+        fontSize: 12,
+        color: "gray",
+        marginLeft: 10,
+        marginBottom: 5,
+    },
     attachFile: { marginVertical: 10 },
     attachText: { color: "#4942CD", fontSize: 16, fontWeight: "bold" },
-    notesInput: { height: 80, textAlignVertical: "top" },
+    notesInput: {
+        height: 80,
+        textAlignVertical: "top",
+        backgroundColor: "white",
+        width: "100%",
+    },
     saveButton: {
+        marginTop: 16,
         alignItems: "center",
         justifyContent: "center",
         width: "100%",
@@ -174,24 +238,14 @@ const styles = StyleSheet.create({
         backgroundColor: "#4942CD",
         borderRadius: 12,
     },
-    saveButtonText: { color: "white", fontSize: 18, fontWeight: "bold" },
+    saveButtonText: {
+        color: "white",
+        fontSize: 18,
+        fontWeight: "bold",
+    },
+    innerKeyboardContainer: {
+        flex: 1,
+    },
 });
 
 export default ServiceScreen;
-
-// loginButton: {
-//     alignItems: "center",
-//     justifyContent: "center",
-//     width: "100%",
-//     height: 42,
-//     backgroundColor: "#4942CD",
-//     borderRadius: 12,
-// },
-// pressedLoginButton: {
-//     backgroundColor: "#625be7",
-//     width: "100%",
-//     height: 42,
-//     alignItems: "center",
-//     justifyContent: "center",
-//     borderRadius: 12,
-// },

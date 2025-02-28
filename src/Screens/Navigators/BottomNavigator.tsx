@@ -12,7 +12,7 @@ import ReminderScreen from "../ReminderScreen";
 const Tab = createBottomTabNavigator();
 
 // 📌 **Bottom Tab Navigator for Logged-in Users**
-export default function AppTabs() {
+export default function BottomNavigator() {
     const navigation = useNavigation();
     const { logout } = useAuth(); // Get logout function from AuthProvider
     const [modalVisible, setModalVisible] = useState(false);
@@ -26,7 +26,7 @@ export default function AppTabs() {
         <View style={{ flex: 1, position: "relative" }}>
             <Tab.Navigator
                 screenOptions={{
-                    // headerShown: false,
+                    headerShown: false,
                     tabBarStyle: { backgroundColor: "#212640" },
                     tabBarActiveTintColor: "#ffffff",
                     tabBarInactiveTintColor: "#888",
@@ -118,8 +118,6 @@ export default function AppTabs() {
                     })}
                 />
             </Tab.Navigator>
-
-            {/* ✅ Modal for Selecting Actions */}
 
             {/* ✅ Modal for Selecting Actions */}
             {modalVisible && (

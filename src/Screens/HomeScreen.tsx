@@ -26,6 +26,8 @@ function HomeScreen() {
         vehicles,
     } = useContext(ProfileContext);
 
+    console.log(vehicles);
+    
     function navigateTo() {
         // @ts-ignore
         navigation.navigate("ReminderScreen");

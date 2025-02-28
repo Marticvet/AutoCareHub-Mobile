@@ -77,7 +77,6 @@ function LoginScreen() {
         >
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={styles.innerKeyboardContainer}>
-                    {/* <View style={styles.topContainer}></View> */}
 
                     <View style={styles.loginContainer}>
                         <View style={styles.loginLabelContainer}>

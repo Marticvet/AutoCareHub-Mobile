@@ -1,31 +1,86 @@
+// App.tsx
 import * as React from "react";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { AuthProvider, useAuth } from "./src/providers/AuthProvider";
 import LoginScreen from "./src/Screens/LoginScreen";
 import RegisterScreen from "./src/Screens/RegisterScreen";
 import QueryProvider from "./src/providers/QueryProvider";
 import { ProfileDataProvider } from "./src/providers/ProfileDataProvider";
-import AppTabs from "./src/Screens/Navigators/AppTabs";
+
+// Navigators & Global Screens
+import SidebarNavigator from "./src/Screens/Navigators/SidebarNavigator";
+import BottomNavigator from "./src/Screens/Navigators/BottomNavigator";
+import ServiceExpensesScreen from "./src/Screens/ServiceExpensesScreen";
 
 const AuthStack = createStackNavigator();
+const RootStack = createStackNavigator();
 
-const App = () => (
-    <QueryProvider>
-      <AuthProvider>
-        <ProfileDataProvider>
-          <NavigationContainer>
-            <RootNavigator />
-          </NavigationContainer>
-        </ProfileDataProvider>
-      </AuthProvider>
-    </QueryProvider>
-  );
+const MyTheme = {
+    dark: true,
+    colors: {
+        primary: "white",
+        background: "white",
+        card: "rgb(20, 20, 20)",
+        text: "rgb(255, 255, 255)",
+        border: "rgb(50, 50, 50)",
+        notification: "rgb(255, 69, 58)",
+    },
+    fonts: {
+        regular: { fontFamily: "System", fontWeight: "400" }, // Corrected
+        medium: { fontFamily: "System", fontWeight: "500" }, // Corrected
+        bold: { fontFamily: "System", fontWeight: "700" }, // Corrected
+        heavy: { fontFamily: "System", fontWeight: "800" }, // Corrected
+    },
+};
+
+function App() {
+    return (
+        <QueryProvider>
+            <AuthProvider>
+                <ProfileDataProvider>
+                    <NavigationContainer
+                        // @ts-ignore
+                        theme={MyTheme}
+                    >
+                        <RootNavigator />
+                    </NavigationContainer>
+                </ProfileDataProvider>
+            </AuthProvider>
+        </QueryProvider>
+    );
+}
 
 function RootNavigator() {
     const { session } = useAuth();
 
-    return session?.access_token ? <AppTabs /> : <NonAuthNavigator />;
+    // If not authenticated, show the non-auth stack.
+    if (!session?.access_token) {
+        return <NonAuthNavigator />;
+    }
+
+    // When authenticated, use a global RootStack:
+    // - "MainApp" contains your SidebarNavigator wrapping the BottomNavigator.
+    // - "ServiceExpensesScreen" (and any other global screens) is declared here.
+    return (
+        <RootStack.Navigator screenOptions={{ headerShown: false }}>
+            <RootStack.Screen name="MainApp" component={MainAppNavigator} />
+            <RootStack.Screen
+                name="ServiceExpensesScreen"
+                component={ServiceExpensesScreen}
+            />
+            {/* Add more global screens here if needed */}
+        </RootStack.Navigator>
+    );
+}
+
+function MainAppNavigator() {
+    // Wrap your bottom tabs with your drawer so that the drawer is available globally.
+    return (
+        <SidebarNavigator>
+            <BottomNavigator />
+        </SidebarNavigator>
+    );
 }
 
 function NonAuthNavigator() {
@@ -33,8 +88,8 @@ function NonAuthNavigator() {
         <AuthStack.Navigator
             initialRouteName="Login"
             screenOptions={{
-                headerShown: false, // Hide header during reset
-                gestureEnabled: false, // Disable gestures if they interfere
+                headerShown: false,
+                gestureEnabled: false,
             }}
         >
             <AuthStack.Screen name="Login" component={LoginScreen} />

@@ -1,11 +1,13 @@
+// AuthNavigator.js
 import { createStackNavigator } from "@react-navigation/stack";
 import QueryProvider from "../../providers/QueryProvider";
-import SidebarNavigator from "./SidebarNavigator";
 import AddVehicleScreen from "../AddVehicleScreen";
 import VehicleDetailScreen from "../VehicleDetailScreen";
 import ReportsScreen from "../ReportsScreen";
 import ServiceScreen from "../ServiceExpensesScreen";
 import ReminderScreen from "../ReminderScreen";
+import HomeScreen from "../HomeScreen"; // if needed
+import ServiceExpensesScreen from "../ServiceExpensesScreen";
 
 const AppStack = createStackNavigator();
 
@@ -13,7 +15,7 @@ export default function AuthNavigator() {
     return (
         <QueryProvider>
             <AppStack.Navigator
-                initialRouteName="HomeDrawer"
+                initialRouteName="Home" // Changed from "HomeDrawer" since the drawer is global now
                 screenOptions={{
                     headerStyle: {
                         backgroundColor: "#212640",
@@ -24,11 +26,11 @@ export default function AuthNavigator() {
                     },
                 }}
             >
-                {/* Wrap HomeScreen inside DrawerNavigator */}
                 <AppStack.Screen
-                    name="HomeDrawer" // Renamed to avoid conflict
-                    component={SidebarNavigator}
+                    name="Home"
+                    component={HomeScreen}
                     options={{
+                        title: "Home",
                         headerShown: false,
                     }}
                 />
@@ -45,23 +47,23 @@ export default function AuthNavigator() {
                 <AppStack.Screen
                     name="ReportsScreen"
                     component={ReportsScreen}
-                    options={{
-                        title: "Reports",
-                    }}
+                    options={{ title: "Reports" }}
                 />
                 <AppStack.Screen
                     name="ServiceScreen"
                     component={ServiceScreen}
-                    options={{
-                        title: "Service",
-                    }}
+                    options={{ title: "Service" }}
                 />
                 <AppStack.Screen
                     name="ReminderScreen"
                     component={ReminderScreen}
-                    options={{
-                        title: "Reminder",
-                    }}
+                    options={{ title: "Reminder" }}
+                />    
+                
+                   <AppStack.Screen
+                     name="ServiceExpensesScreen"
+                     component={ServiceExpensesScreen}
+                    options={{ title: "ServiceExpensesScreen" }}
                 />
             </AppStack.Navigator>
         </QueryProvider>
