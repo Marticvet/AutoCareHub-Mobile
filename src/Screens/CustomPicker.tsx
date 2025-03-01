@@ -13,6 +13,7 @@ interface CustomPickerProps {
     selectedValue: string;
     onValueChange: (value: string) => void;
     label: string;
+    placeholder: string;
 }
 
 const CustomPicker = ({
@@ -20,6 +21,7 @@ const CustomPicker = ({
     selectedValue,
     onValueChange,
     label,
+    placeholder
 }: CustomPickerProps) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -36,7 +38,7 @@ const CustomPicker = ({
                 onPress={() => setIsModalVisible(true)}
             >
                 <Text style={styles.pickerText}>
-                    {selectedValue || "Select"}
+                    {selectedValue || placeholder}
                 </Text>
             </TouchableOpacity>
 

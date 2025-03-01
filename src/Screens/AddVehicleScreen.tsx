@@ -12,17 +12,15 @@ import {
     SafeAreaView,
     Keyboard,
 } from "react-native";
-import { useState, useEffect } from "react";
-import { CommonActions, useNavigation } from "@react-navigation/native";
-import { useAuth } from "../providers/AuthProvider";
+import { useState, useEffect, useRef, useContext } from "react";
+import { useNavigation } from "@react-navigation/native";
 import { useInsertVehicle } from "../api/vehicles";
 import { VehicleData } from "../../types/vehicle";
 import CustomPicker from "./CustomPicker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ProfileContext } from "../providers/ProfileDataProvider";
 
 const years = [
-    // 1950, 1951, 1952, 1953, 1954, 1955, 1956, 1957, 1958, 1959, 1960, 1961,
-    // 1962, 1963, 1964, 1965, 1966, 1967, 1968, 1969, 1970, 1971, 1972, 1973,
-    // 1974, 1975, 1976, 1977, 1978, 1979,
     1980, 1981, 1982, 1983, 1984, 1985, 1986, 1987, 1988, 1989, 1990, 1991,
     1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
     2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
@@ -69,29 +67,17 @@ interface Models {
 }
 
 function AddVehicleScreen(props: any) {
-    const { profile } = useAuth();
-    const { id } = profile;
-    const [userId, setUserId] = useState<string>("");
-
-    useEffect(() => {
-        if (id) {
-            setUserId(id);
-        }
-    }, [id]);
-
-    console.log(userId);
-
-    const { vehicle, modalVisible, setModalVisible } = props;
+    const { userProfile } = useContext(ProfileContext);
+    const userId = userProfile?.id;
+    const { modalVisible, setModalVisible } = props;
     const navigation = useNavigation();
     const [selectedVehicleBrand, setSelectedVehicleBrand] =
         useState<string>("");
     const [selectedModel, setSelectedModel] = useState<string>("");
     const [selectedYear, setSelectedYear] = useState<number>(2024);
-    const [selectedCarType, setSelectedCarType] = useState<string>(
-        carTypesByShape[0].name
-    );
+    const [selectedCarType, setSelectedCarType] = useState<string>("");
     const [vehicleLicensePlate, setVehicleLicensePlate] = useState<string>("");
-    const [yearOfManufacture, setYearOfManufacture] = useState<string>("");
+    const [yearOfManufacture, setYearOfManufacture] = useState<number>(0);
     const [vehicleIdentificationNumber, setVehicleIdentificationNumber] =
         useState<string>("");
     const [vehicleCurrentMileage, setVehicleCurrentMileage] =
@@ -99,65 +85,117 @@ function AddVehicleScreen(props: any) {
 
     const { mutate, isPending, error } = useInsertVehicle(); // ✅ Call Hook at the top level
 
-    // let addVehicleData: VehicleData = {
-    //     vehicle_brand: selectedVehicleBrand,
-    //     vehicle_model: selectedModel,
-    //     vehicle_car_type: selectedCarType,
-    //     vehicle_model_year: selectedYear,
-    //     vehicle_license_plate: vehicleLicensePlate,
-    //     vehicle_year_of_manufacture: yearOfManufacture,
-    //     vehicle_identification_number: vehicleIdentificationNumber,
-    //     current_mileage: vehicleCurrentMileage,
-    //     user_id: user_id,
-    // };
-
-    const addVehicleData: VehicleData = {
-        id: "",
-        vehicle_brand: "BMW",
-        vehicle_car_type: "Hatchback",
-        vehicle_identification_number: "",
-        vehicle_license_plate: "HU-MT7927",
-        vehicle_model: "330",
-        vehicle_model_year: 2024,
-        vehicle_year_of_manufacture: 2023,
-        selected_vehicle_id: '',
-        current_mileage: 30121,
+    let addVehicleData: VehicleData = {
+        vehicle_brand: selectedVehicleBrand,
+        vehicle_model: selectedModel,
+        vehicle_car_type: selectedCarType,
+        vehicle_model_year: selectedYear,
+        vehicle_license_plate: vehicleLicensePlate,
+        vehicle_year_of_manufacture: yearOfManufacture,
+        vehicle_identification_number: vehicleIdentificationNumber,
+        current_mileage: vehicleCurrentMileage,
         user_id: userId,
     };
+
+    // const addVehicleData: VehicleData = {
+    //     vehicle_brand: "BMW",
+    //     vehicle_car_type: "Hatchback",
+    //     vehicle_identification_number: "",
+    //     vehicle_license_plate: "HU-MT7927",
+    //     vehicle_model: "330",
+    //     vehicle_model_year: 2024,
+    //     vehicle_year_of_manufacture: 2023,
+    //     current_mileage: 30121,
+    //     user_id: userId,
+    // };
 
     const [brands, setBrands] = useState<Brands[]>([]);
     const [models, setModels] = useState<Models[]>([]);
 
+    // Store last fetched brands/models to prevent unnecessary re-fetching
+    const previousBrands = useRef<Brands[]>([]);
+    const previousModels = useRef<Models[]>([]);
+
+    /** Fetch Brands Once & Store in AsyncStorage */
     useEffect(() => {
         async function fetchBrands() {
-            const response = await fetch(`${API_BASE_URL}?cmd=getMakes`);
-            const data = await response.json();
-            const filteredData = data.Makes.filter((brand: Brands) => {
-                if (Number(brand.make_is_common) > 0) return brand;
-            });
+            try {
+                const cachedBrands = await AsyncStorage.getItem("brands");
+                if (cachedBrands) {
+                    console.log("Using cached brands...");
+                    setBrands(JSON.parse(cachedBrands));
+                    return;
+                }
 
-            setBrands(filteredData);
-            setSelectedVehicleBrand(filteredData[0].make_display ?? "");
-            setSelectedYear(2024);
+                console.log("Fetching brands...");
+                const response = await fetch(`${API_BASE_URL}?cmd=getMakes`);
+                const data = await response.json();
+                const filteredData = data.Makes.filter(
+                    (brand: Brands) => Number(brand.make_is_common) > 0
+                );
+
+                // Store to AsyncStorage
+                await AsyncStorage.setItem(
+                    "brands",
+                    JSON.stringify(filteredData)
+                );
+
+                setBrands(filteredData);
+                setSelectedVehicleBrand(filteredData[0]?.make_display ?? "");
+            } catch (error) {
+                console.error("Error fetching brands:", error);
+            }
         }
 
         fetchBrands();
     }, []);
 
+    /** Fetch Models Only When Brand Changes */
     useEffect(() => {
         async function fetchModels() {
-            const response = await fetch(
-                `${API_BASE_URL}?cmd=getModels&make=${selectedVehicleBrand}`
-            );
+            if (!selectedVehicleBrand) return;
 
-            const data = await response.json();
-            setModels(data.Models || []);
-            setSelectedModel(data.Models[0].model_name ?? "");
+            setSelectedModel("");
+
+            try {
+                const cacheKey = `models-${selectedVehicleBrand}`;
+                const cachedModels = await AsyncStorage.getItem(cacheKey);
+
+                if (cachedModels) {
+                    console.log(
+                        `Using cached models for ${selectedVehicleBrand}`
+                    );
+                    setModels(JSON.parse(cachedModels));
+                    return;
+                }
+
+                console.log(`Fetching models for ${selectedVehicleBrand}...`);
+                const response = await fetch(
+                    `${API_BASE_URL}?cmd=getModels&make=${selectedVehicleBrand}`
+                );
+                const data = await response.json();
+
+                if (
+                    JSON.stringify(previousModels.current) !==
+                    JSON.stringify(data.Models)
+                ) {
+                    // Store in AsyncStorage only if models changed
+                    await AsyncStorage.setItem(
+                        cacheKey,
+                        JSON.stringify(data.Models)
+                    );
+                    setModels(data.Models || []);
+                    previousModels.current = data.Models;
+                }
+            } catch (error) {
+                console.error(
+                    `Error fetching models for ${selectedVehicleBrand}:`,
+                    error
+                );
+            }
         }
 
-        if (selectedVehicleBrand && selectedYear) {
-            fetchModels();
-        }
+        fetchModels();
     }, [selectedVehicleBrand]);
 
     const handlePickerChange = (field: string, value: string) => {
@@ -174,7 +212,7 @@ function AddVehicleScreen(props: any) {
         } else if (field === "vehicleLicense") {
             setVehicleLicensePlate(value);
         } else if (field === "yearOfManufacture") {
-            setYearOfManufacture(value);
+            setYearOfManufacture(Number(value));
         } else if (field === "vin") {
             setVehicleIdentificationNumber(value);
         } else if (field === "mileage") {
@@ -183,21 +221,31 @@ function AddVehicleScreen(props: any) {
     };
 
     const addVehicleHandler = () => {
+        if (
+            !selectedVehicleBrand.trim() ||
+            !selectedModel.trim() ||
+            !selectedCarType.trim() ||
+            !vehicleLicensePlate.trim() ||
+            !yearOfManufacture// Check if it's 0 or undefined
+        ) {
+            Alert.alert("Error", "Please fill in all required fields before proceeding.");
+            return false;
+        }
+
         // @ts-ignore
         mutate(addVehicleData, {
             onSuccess: () => {
-                console.log("✅ Vehicle added successfully!");
+                console.log("Vehicle added successfully!");
                 navigation.goBack();
             },
             // @ts-ignore
             onError: (err) => {
-                console.error("❌ Error inserting vehicle:", err.message);
-                Alert.alert("Insertion Failed", err.message);
+                console.error("Error inserting vehicle:", err.message);
             },
         });
 
         if (isPending) {
-            Alert.alert("⏳ Inserting vehicle...");
+            Alert.alert("Inserting vehicle...");
         }
     };
 
@@ -230,6 +278,7 @@ function AddVehicleScreen(props: any) {
                                             handlePickerChange("brand", value)
                                         }
                                         label="Vehicle Brand"
+                                        placeholder={"Select a brand"}
                                     />
                                 </View>
                             </View>
@@ -247,6 +296,7 @@ function AddVehicleScreen(props: any) {
                                         handlePickerChange("model", value)
                                     }
                                     label="Model"
+                                    placeholder={"Select a model"}
                                 />
                             </View>
                         </View>
@@ -256,13 +306,14 @@ function AddVehicleScreen(props: any) {
                             <View style={styles.pickerWrapper}>
                                 <CustomPicker
                                     items={years
-                                        .reverse()
-                                        .map((year) => year.toString())}
+                                        .map((year) => year.toString())
+                                        .reverse()}
                                     selectedValue={selectedYear.toString()}
                                     onValueChange={(value: string) =>
                                         handlePickerChange("year", value)
                                     }
                                     label="Year"
+                                    placeholder={"Select a year"}
                                 />
                             </View>
                         </View>
@@ -279,6 +330,7 @@ function AddVehicleScreen(props: any) {
                                         handlePickerChange("carType", value)
                                     }
                                     label="Vehicle Type"
+                                    placeholder={"Select a car type"}
                                 />
                             </View>
                         </View>
