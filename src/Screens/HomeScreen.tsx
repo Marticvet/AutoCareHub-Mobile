@@ -19,15 +19,13 @@ import HomeScreenDropdown from "./HomeScreenDropdown";
 
 function HomeScreen() {
     const navigation = useNavigation();
-    const { profile } = useAuth();
+
     // Retrieve the values provided by ProfileDataProvider
     const {
         selectedVehicle,
         vehicles,
     } = useContext(ProfileContext);
 
-    console.log(vehicles);
-    
     function navigateTo() {
         // @ts-ignore
         navigation.navigate("ReminderScreen");

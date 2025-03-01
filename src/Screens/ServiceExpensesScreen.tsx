@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import {
     View,
     Text,
@@ -9,7 +9,6 @@ import {
     SafeAreaView,
     KeyboardAvoidingView,
     Platform,
-    TouchableWithoutFeedback,
     Keyboard,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -26,168 +25,209 @@ const ServiceScreen = () => {
     // Retrieve the values provided by ProfileDataProvider
     const { selectedVehicle } = useContext(ProfileContext);
 
-    console.log(selectedVehicle, `selectedVehicle`);
+    // References for each input field to manage focus
+    const odometerRef = useRef(null);
+    const serviceTypeRef = useRef(null);
+    const placeRef = useRef(null);
+    const driverRef = useRef(null);
+    const paymentMethodRef = useRef(null);
+    const notesRef = useRef(null);
 
     return (
         <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
-            style={styles.container}
-            keyboardVerticalOffset={20}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1 }}
         >
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <View style={styles.innerKeyboardContainer}>
-                <ScrollView style={styles.content}>
-                    <View style={styles.dateTimeContainer}>
-                        <View style={styles.dateTimeInputContainer}>
+            <ScrollView
+                contentContainerStyle={{ flexGrow: 1 }}
+                keyboardShouldPersistTaps="handled"
+            >
+                <SafeAreaView style={styles.container}>
+                    <View style={styles.innerKeyboardContainer}>
+                        {/* Date & Time Inputs */}
+                        <View style={styles.dateTimeContainer}>
+                            <View style={styles.dateTimeInputContainer}>
+                                <Ionicons
+                                    name="calendar"
+                                    size={20}
+                                    color="gray"
+                                    style={styles.icon}
+                                />
+                                <TextInput
+                                    placeholder="17/02/2025"
+                                    style={styles.dateTimeInputField}
+                                    editable={false}
+                                    selectTextOnFocus={false}
+                                />
+                            </View>
+                            <View style={styles.dateTimeInputContainer}>
+                                <Ionicons
+                                    name="time"
+                                    size={20}
+                                    color="gray"
+                                    style={styles.icon}
+                                />
+                                <TextInput
+                                    placeholder="19:16"
+                                    style={styles.dateTimeInputField}
+                                    editable={false}
+                                    selectTextOnFocus={false}
+                                />
+                            </View>
+                        </View>
+
+                        {/* Odometer Input */}
+                        <View style={styles.inputContainer}>
                             <Ionicons
-                                name="calendar"
+                                name="speedometer"
                                 size={20}
                                 color="gray"
                                 style={styles.icon}
                             />
                             <TextInput
-                                placeholder="17/02/2025"
-                                style={styles.dateTimeInputField}
-                                // editable={false}
+                                ref={odometerRef}
+                                placeholder="Odometer (km)"
+                                value={odometer}
+                                onChangeText={setOdometer}
+                                keyboardType="numeric"
+                                returnKeyType="next"
+                                onSubmitEditing={() =>
+                                    // @ts-ignore
+                                    serviceTypeRef.current?.focus()
+                                }
+                                style={styles.input}
                             />
                         </View>
-                        <View style={styles.dateTimeInputContainer}>
+                        <Text style={styles.hint}>
+                            Last odometer:{" "}
+                            {selectedVehicle?.current_mileage || "N/A"} km
+                        </Text>
+
+                        {/* Service Type Input */}
+                        <View style={styles.inputContainer}>
                             <Ionicons
-                                name="time"
+                                name="construct"
                                 size={20}
                                 color="gray"
                                 style={styles.icon}
                             />
                             <TextInput
-                                placeholder="19:16"
-                                style={styles.dateTimeInputField}
-                                // editable={false}
+                                ref={serviceTypeRef}
+                                placeholder="Type of service"
+                                value={serviceType}
+                                onChangeText={setServiceType}
+                                returnKeyType="next"
+                                onSubmitEditing={() =>
+                                    // @ts-ignore
+                                    placeRef.current?.focus()
+                                }
+                                style={styles.input}
                             />
                         </View>
-                    </View>
 
-                    <View style={styles.inputContainer}>
-                        <Ionicons
-                            name="speedometer"
-                            size={20}
-                            color="gray"
-                            style={styles.icon}
-                        />
+                        {/* Place Input */}
+                        <View style={styles.inputContainer}>
+                            <Ionicons
+                                name="location"
+                                size={20}
+                                color="gray"
+                                style={styles.icon}
+                            />
+                            <TextInput
+                                ref={placeRef}
+                                placeholder="Place"
+                                value={place}
+                                onChangeText={setPlace}
+                                returnKeyType="next"
+                                onSubmitEditing={() =>
+                                    // @ts-ignore
+                                    driverRef.current?.focus()
+                                }
+                                style={styles.input}
+                            />
+                        </View>
+
+                        {/* Driver Input */}
+                        <View style={styles.inputContainer}>
+                            <Ionicons
+                                name="person"
+                                size={20}
+                                color="gray"
+                                style={styles.icon}
+                            />
+                            <TextInput
+                                ref={driverRef}
+                                placeholder="Driver"
+                                value={driver}
+                                onChangeText={setDriver}
+                                returnKeyType="next"
+                                onSubmitEditing={() =>
+                                    // @ts-ignore
+                                    paymentMethodRef.current?.focus()
+                                }
+                                style={styles.input}
+                            />
+                        </View>
+
+                        {/* Payment Method Input */}
+                        <View style={styles.inputContainer}>
+                            <Ionicons
+                                name="cash"
+                                size={20}
+                                color="gray"
+                                style={styles.icon}
+                            />
+                            <TextInput
+                                ref={paymentMethodRef}
+                                placeholder="Payment method"
+                                value={paymentMethod}
+                                onChangeText={setPaymentMethod}
+                                returnKeyType="next"
+                                onSubmitEditing={() =>
+                                    // @ts-ignore
+                                    notesRef.current?.focus()
+                                }
+                                style={styles.input}
+                            />
+                        </View>
+
+                        {/* Attach File Button */}
+                        {/* <TouchableOpacity style={styles.attachFile}>
+                            <Text style={styles.attachText}>+ Attach file</Text>
+                        </TouchableOpacity> */}
+
+                        {/* Notes Input */}
                         <TextInput
-                            placeholder="Odometer (km)"
-                            value={odometer}
-                            onChangeText={setOdometer}
-                            keyboardType="numeric"
-                            style={styles.input}
+                            ref={notesRef}
+                            placeholder="Notes"
+                            value={notes}
+                            onChangeText={setNotes}
+                            returnKeyType="done"
+                            style={[styles.input, styles.notesInput]}
+                            multiline
                         />
+
+                        {/* Save Button */}
+                        <TouchableOpacity style={styles.saveButton}>
+                            <Text style={styles.saveButtonText}>SAVE</Text>
+                        </TouchableOpacity>
                     </View>
-                    <Text style={styles.hint}>
-                        Last odometer: {selectedVehicle?.current_mileage} km
-                    </Text>
-
-                    <View style={styles.inputContainer}>
-                        <Ionicons
-                            name="construct"
-                            size={20}
-                            color="gray"
-                            style={styles.icon}
-                        />
-                        <TextInput
-                            placeholder="Type of service"
-                            value={serviceType}
-                            onChangeText={setServiceType}
-                            style={styles.input}
-                        />
-                    </View>
-
-                    <View style={styles.inputContainer}>
-                        <Ionicons
-                            name="location"
-                            size={20}
-                            color="gray"
-                            style={styles.icon}
-                        />
-                        <TextInput
-                            placeholder="Place"
-                            value={place}
-                            onChangeText={setPlace}
-                            style={styles.input}
-                        />
-                    </View>
-
-                    <View style={styles.inputContainer}>
-                        <Ionicons
-                            name="person"
-                            size={20}
-                            color="gray"
-                            style={styles.icon}
-                        />
-                        <TextInput
-                            placeholder="Driver"
-                            value={driver}
-                            onChangeText={setDriver}
-                            style={styles.input}
-                        />
-                    </View>
-
-                    <View style={styles.inputContainer}>
-                        <Ionicons
-                            name="cash"
-                            size={20}
-                            color="gray"
-                            style={styles.icon}
-                        />
-                        <TextInput
-                            placeholder="Payment method"
-                            value={paymentMethod}
-                            onChangeText={setPaymentMethod}
-                            style={styles.input}
-                        />
-                    </View>
-
-                    <TouchableOpacity style={styles.attachFile}>
-                        <Text style={styles.attachText}>+ Attach file</Text>
-                    </TouchableOpacity>
-
-                    <TextInput
-                        placeholder="Notes"
-                        value={notes}
-                        onChangeText={setNotes}
-                        style={[styles.input, styles.notesInput]}
-                        multiline
-                    />
-
-                    <TouchableOpacity style={styles.saveButton}>
-                        <Text style={styles.saveButtonText}>SAVE</Text>
-                    </TouchableOpacity>
-                </ScrollView>
-                </View>
-            </TouchableWithoutFeedback>
+                </SafeAreaView>
+            </ScrollView>
         </KeyboardAvoidingView>
-
-        // <SafeAreaView style={styles.container}>
-
-        // </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#F8F8F8",
-    },
-    content: {
-        padding: 15,
-    },
+    container: { flex: 1, backgroundColor: "#F8F8F8" },
     dateTimeContainer: {
-        flex: 1,
         flexDirection: "row",
-        width: "100%",
         justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
     },
     dateTimeInputContainer: {
         flexDirection: "row",
-        // flex: 0.5,
         width: "48%",
         backgroundColor: "white",
         alignItems: "center",
@@ -196,12 +236,6 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderBottomWidth: 1,
         borderBottomColor: "#DDD",
-    },
-    dateTimeInputField: {},
-
-    row: {
-        flexDirection: "row",
-        justifyContent: "space-between",
     },
     inputContainer: {
         flexDirection: "row",
@@ -215,12 +249,7 @@ const styles = StyleSheet.create({
     },
     icon: { marginRight: 10 },
     input: { flex: 1, fontSize: 16, color: "black" },
-    hint: {
-        fontSize: 12,
-        color: "gray",
-        marginLeft: 10,
-        marginBottom: 5,
-    },
+    hint: { fontSize: 12, color: "gray", marginLeft: 10, marginBottom: 5 },
     attachFile: { marginVertical: 10 },
     attachText: { color: "#4942CD", fontSize: 16, fontWeight: "bold" },
     notesInput: {
@@ -231,6 +260,7 @@ const styles = StyleSheet.create({
     },
     saveButton: {
         marginTop: 16,
+        paddingVertical: 12,
         alignItems: "center",
         justifyContent: "center",
         width: "100%",
@@ -238,13 +268,15 @@ const styles = StyleSheet.create({
         backgroundColor: "#4942CD",
         borderRadius: 12,
     },
-    saveButtonText: {
-        color: "white",
-        fontSize: 18,
-        fontWeight: "bold",
+    saveButtonText: { color: "white", fontSize: 18, fontWeight: "bold" },
+    dateTimeInputField: {
+        flex: 1,
+        fontSize: 16,
+        color: "gray",
     },
     innerKeyboardContainer: {
-        flex: 1,
+        // flex: 1,
+        padding: 16,
     },
 });
 
