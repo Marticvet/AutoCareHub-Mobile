@@ -85,7 +85,7 @@ function AddVehicleScreen(props: any) {
 
     const { mutate, isPending, error } = useInsertVehicle(); // ✅ Call Hook at the top level
 
-    let addVehicleData: VehicleData = {
+    const addVehicleData: VehicleData = {
         vehicle_brand: selectedVehicleBrand,
         vehicle_model: selectedModel,
         vehicle_car_type: selectedCarType,
@@ -99,13 +99,13 @@ function AddVehicleScreen(props: any) {
 
     // const addVehicleData: VehicleData = {
     //     vehicle_brand: "BMW",
-    //     vehicle_car_type: "Hatchback",
-    //     vehicle_identification_number: "",
-    //     vehicle_license_plate: "HU-MT7927",
     //     vehicle_model: "330",
-    //     vehicle_model_year: 2024,
-    //     vehicle_year_of_manufacture: 2023,
-    //     current_mileage: 30121,
+    //     vehicle_car_type: "sedan",
+    //     vehicle_model_year: 2021,
+    //     vehicle_license_plate: "HU-MT7927",
+    //     vehicle_year_of_manufacture: 2020,
+    //     vehicle_identification_number: "",
+    //     current_mileage: 30212,
     //     user_id: userId,
     // };
 
@@ -221,16 +221,19 @@ function AddVehicleScreen(props: any) {
     };
 
     const addVehicleHandler = () => {
-        if (
-            !selectedVehicleBrand.trim() ||
-            !selectedModel.trim() ||
-            !selectedCarType.trim() ||
-            !vehicleLicensePlate.trim() ||
-            !yearOfManufacture// Check if it's 0 or undefined
-        ) {
-            Alert.alert("Error", "Please fill in all required fields before proceeding.");
-            return false;
-        }
+        // if (
+        //     !selectedVehicleBrand.trim() ||
+        //     !selectedModel.trim() ||
+        //     !selectedCarType.trim() ||
+        //     !vehicleLicensePlate.trim() ||
+        //     !yearOfManufacture // Check if it's 0 or undefined
+        // ) {
+        //     Alert.alert(
+        //         "Error",
+        //         "Please fill in all required fields before proceeding."
+        //     );
+        //     return false;
+        // }
 
         // @ts-ignore
         mutate(addVehicleData, {
@@ -243,14 +246,14 @@ function AddVehicleScreen(props: any) {
                 console.error("Error inserting vehicle:", err.message);
             },
         });
-
-        if (isPending) {
-            Alert.alert("Inserting vehicle...");
-        }
     };
 
     if (error) {
         Alert.alert(error.message);
+    }
+
+    if (isPending) {
+        Alert.alert("Inserting vehicle...");
     }
 
     return (
