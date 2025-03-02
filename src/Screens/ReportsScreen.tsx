@@ -5,110 +5,135 @@ import {
     ScrollView,
     StyleSheet,
     TouchableOpacity,
+    KeyboardAvoidingView,
+    SafeAreaView,
+    Platform,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 
 const ReportsScreen = () => {
     return (
-        <View style={styles.container}>
-            {/* Tabs */}
-            <View style={styles.tabs}>
-                {["GENERAL", "REFUELING", "EXPENSE", "INCOME", "SERVICE"].map(
-                    (tab, index) => (
-                        <TouchableOpacity
-                            key={index}
-                            style={[
-                                styles.tab,
-                                index === 0 && styles.activeTab,
-                            ]}
-                        >
-                            <Text
-                                style={[
-                                    styles.tabText,
-                                    index === 0 && styles.activeTabText,
-                                ]}
-                            >
-                                {tab}
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1 }}
+        >
+            <ScrollView
+                contentContainerStyle={{ flexGrow: 1 }}
+                keyboardShouldPersistTaps="handled"
+            >
+                <SafeAreaView style={styles.container}>
+                    <View style={styles.innerKeyboardContainer}>
+                        {/* Tabs */}
+                        <View style={styles.tabs}>
+                            {[
+                                "GENERAL",
+                                "REFUELING",
+                                "EXPENSE",
+                                "INCOME",
+                                "SERVICE",
+                            ].map((tab, index) => (
+                                <TouchableOpacity
+                                    key={index}
+                                    style={[
+                                        styles.tab,
+                                        index === 0 && styles.activeTab,
+                                    ]}
+
+                                >
+                                    <Text
+                                        style={[
+                                            styles.tabText,
+                                            index === 0 && styles.activeTabText,
+                                        ]}
+                                    >
+                                        {tab}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+
+                        <ScrollView style={styles.content}>
+                            <Text style={styles.dateRange}>
+                                2 entries (16/01/2025 - 16/01/2025)
                             </Text>
-                        </TouchableOpacity>
-                    )
-                )}
-            </View>
 
-            <ScrollView style={styles.content}>
-                <Text style={styles.dateRange}>
-                    2 entries (16/01/2025 - 16/01/2025)
-                </Text>
+                            {/* Balance Section */}
+                            <View style={styles.section}>
+                                <Text style={styles.sectionTitle}>Balance</Text>
+                                <View style={styles.row}>
+                                    <Text style={styles.redText}>Total</Text>
+                                    <Text>55,650 €</Text>
+                                </View>
+                                <View style={styles.row}>
+                                    <Text>By day</Text>
+                                    <Text>-12,000 €</Text>
+                                </View>
+                                <View style={styles.row}>
+                                    <Text>By km</Text>
+                                    <Text>-0,273 €</Text>
+                                </View>
+                            </View>
 
-                {/* Balance Section */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Balance</Text>
-                    <View style={styles.row}>
-                        <Text style={styles.redText}>Total</Text>
-                        <Text>55,650 €</Text>
-                    </View>
-                    <View style={styles.row}>
-                        <Text>By day</Text>
-                        <Text>-12,000 €</Text>
-                    </View>
-                    <View style={styles.row}>
-                        <Text>By km</Text>
-                        <Text>-0,273 €</Text>
-                    </View>
-                </View>
+                            {/* Cost Section */}
+                            <View style={styles.section}>
+                                <Text style={styles.sectionTitle}>Cost</Text>
+                                <View style={styles.row}>
+                                    <Text style={styles.redText}>Total</Text>
+                                    <Text>67,650 €</Text>
+                                </View>
+                                <View style={styles.row}>
+                                    <Text>By day</Text>
+                                    <Text>0,000 €</Text>
+                                </View>
+                                <View style={styles.row}>
+                                    <Text>By km</Text>
+                                    <Text>0,000 €</Text>
+                                </View>
+                            </View>
 
-                {/* Cost Section */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Cost</Text>
-                    <View style={styles.row}>
-                        <Text style={styles.redText}>Total</Text>
-                        <Text>67,650 €</Text>
-                    </View>
-                    <View style={styles.row}>
-                        <Text>By day</Text>
-                        <Text>0,000 €</Text>
-                    </View>
-                    <View style={styles.row}>
-                        <Text>By km</Text>
-                        <Text>0,000 €</Text>
-                    </View>
-                </View>
+                            {/* Income Section */}
+                            <View style={styles.section}>
+                                <Text style={styles.sectionTitle}>Income</Text>
+                                <View style={styles.row}>
+                                    <Text style={styles.greenText}>Total</Text>
+                                    <Text>12,000 €</Text>
+                                </View>
+                                <View style={styles.row}>
+                                    <Text>By day</Text>
+                                    <Text>12,000 €</Text>
+                                </View>
+                                <View style={styles.row}>
+                                    <Text>By km</Text>
+                                    <Text>0,273 €</Text>
+                                </View>
+                            </View>
 
-                {/* Income Section */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Income</Text>
-                    <View style={styles.row}>
-                        <Text style={styles.greenText}>Total</Text>
-                        <Text>12,000 €</Text>
+                            {/* Distance Section */}
+                            <View style={styles.section}>
+                                <Text style={styles.sectionTitle}>
+                                    Distance
+                                </Text>
+                                <View style={styles.row}>
+                                    <Text>Total</Text>
+                                    <Text>44 km</Text>
+                                </View>
+                                <View style={styles.row}>
+                                    <Text>Daily average</Text>
+                                    <Text>44 km</Text>
+                                </View>
+                            </View>
+                        </ScrollView>
                     </View>
-                    <View style={styles.row}>
-                        <Text>By day</Text>
-                        <Text>12,000 €</Text>
-                    </View>
-                    <View style={styles.row}>
-                        <Text>By km</Text>
-                        <Text>0,273 €</Text>
-                    </View>
-                </View>
-
-                {/* Distance Section */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Distance</Text>
-                    <View style={styles.row}>
-                        <Text>Total</Text>
-                        <Text>44 km</Text>
-                    </View>
-                    <View style={styles.row}>
-                        <Text>Daily average</Text>
-                        <Text>44 km</Text>
-                    </View>
-                </View>
+                </SafeAreaView>
             </ScrollView>
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 
 const styles = StyleSheet.create({
+    innerKeyboardContainer: {
+        // flex: 1,
+        padding: 16,
+    },
     container: { flex: 1, backgroundColor: "#F8F8F8" },
     topBar: {
         flexDirection: "row",

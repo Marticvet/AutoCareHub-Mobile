@@ -44,7 +44,7 @@ export default function AuthNavigator() {
                     component={VehicleDetailScreen}
                     options={{ title: "Your Vehicle" }}
                 />
-                <AppStack.Screen
+                {/* <AppStack.Screen
                     name="ReportsScreen"
                     component={ReportsScreen}
                     options={{ title: "Reports" }}
@@ -64,7 +64,7 @@ export default function AuthNavigator() {
                      name="ServiceExpensesScreen"
                      component={ServiceExpensesScreen}
                     options={{ title: "ServiceExpensesScreen" }}
-                />
+                /> */}
             </AppStack.Navigator>
         </QueryProvider>
     );

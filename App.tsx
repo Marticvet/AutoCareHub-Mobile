@@ -12,6 +12,9 @@ import { ProfileDataProvider } from "./src/providers/ProfileDataProvider";
 import SidebarNavigator from "./src/Screens/Navigators/SidebarNavigator";
 import BottomNavigator from "./src/Screens/Navigators/BottomNavigator";
 import ServiceExpensesScreen from "./src/Screens/ServiceExpensesScreen";
+import ReminderScreen from "./src/Screens/ReminderScreen";
+import ReportsScreen from "./src/Screens/ReportsScreen";
+import ServiceScreen from "./src/Screens/ServiceExpensesScreen";
 
 const AuthStack = createStackNavigator();
 const RootStack = createStackNavigator();
@@ -63,11 +66,39 @@ function RootNavigator() {
     // - "MainApp" contains your SidebarNavigator wrapping the BottomNavigator.
     // - "ServiceExpensesScreen" (and any other global screens) is declared here.
     return (
-        <RootStack.Navigator screenOptions={{ headerShown: false }}>
-            <RootStack.Screen name="MainApp" component={MainAppNavigator} />
+        <RootStack.Navigator
+            screenOptions={{
+                // headerShown: false,
+                headerStyle: {
+                    backgroundColor: "#212640",
+                },
+            }}
+        >
+            <RootStack.Screen
+                name="MainApp"
+                component={MainAppNavigator}
+                options={{
+                    title: "Home",
+                    headerShown: false,
+                }}
+            />
             <RootStack.Screen
                 name="ServiceExpensesScreen"
                 component={ServiceExpensesScreen}
+            />
+            <RootStack.Screen
+                name="ReminderScreen"
+                component={ReminderScreen}
+            />
+            <RootStack.Screen
+                name="ReportsScreen"
+                component={ReportsScreen}
+                options={{ title: "Reports" }}
+            />
+            <RootStack.Screen
+                name="ServiceScreen"
+                component={ServiceScreen}
+                options={{ title: "Service" }}
             />
             {/* Add more global screens here if needed */}
         </RootStack.Navigator>
