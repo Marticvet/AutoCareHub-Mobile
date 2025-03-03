@@ -3,7 +3,7 @@ import React, { useContext, useState } from "react";
 import {
     View,
     Text,
-    TouchableOpacity,
+    Pressable,
     StyleSheet,
     Modal,
     FlatList,
@@ -60,17 +60,17 @@ const HomeScreenDropdown: React.FC<HomeScreenDropdownProps> = ({
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity
+            <Pressable
                 onPress={() => setVisible(true)}
                 style={styles.input}
             >
                 <Text style={styles.inputText}>
                     {selectedValue ? selectedValue : placeholder}
                 </Text>
-            </TouchableOpacity>
+            </Pressable>
 
             <Modal transparent animationType="fade" visible={visible}>
-                <TouchableOpacity
+                <Pressable
                     style={styles.modalOverlay}
                     onPress={() => setVisible(false)}
                 >
@@ -79,7 +79,7 @@ const HomeScreenDropdown: React.FC<HomeScreenDropdownProps> = ({
                             data={data}
                             keyExtractor={(item, index) => index.toString()}
                             renderItem={({ item }) => (
-                                <TouchableOpacity
+                                <Pressable
                                     style={styles.HomeScreenDropdownItem}
                                     // @ts-ignore
                                     onPress={() => handleSelect(item.id)}
@@ -87,11 +87,11 @@ const HomeScreenDropdown: React.FC<HomeScreenDropdownProps> = ({
                                     <Text style={styles.itemText}>
                                         {item.id}
                                     </Text>
-                                </TouchableOpacity>
+                                </Pressable>
                             )}
                         />
                     </View>
-                </TouchableOpacity>
+                </Pressable>
             </Modal>
         </View>
     );

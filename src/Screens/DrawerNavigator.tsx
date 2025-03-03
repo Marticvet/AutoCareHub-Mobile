@@ -1,7 +1,7 @@
 // DrawerNavigator.tsx
 import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { TouchableOpacity } from "react-native";
+import { Pressable } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import SettingsScreen from "../Screens/SettingsScreen";
 
@@ -25,12 +25,12 @@ const DrawerNavigator = () => {
                 options={({ navigation }) => ({
                     title: "Home",
                     headerLeft: () => (
-                        <TouchableOpacity
+                        <Pressable
                             onPress={() => navigation.openDrawer()}
                             style={{ marginLeft: 15 }}
                         >
                             <Ionicons name="menu" size={24} color="white" />
-                        </TouchableOpacity>
+                        </Pressable>
                     ),
                 })}
             /> */}
@@ -41,12 +41,12 @@ const DrawerNavigator = () => {
                 options={({ navigation }) => ({
                     title: "Notifications",
                     headerLeft: () => (
-                        <TouchableOpacity
+                        <Pressable
                             onPress={() => navigation.openDrawer()}
                             style={{ marginLeft: 15 }}
                         >
                             <Ionicons name="menu" size={24} color="white" />
-                        </TouchableOpacity>
+                        </Pressable>
                     ),
                 })}
             />
@@ -56,12 +56,12 @@ const DrawerNavigator = () => {
                 options={({ navigation }) => ({
                     title: "Profile",
                     headerLeft: () => (
-                        <TouchableOpacity
+                        <Pressable
                             onPress={() => navigation.openDrawer()}
                             style={{ marginLeft: 15 }}
                         >
                             <Ionicons name="menu" size={24} color="white" />
-                        </TouchableOpacity>
+                        </Pressable>
                     ),
                 })}
             />
@@ -71,12 +71,12 @@ const DrawerNavigator = () => {
                 options={({ navigation }) => ({
                     title: "Settings",
                     headerLeft: () => (
-                        <TouchableOpacity
+                        <Pressable
                             onPress={() => navigation.openDrawer()}
                             style={{ marginLeft: 15 }}
                         >
                             <Ionicons name="menu" size={24} color="white" />
-                        </TouchableOpacity>
+                        </Pressable>
                     ),
                 })}
             />

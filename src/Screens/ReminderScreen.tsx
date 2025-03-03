@@ -3,7 +3,7 @@ import {
     View,
     Text,
     TextInput,
-    TouchableOpacity,
+    Pressable,
     StyleSheet,
     ScrollView,
 } from "react-native";
@@ -22,7 +22,7 @@ const ReminderScreen = () => {
         <View style={styles.container}>
             <ScrollView style={styles.content}>
                 <View style={styles.switchContainer}>
-                    <TouchableOpacity
+                    <Pressable
                         style={[
                             styles.switchButton,
                             isOneTime && styles.activeButton,
@@ -37,8 +37,8 @@ const ReminderScreen = () => {
                         >
                             Just one time
                         </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
+                    </Pressable>
+                    <Pressable
                         style={[
                             styles.switchButton,
                             !isOneTime && styles.activeButton,
@@ -53,7 +53,7 @@ const ReminderScreen = () => {
                         >
                             Repeat every
                         </Text>
-                    </TouchableOpacity>
+                    </Pressable>
                 </View>
 
                 <View style={styles.inputContainer}>
@@ -72,7 +72,7 @@ const ReminderScreen = () => {
                 </View>
 
                 <View style={styles.checkboxContainer}>
-                    <TouchableOpacity
+                    <Pressable
                         onPress={() => setIsKmChecked(!isKmChecked)}
                         style={styles.checkbox}
                     >
@@ -83,7 +83,7 @@ const ReminderScreen = () => {
                                 color="white"
                             />
                         )}
-                    </TouchableOpacity>
+                    </Pressable>
                     <Text style={styles.checkboxText}>km</Text>
                     <TextInput
                         placeholder="Odometer (km)"
@@ -94,7 +94,7 @@ const ReminderScreen = () => {
                 </View>
 
                 <View style={styles.checkboxContainer}>
-                    <TouchableOpacity
+                    <Pressable
                         onPress={() => setIsDateChecked(!isDateChecked)}
                         style={styles.checkbox}
                     >
@@ -105,7 +105,7 @@ const ReminderScreen = () => {
                                 color="white"
                             />
                         )}
-                    </TouchableOpacity>
+                    </Pressable>
                     <Text style={styles.checkboxText}>Date</Text>
                     <TextInput
                         placeholder="Date"
@@ -123,9 +123,9 @@ const ReminderScreen = () => {
                     multiline
                 />
 
-                <TouchableOpacity style={styles.saveButton}>
+                <Pressable style={styles.saveButton}>
                     <Text style={styles.saveButtonText}>SAVE</Text>
-                </TouchableOpacity>
+                </Pressable>
             </ScrollView>
         </View>
     );

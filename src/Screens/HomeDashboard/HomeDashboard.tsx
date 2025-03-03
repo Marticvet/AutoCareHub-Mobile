@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, ScrollView } from 'react-native';
 
 const HomeDashboard: React.FC = () => {
 
@@ -39,9 +39,9 @@ const HomeDashboard: React.FC = () => {
       </View>
 
       {/* Add Vehicle Button */}
-      <TouchableOpacity style={styles.addButton}>
+      <Pressable style={styles.addButton}>
         <Text style={styles.addButtonText}>Add Vehicle</Text>
-      </TouchableOpacity>
+      </Pressable>
     </ScrollView>
   );
 };

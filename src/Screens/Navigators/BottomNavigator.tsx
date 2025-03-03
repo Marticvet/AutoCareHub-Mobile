@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../../providers/AuthProvider";
 import { useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Modal, StyleSheet, TouchableOpacity, View, Text } from "react-native";
+import { Modal, StyleSheet, View, Text, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import AuthNavigator from "./AuthNavigator";
 import AddVehicleScreen from "../AddVehicleScreen";
@@ -66,12 +66,12 @@ export default function BottomNavigator() {
                     component={HomeScreen} // Dummy component
                     options={{
                         tabBarButton: () => (
-                            <TouchableOpacity
+                            <Pressable
                                 style={styles.fabButton}
                                 onPress={() => setModalVisible(true)}
                             >
                                 <Ionicons name="add" size={32} color="white" />
-                            </TouchableOpacity>
+                            </Pressable>
                         ),
                     }}
                     listeners={{
@@ -128,9 +128,9 @@ export default function BottomNavigator() {
                         animationType="slide"
                         onRequestClose={() => setModalVisible(false)}
                     >
-                        <TouchableOpacity
+                        <Pressable
                             style={styles.overlay}
-                            activeOpacity={1}
+                            // activeOpacity={1}
                             onPress={() => setModalVisible(false)}
                         >
                             <View style={styles.modalContainer}>
@@ -168,7 +168,7 @@ export default function BottomNavigator() {
                                         screen: "ReminderScreen",
                                     },
                                 ].map((item, index) => (
-                                    <TouchableOpacity
+                                    <Pressable
                                         key={index}
                                         style={styles.option}
                                         onPress={() =>
@@ -178,18 +178,18 @@ export default function BottomNavigator() {
                                         <Text style={styles.optionText}>
                                             {item.title}
                                         </Text>
-                                    </TouchableOpacity>
+                                    </Pressable>
                                 ))}
-                                <TouchableOpacity
+                                <Pressable
                                     style={styles.cancelButton}
                                     onPress={() => setModalVisible(false)}
                                 >
                                     <Text style={styles.cancelText}>
                                         Cancel
                                     </Text>
-                                </TouchableOpacity>
+                                </Pressable>
                             </View>
-                        </TouchableOpacity>
+                        </Pressable>
                     </Modal>
                 </View>
             )}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Pressable, StyleSheet, ScrollView } from 'react-native';
 
 const HomePage: React.FC = () => {
   return (
@@ -44,15 +44,15 @@ const HomePage: React.FC = () => {
 
       {/* Add Vehicle / Log Expense / Log Fuel Buttons */}
       <View style={styles.actionButtons}>
-        <TouchableOpacity style={styles.actionButton}>
+        <Pressable style={styles.actionButton}>
           <Text style={styles.actionButtonText}>Add Vehicle</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton}>
+        </Pressable>
+        <Pressable style={styles.actionButton}>
           <Text style={styles.actionButtonText}>Log Fuel</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton}>
+        </Pressable>
+        <Pressable style={styles.actionButton}>
           <Text style={styles.actionButtonText}>Record Expense</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </ScrollView>
   );

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
     Modal,
-    TouchableOpacity,
+    Pressable,
     View,
     Text,
     FlatList,
@@ -33,17 +33,17 @@ const CustomPicker = ({
     return (
         <View style={styles.pickerContainer}>
             <Text style={styles.label}>{label}:</Text>
-            <TouchableOpacity
+            <Pressable
                 style={styles.pickerButton}
                 onPress={() => setIsModalVisible(true)}
             >
                 <Text style={styles.pickerText}>
                     {selectedValue || placeholder}
                 </Text>
-            </TouchableOpacity>
+            </Pressable>
 
             <Modal visible={isModalVisible} transparent>
-                <TouchableOpacity
+                <Pressable
                     style={styles.modalOverlay}
                     onPress={() => setIsModalVisible(false)}
                 >
@@ -52,16 +52,16 @@ const CustomPicker = ({
                             data={items}
                             keyExtractor={(item) => item}
                             renderItem={({ item }) => (
-                                <TouchableOpacity
+                                <Pressable
                                     style={styles.modalItem}
                                     onPress={() => handleSelect(item)}
                                 >
                                     <Text style={styles.modalText}>{item}</Text>
-                                </TouchableOpacity>
+                                </Pressable>
                             )}
                         />
                     </View>
-                </TouchableOpacity>
+                </Pressable>
             </Modal>
         </View>
     );

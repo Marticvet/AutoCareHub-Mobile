@@ -3,7 +3,7 @@ import {
     Text,
     TextInput,
     StyleSheet,
-    TouchableOpacity,
+    Pressable,
     ScrollView,
     TouchableWithoutFeedback,
     Platform,
@@ -393,30 +393,30 @@ function AddVehicleScreen(props: any) {
 
                             {/* Close Button */}
                             {modalVisible && (
-                                <TouchableOpacity
+                                <Pressable
                                     style={[
                                         styles.saveButton,
                                         styles.closeButton,
                                     ]}
-                                    activeOpacity={0.65}
+                                    // activeOpacity={0.65}
                                     onPress={() => setModalVisible(false)}
                                 >
                                     <Text style={styles.buttonText}>
                                         Cancel Editing
                                     </Text>
-                                </TouchableOpacity>
+                                </Pressable>
                             )}
 
                             {/* Submit Button */}
-                            <TouchableOpacity
+                            <Pressable
                                 style={styles.saveButton}
-                                activeOpacity={0.65}
+                                // activeOpacity={0.65}
                                 onPress={addVehicleHandler}
                             >
                                 <Text style={styles.buttonText}>
                                     Save Vehicle
                                 </Text>
-                            </TouchableOpacity>
+                            </Pressable>
                         </View>
                     </ScrollView>
                 </KeyboardAvoidingView>
