@@ -85,10 +85,13 @@ function RootNavigator() {
             <RootStack.Screen
                 name="ServiceExpensesScreen"
                 component={ServiceExpensesScreen}
+                options={{ title: "Service Expenses" }}
+
             />
             <RootStack.Screen
                 name="ReminderScreen"
                 component={ReminderScreen}
+                options={{ title: "Reminders" }}
             />
             <RootStack.Screen
                 name="ReportsScreen"
