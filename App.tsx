@@ -15,6 +15,7 @@ import ServiceExpensesScreen from "./src/Screens/ServiceExpensesScreen";
 import ReminderScreen from "./src/Screens/ReminderScreen";
 import ReportsScreen from "./src/Screens/ReportsScreen";
 import ServiceScreen from "./src/Screens/ServiceExpensesScreen";
+import { FuelExpensesScreen } from "./src/Screens/FuelExpensesScreen";
 
 const AuthStack = createStackNavigator();
 const RootStack = createStackNavigator();
@@ -86,7 +87,6 @@ function RootNavigator() {
                 name="ServiceExpensesScreen"
                 component={ServiceExpensesScreen}
                 options={{ title: "Service Expenses" }}
-
             />
             <RootStack.Screen
                 name="ReminderScreen"
@@ -102,6 +102,11 @@ function RootNavigator() {
                 name="ServiceScreen"
                 component={ServiceScreen}
                 options={{ title: "Service" }}
+            />
+            <RootStack.Screen
+                name="FuelExpensesScreen"
+                component={FuelExpensesScreen}
+                options={{ title: "Fuel Expenses" }}
             />
             {/* Add more global screens here if needed */}
         </RootStack.Navigator>

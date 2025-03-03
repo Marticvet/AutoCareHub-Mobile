@@ -9,15 +9,13 @@ import {
     SafeAreaView,
     KeyboardAvoidingView,
     Platform,
-    Modal,
-    Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ProfileContext } from "../providers/ProfileDataProvider";
-import DateTimePicker, {
+import  {
     DateType,
-    getDefaultStyles,
 } from "react-native-ui-datepicker";
+import { DateTimePickerModal } from "./DateTimePickerModal";
 
 const ServiceScreen = () => {
     const [odometer, setOdometer] = useState("");
@@ -28,8 +26,6 @@ const ServiceScreen = () => {
     const [notes, setNotes] = useState("");
 
     const [selectedDateTime, setSelectedDateTime] = useState<DateType>(); // Stores both Date & Time
-    const defaultStyles = getDefaultStyles();
-
     const [modalVisible, setModalVisible] = useState(false);
 
     // Retrieve the values provided by ProfileDataProvider
@@ -63,30 +59,7 @@ const ServiceScreen = () => {
     const [selectedDate, setSelectedDate] = useState<DateType>(formattedDate);
     const [selectedTime, setSelectedTime] = useState<DateType>(formattedTime);
 
-    const handleDateChange = ({ date }: { date?: DateType }) => {
-        setSelectedDateTime(date);
-
-        // Automatically adapt to user's locale and timezone
-        // @ts-ignore
-        const formattedDate = date.toLocaleDateString(undefined, {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-        });
-
-        // @ts-ignore
-        const formattedTime = date.toLocaleTimeString(undefined, {
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-        });
-
-        setSelectedDate(formattedDate);
-        setSelectedTime(formattedTime);
-        // setModalVisible(false); // Close modal after selection if needed
-    };
-
-    function submitSaveHandler(){
+    function submitSaveHandler() {
         const serviceExpensesInputs = {
             date: selectedDate,
             odometer,
@@ -95,13 +68,12 @@ const ServiceScreen = () => {
             driver,
             paymentMethod,
             notes,
-        }
-   
+        };
     }
 
     return (
         <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
+            behavior={Platform.OS === "ios" ? "height" : undefined}
             style={{ flex: 1 }}
         >
             <ScrollView
@@ -151,72 +123,14 @@ const ServiceScreen = () => {
                             </Pressable>
                         </View>
 
-                        {/* Modal for Calendar */}
-                        <Modal
-                            animationType="none"
-                            transparent={true}
-                            visible={modalVisible}
-                            onRequestClose={() => {
-                                Alert.alert("Modal has been closed.");
-                                setModalVisible(!modalVisible);
-                            }}
-                        >
-                            <View style={styles.modalOverlay}>
-                                <View style={styles.modalContainer}>
-                                    <DateTimePicker
-                                        mode="single"
-                                        date={selectedDateTime}
-                                        onChange={handleDateChange}
-                                        timePicker={true} // ✅ Enables both Date & Time selection
-                                        styles={{
-                                            ...defaultStyles,
-                                            today: {
-                                                borderColor: "#00AFCF",
-                                                borderWidth: 2,
-                                            },
-                                            selected: {
-                                                backgroundColor: "#00AFCF",
-                                            },
-                                            selected_label: { color: "white" },
-                                            header: {
-                                                // color: "white",
-                                                width: 300,
-                                            },
-                                        }}
-                                    />
-
-                                    <View style={styles.modalButtonsContainer}>
-                                        {/* confirm button */}
-                                        <Pressable
-                                            style={styles.confirmButton}
-                                            onPress={() =>
-                                                setModalVisible(false)
-                                            }
-                                        >
-                                            <Text
-                                                style={styles.confirmButtonText}
-                                            >
-                                                Confirm
-                                            </Text>
-                                        </Pressable>
-
-                                        {/* close button */}
-                                        <Pressable
-                                            style={styles.closeButton}
-                                            onPress={() =>
-                                                setModalVisible(false)
-                                            }
-                                        >
-                                            <Text
-                                                style={styles.closeButtonText}
-                                            >
-                                                Close
-                                            </Text>
-                                        </Pressable>
-                                    </View>
-                                </View>
-                            </View>
-                        </Modal>
+                      <DateTimePickerModal
+                            modalVisible={modalVisible}
+                            setModalVisible={setModalVisible}
+                            selectedDateTime={selectedDateTime}
+                            setSelectedDate={setSelectedDate}
+                            setSelectedTime={setSelectedTime}
+                            setSelectedDateTime={setSelectedDateTime}
+                        />
 
                         {/* Odometer Input */}
                         <View style={styles.inputContainer}>
@@ -350,7 +264,10 @@ const ServiceScreen = () => {
                         />
 
                         {/* Save Button */}
-                        <Pressable style={styles.saveButton} onPress={submitSaveHandler}>
+                        <Pressable
+                            style={styles.saveButton}
+                            onPress={submitSaveHandler}
+                        >
                             <Text style={styles.saveButtonText}>SAVE</Text>
                         </Pressable>
                     </View>
@@ -361,7 +278,10 @@ const ServiceScreen = () => {
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#F8F8F8" },
+    container: {
+        flex: 1,
+        backgroundColor: "#F8F8F8",
+    },
     dateTimeContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -371,7 +291,7 @@ const styles = StyleSheet.create({
     dateTimeInputContainer: {
         flexDirection: "row",
         width: "48%",
-        height: 64,
+        height: 48,
         backgroundColor: "white",
         alignItems: "center",
         padding: 10,
@@ -399,7 +319,7 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 16,
         color: "black",
-        height: 42,
+        height: 28,
     },
     hint: {
         fontSize: 12,
@@ -438,82 +358,9 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "bold",
     },
-    dateTimeInputField: {
-        flex: 1,
-        fontSize: 16,
-        color: "gray",
-    },
     innerKeyboardContainer: {
         padding: 16,
     },
-    // Modal styles
-    modalOverlay: {
-        flex: 1,
-        backgroundColor: "rgba(0,0,0,0.5)",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    modalContainer: {
-        width: "85%",
-        height: "50%",
-        backgroundColor: "white",
-        padding: 20,
-        borderRadius: 15,
-        alignItems: "center",
-        elevation: 10,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 5,
-    },
-
-    modalTitle: {
-        fontSize: 18,
-        fontWeight: "bold",
-        color: "#333",
-        marginBottom: 10,
-    },
-
-    modalButtonsContainer: {
-        width: "100%",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-around",
-    },
-
-    confirmButton: {
-        marginTop: 15,
-        paddingVertical: 12,
-        paddingHorizontal: 30,
-        backgroundColor: "#00AFCF",
-        borderRadius: 8,
-    },
-
-    confirmButtonText: {
-        color: "white",
-        fontSize: 16,
-        fontWeight: "bold",
-    },
-    closeButton: {
-        marginTop: 15,
-        paddingVertical: 12,
-        paddingHorizontal: 30,
-        backgroundColor: "#00AFCF",
-        borderRadius: 8,
-    },
-
-    closeButtonText: {
-        color: "white",
-        fontSize: 16,
-        fontWeight: "bold",
-    },
-    dateTimeText: {
-        width: "100%",
-        flex: 1,
-        fontSize: 16,
-        color: "black",
-    },
-
     PressedDateTimeInputContainer: {
         flexDirection: "row",
         width: "48%",
@@ -526,6 +373,12 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: "#DDD",
         marginBottom: 12,
+    },
+    dateTimeText: {
+        width: "100%",
+        flex: 1,
+        fontSize: 16,
+        color: "black",
     },
 });
 

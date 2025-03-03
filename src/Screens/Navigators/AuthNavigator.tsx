@@ -44,27 +44,6 @@ export default function AuthNavigator() {
                     component={VehicleDetailScreen}
                     options={{ title: "Your Vehicle" }}
                 />
-                {/* <AppStack.Screen
-                    name="ReportsScreen"
-                    component={ReportsScreen}
-                    options={{ title: "Reports" }}
-                />
-                <AppStack.Screen
-                    name="ServiceScreen"
-                    component={ServiceScreen}
-                    options={{ title: "Service" }}
-                />
-                <AppStack.Screen
-                    name="ReminderScreen"
-                    component={ReminderScreen}
-                    options={{ title: "Reminder" }}
-                />    
-                
-                   <AppStack.Screen
-                     name="ServiceExpensesScreen"
-                     component={ServiceExpensesScreen}
-                    options={{ title: "ServiceExpensesScreen" }}
-                /> */}
             </AppStack.Navigator>
         </QueryProvider>
     );
