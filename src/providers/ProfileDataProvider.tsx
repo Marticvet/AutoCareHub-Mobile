@@ -56,14 +56,13 @@ const ProfileDataProvider = ({ children }: PropsWithChildren) => {
         isLoading: isVehiclesLoading,
         error: errorVehicles,
     } = useVehicleList(userId ? userId : "");
-    // const vehicles: VehicleData[] | undefined = vehicleList;
 
     useEffect(() => {
-        if(userProfile && userId && vehicleList){
+        if(userProfile && profile && vehicleList){
             setVehicles(vehicleList);
         }
 
-    }, [profile, userProfile, vehicleList]);
+    }, [ userProfile, vehicleList]);
     
     // Manage selected vehicle state as a full VehicleData object
     const [selectedVehicle, setSelectedVehicle] = useState<VehicleData | null>(
@@ -85,7 +84,7 @@ const ProfileDataProvider = ({ children }: PropsWithChildren) => {
     const vehicle: VehicleData = vehicleData;
 
     useEffect(() => {
-        if(vehicleData){
+        if(vehicleData && userId){
             setSelectedVehicle(vehicle);
         }
     }, [profile, userProfile, vehicleData]);    
