@@ -7,7 +7,12 @@ import {
     StyleSheet,
     ScrollView,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import {
+    FontAwesome5,
+    FontAwesome6,
+    Fontisto,
+    Ionicons,
+} from "@expo/vector-icons";
 
 const ReminderScreen = () => {
     const [expenseType, setExpenseType] = useState("");
@@ -18,122 +23,155 @@ const ReminderScreen = () => {
     const [isDateChecked, setIsDateChecked] = useState(false);
     const [isOneTime, setIsOneTime] = useState(true);
 
+    const [showServiceReminderContainer, setShowServiceReminderContainer] =
+        useState(false);
+    const [selectRepeaterSwitch, setSelectRepeaterSwitch] = useState(false);
+
     return (
         <View style={styles.container}>
             <ScrollView style={styles.content}>
+                {/* Switch Container */}
                 <View style={styles.switchContainer}>
+                    {showServiceReminderContainer === false ? (
+                        <FontAwesome6
+                            name="money-bills"
+                            size={24}
+                            color="gray"
+                            style={styles.icon}
+                        />
+                    ) : (
+                        <FontAwesome5
+                            name="oil-can"
+                            size={24}
+                            color="gray"
+                            style={styles.icon}
+                        />
+                    )}
+
                     <Pressable
                         style={[
                             styles.switchButton,
-                            isOneTime && styles.activeButton,
+                            !showServiceReminderContainer &&
+                                styles.activeButton,
                         ]}
-                        onPress={() => setIsOneTime(true)}
+                        onPress={() => setShowServiceReminderContainer(false)}
                     >
                         <Text
                             style={[
                                 styles.switchText,
-                                isOneTime && styles.activeText,
+                                !showServiceReminderContainer &&
+                                    styles.activeText,
+                            ]}
+                        >
+                            Expense
+                        </Text>
+                    </Pressable>
+                    <Pressable
+                        style={[
+                            styles.switchButton,
+                            showServiceReminderContainer && styles.activeButton,
+                        ]}
+                        onPress={() => setShowServiceReminderContainer(true)}
+                    >
+                        <Text
+                            style={[
+                                styles.switchText,
+                                showServiceReminderContainer &&
+                                    styles.activeText,
+                            ]}
+                        >
+                            Service
+                        </Text>
+                    </Pressable>
+                </View>
+
+                {/* Switch one time/ repeat */}
+                <View style={styles.inputContainer}>
+                    <View style={styles.innerInputContainer}>
+                        <TextInput
+                            // ref={odometerRef}
+                            placeholder="Type of service"
+                            value={odometer}
+                            onChangeText={setOdometer}
+                            keyboardType="default"
+                            returnKeyType="next"
+                            onSubmitEditing={() =>
+                                // @ts-ignore
+                                serviceTypeRef.current?.focus()
+                            }
+                            style={styles.input}
+                        />
+                    </View>
+                </View>
+
+                {/* Switch Container */}
+                <View style={styles.switchContainer}>
+                    <Fontisto
+                        name="bell-alt"
+                        size={24}
+                        color="gray"
+                        style={styles.icon}
+                    />
+
+                    <Pressable
+                        style={[
+                            styles.switchButton,
+                            !selectRepeaterSwitch && styles.activeButton,
+                        ]}
+                        onPress={() => setSelectRepeaterSwitch(false)}
+                    >
+                        <Text
+                            style={[
+                                styles.switchText,
+                                !selectRepeaterSwitch && styles.activeText,
                             ]}
                         >
                             Just one time
                         </Text>
                     </Pressable>
+
                     <Pressable
                         style={[
                             styles.switchButton,
-                            !isOneTime && styles.activeButton,
+                            selectRepeaterSwitch && styles.activeButton,
                         ]}
-                        onPress={() => setIsOneTime(false)}
+                        onPress={() => setSelectRepeaterSwitch(true)}
                     >
                         <Text
                             style={[
                                 styles.switchText,
-                                !isOneTime && styles.activeText,
+                                selectRepeaterSwitch && styles.activeText,
                             ]}
                         >
-                            Repeat every
+                            Repeat
                         </Text>
                     </Pressable>
                 </View>
 
-                <View style={styles.inputContainer}>
-                    <Ionicons
-                        name="card"
-                        size={20}
-                        color="gray"
-                        style={styles.icon}
-                    />
-                    <TextInput
-                        placeholder="Type of expense"
-                        value={expenseType}
-                        onChangeText={setExpenseType}
-                        style={styles.input}
-                    />
+                <View style={styles.repeaterSelectContainer}>
+                    <View style={styles.repetearSelectInputContainer}>
+                        <Text>ebanie</Text>
+
+                        <TextInput style={styles.repetearSelectInput} placeholder="Odometer (km)"/>
+                    </View>
+
+                    <View style={styles.repetearSelectInputContainer}>
+                        <Text>ebanie</Text>
+                        <TextInput style={styles.repetearSelectInput} placeholder="Date"/>
+                    </View>
                 </View>
-
-                <View style={styles.checkboxContainer}>
-                    <Pressable
-                        onPress={() => setIsKmChecked(!isKmChecked)}
-                        style={styles.checkbox}
-                    >
-                        {isKmChecked && (
-                            <Ionicons
-                                name="checkmark"
-                                size={16}
-                                color="white"
-                            />
-                        )}
-                    </Pressable>
-                    <Text style={styles.checkboxText}>km</Text>
-                    <TextInput
-                        placeholder="Odometer (km)"
-                        value={odometer}
-                        onChangeText={setOdometer}
-                        style={styles.inputInline}
-                    />
-                </View>
-
-                <View style={styles.checkboxContainer}>
-                    <Pressable
-                        onPress={() => setIsDateChecked(!isDateChecked)}
-                        style={styles.checkbox}
-                    >
-                        {isDateChecked && (
-                            <Ionicons
-                                name="checkmark"
-                                size={16}
-                                color="white"
-                            />
-                        )}
-                    </Pressable>
-                    <Text style={styles.checkboxText}>Date</Text>
-                    <TextInput
-                        placeholder="Date"
-                        value={date}
-                        onChangeText={setDate}
-                        style={styles.inputInline}
-                    />
-                </View>
-
-                <TextInput
-                    placeholder="Notes"
-                    value={notes}
-                    onChangeText={setNotes}
-                    style={[styles.input, styles.notesInput]}
-                    multiline
-                />
-
-                <Pressable style={styles.saveButton}>
-                    <Text style={styles.saveButtonText}>SAVE</Text>
-                </Pressable>
             </ScrollView>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#F8F8F8" },
-    content: { padding: 15 },
+    container: {
+        flex: 1,
+    },
+    content: {
+        padding: 15,
+    },
     switchContainer: {
         flexDirection: "row",
         justifyContent: "center",
@@ -146,54 +184,66 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginHorizontal: 5,
     },
-    activeButton: { backgroundColor: "#4942CD" },
-    switchText: { color: "gray", fontSize: 16 },
-    activeText: { color: "white" },
+    activeButton: {
+        backgroundColor: "#4942CD",
+    },
+    switchText: {
+        color: "gray",
+        fontSize: 16,
+    },
+    activeText: {
+        color: "white",
+    },
     inputContainer: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "white",
         padding: 10,
         marginVertical: 5,
-        borderRadius: 5,
+        borderRadius: 8,
+        marginBottom: 12,
+    },
+    innerInputContainer: {
+        flexDirection: "row",
+        flexGrow: 1,
         borderBottomWidth: 1,
         borderBottomColor: "#DDD",
-    },
-    icon: { marginRight: 10 },
-    input: { flex: 1, fontSize: 16, color: "black" },
-    checkboxContainer: {
-        flexDirection: "row",
+        justifyContent: "space-between",
         alignItems: "center",
-        marginVertical: 5,
+        // paddingLeft: 12,
+        marginLeft: 16,
     },
-    checkbox: {
-        width: 20,
-        height: 20,
-        borderRadius: 5,
-        borderWidth: 1,
-        borderColor: "#4942CD",
+    input: {
+        fontSize: 16,
+        color: "black",
+        width: 300,
+        height: 48, // Set explicit height
+    },
+    icon: {
+        marginRight: 10,
+    },
+    repeaterSelectContainer: {
+        marginTop: 12,
+        height: 160,
+        flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        marginRight: 10,
-        backgroundColor: "white",
     },
-    inputInline: {
+    repetearSelectInputContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: "center",
+        justifyContent: "space-between",
+        width: '100%',
+
+    },
+    repetearSelectInput: {
+        height: 48,
+        width: 180,
+        fontSize: 16,
+        color: "black",
         borderBottomWidth: 1,
         borderBottomColor: "#DDD",
-        flex: 1,
-        marginLeft: 10,
-        paddingBottom: 5,
-    },
-    checkboxText: { fontSize: 16, color: "black" },
-    notesInput: { height: 80, textAlignVertical: "top" },
-    saveButton: {
-        backgroundColor: "#4942CD",
-        padding: 15,
-        alignItems: "center",
-        borderRadius: 30,
-        marginTop: 20,
-    },
-    saveButtonText: { color: "white", fontSize: 18, fontWeight: "bold" },
+    }
 });
 
 export default ReminderScreen;
