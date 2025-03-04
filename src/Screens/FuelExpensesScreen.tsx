@@ -331,7 +331,7 @@ export const FuelExpensesScreen = () => {
                             </View>
                         </View> */}
 
-                    {/* Payment method Input */}
+                    {/* Note Input */}
                     <View style={styles.inputContainer}>
                         <MaterialIcons
                             name="notes"

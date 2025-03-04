@@ -257,7 +257,7 @@ const ServiceScreen = () => {
                         </View>
                     </View> */}
 
-                    {/* Payment method Input */}
+                    {/* Note Input */}
                     <View style={styles.inputContainer}>
                         <MaterialIcons
                             name="notes"
