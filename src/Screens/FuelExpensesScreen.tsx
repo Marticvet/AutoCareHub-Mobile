@@ -370,7 +370,7 @@ export const FuelExpensesScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // marginBottom: 200,
+        paddingBottom: 150,
     },
     dateTimeContainer: {
         flexDirection: "row",
