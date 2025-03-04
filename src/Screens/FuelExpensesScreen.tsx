@@ -29,12 +29,21 @@ export const FuelExpensesScreen = () => {
     const [modalVisible, setModalVisible] = useState(false);
 
     const [odometer, setOdometer] = useState("");
+    const [fuelType, setFuelType] = useState("");
+    const [pricePerLiter, setPricePerLiter] = useState("");
+    const [totalCost, setTotalCost] = useState("");
+    const [litres, setLitres] = useState("");
+    const [place, setPlace] = useState("");
+    const [paymentMethod, setPaymentMethod] = useState("");
+    const [notes, setNotes] = useState("");
 
     // References for each input field to manage focus
     const odometerRef = useRef(null);
-    const serviceTypeRef = useRef(null);
+    const fuelTypeRef = useRef(null);
+    const pricePerLiterRef = useRef(null);
+    const totalCostRef = useRef(null);
+    const litresRef = useRef(null);
     const placeRef = useRef(null);
-    const driverRef = useRef(null);
     const paymentMethodRef = useRef(null);
     const notesRef = useRef(null);
 
@@ -64,14 +73,11 @@ export const FuelExpensesScreen = () => {
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : undefined}
-            style={{ flex: 1 }}
+            style={{ flex: 1, paddingBottom: 150 }}
             keyboardVerticalOffset={20}
         >
-            <ScrollView
-                // contentContainerStyle={{ flexGrow: 1 }}
-                keyboardShouldPersistTaps="handled"
-            >
-                <SafeAreaView style={styles.container}>
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                <View style={styles.container}>
                     <View style={styles.innerKeyboardContainer}>
                         {/* Date & Time Inputs */}
                         <View style={styles.dateTimeContainer}>
@@ -167,14 +173,14 @@ export const FuelExpensesScreen = () => {
                             />
                             <View style={styles.innerInputContainer}>
                                 <TextInput
-                                    ref={odometerRef}
+                                    ref={fuelTypeRef}
                                     placeholder="Fuel type"
-                                    value={odometer}
-                                    onChangeText={setOdometer}
+                                    value={fuelType}
+                                    onChangeText={setFuelType}
                                     keyboardType="default"
                                     onSubmitEditing={() =>
                                         // @ts-ignore
-                                        serviceTypeRef.current?.focus()
+                                        fuelTypeRef.current?.focus()
                                     }
                                     style={styles.input}
                                 />
@@ -190,38 +196,38 @@ export const FuelExpensesScreen = () => {
                                 style={styles.icon}
                             />
                             <TextInput
-                                ref={odometerRef}
+                                ref={pricePerLiterRef}
                                 placeholder="Price/L"
-                                value={odometer}
-                                onChangeText={setOdometer}
-                                keyboardType="default"
+                                value={pricePerLiter}
+                                onChangeText={setPricePerLiter}
+                                keyboardType="numeric"
                                 onSubmitEditing={() =>
                                     // @ts-ignore
-                                    serviceTypeRef.current?.focus()
+                                    pricePerLiterRef.current?.focus()
                                 }
                                 style={styles.fuelInputs}
                             />
                             <TextInput
-                                ref={odometerRef}
+                                ref={totalCostRef}
                                 placeholder="Total cost"
-                                value={odometer}
-                                onChangeText={setOdometer}
-                                keyboardType="default"
+                                value={totalCost}
+                                onChangeText={setTotalCost}
+                                keyboardType="numeric"
                                 onSubmitEditing={() =>
                                     // @ts-ignore
-                                    serviceTypeRef.current?.focus()
+                                    totalCostRef.current?.focus()
                                 }
                                 style={styles.fuelInputs}
                             />
                             <TextInput
-                                ref={odometerRef}
+                                ref={litresRef}
                                 placeholder="Litres"
-                                value={odometer}
-                                onChangeText={setOdometer}
-                                keyboardType="default"
+                                value={litres}
+                                onChangeText={setLitres}
+                                keyboardType="numeric"
                                 onSubmitEditing={() =>
                                     // @ts-ignore
-                                    serviceTypeRef.current?.focus()
+                                    litresRef.current?.focus()
                                 }
                                 style={styles.fuelInputs}
                             />
@@ -272,14 +278,14 @@ export const FuelExpensesScreen = () => {
 
                             <View style={styles.innerInputContainer}>
                                 <TextInput
-                                    ref={odometerRef}
+                                    ref={placeRef}
                                     placeholder="Gas Station"
-                                    value={odometer}
-                                    onChangeText={setOdometer}
+                                    value={place}
+                                    onChangeText={setPlace}
                                     keyboardType="default"
                                     onSubmitEditing={() =>
                                         // @ts-ignore
-                                        serviceTypeRef.current?.focus()
+                                        placeRef.current?.focus()
                                     }
                                     style={styles.input}
                                 />
@@ -296,14 +302,14 @@ export const FuelExpensesScreen = () => {
                             />
                             <View style={styles.innerInputContainer}>
                                 <TextInput
-                                    ref={odometerRef}
+                                    ref={paymentMethodRef}
                                     placeholder="Payment method"
-                                    value={odometer}
-                                    onChangeText={setOdometer}
+                                    value={paymentMethod}
+                                    onChangeText={setPaymentMethod}
                                     keyboardType="default"
                                     onSubmitEditing={() =>
                                         // @ts-ignore
-                                        serviceTypeRef.current?.focus()
+                                        paymentMethodRef.current?.focus()
                                     }
                                     style={styles.input}
                                 />
@@ -344,8 +350,8 @@ export const FuelExpensesScreen = () => {
                                 <TextInput
                                     ref={notesRef}
                                     placeholder="Notes"
-                                    value={odometer}
-                                    onChangeText={setOdometer}
+                                    value={notes}
+                                    onChangeText={setNotes}
                                     returnKeyType="done"
                                     style={[styles.input, styles.notesInput]}
                                     multiline
@@ -365,7 +371,7 @@ export const FuelExpensesScreen = () => {
                             <Text style={styles.saveButtonText}>SAVE</Text>
                         </Pressable>
                     </View>
-                </SafeAreaView>
+                </View>
             </ScrollView>
         </KeyboardAvoidingView>
     );
@@ -374,7 +380,7 @@ export const FuelExpensesScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginBottom: 200,
+        // marginBottom: 200,
     },
     dateTimeContainer: {
         flexDirection: "row",
@@ -430,8 +436,8 @@ const styles = StyleSheet.create({
         gap: 10, // Ensures equal spacing between inputs
     },
     fuelInputs: {
-        flex: 1,  // Equal width distribution
-        height: 48,  // Set explicit height
+        flex: 1, // Equal width distribution
+        height: 48, // Set explicit height
         borderBottomWidth: 1,
         borderBottomColor: "#DDD",
         fontSize: 16,
