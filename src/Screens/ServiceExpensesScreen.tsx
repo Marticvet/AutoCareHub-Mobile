@@ -172,14 +172,14 @@ const ServiceScreen = () => {
                         />
                         <View style={styles.innerInputContainer}>
                             <TextInput
-                                // ref={fuelTypeRef}
+                                ref={serviceTypeRef}
                                 placeholder="Type of service"
-                                // value={fuelType}
-                                // onChangeText={setFuelType}
+                                value={serviceType}
+                                onChangeText={setServiceType}
                                 keyboardType="default"
                                 onSubmitEditing={() =>
                                     // @ts-ignore
-                                    fuelTypeRef.current?.focus()
+                                    serviceTypeRef.current?.focus()
                                 }
                                 style={styles.input}
                             />
