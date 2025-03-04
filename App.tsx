@@ -86,12 +86,12 @@ function RootNavigator() {
             <RootStack.Screen
                 name="ServiceExpensesScreen"
                 component={ServiceExpensesScreen}
-                options={{ title: "Service Expenses" }}
+                options={{ title: "Service Expense" }}
             />
             <RootStack.Screen
                 name="ReminderScreen"
                 component={ReminderScreen}
-                options={{ title: "Reminders" }}
+                options={{ title: "Reminder" }}
             />
             <RootStack.Screen
                 name="ReportsScreen"
@@ -106,7 +106,7 @@ function RootNavigator() {
             <RootStack.Screen
                 name="FuelExpensesScreen"
                 component={FuelExpensesScreen}
-                options={{ title: "Fuel Expenses" }}
+                options={{ title: "Fuel Expense" }}
             />
             {/* Add more global screens here if needed */}
         </RootStack.Navigator>

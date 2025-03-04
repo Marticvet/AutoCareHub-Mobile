@@ -12,9 +12,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ProfileContext } from "../providers/ProfileDataProvider";
-import  {
-    DateType,
-} from "react-native-ui-datepicker";
+import { DateType } from "react-native-ui-datepicker";
 import { DateTimePickerModal } from "./DateTimePickerModal";
 
 const ServiceScreen = () => {
@@ -73,7 +71,7 @@ const ServiceScreen = () => {
 
     return (
         <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "height" : undefined}
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
             style={{ flex: 1 }}
         >
             <ScrollView
@@ -123,7 +121,7 @@ const ServiceScreen = () => {
                             </Pressable>
                         </View>
 
-                      <DateTimePickerModal
+                        <DateTimePickerModal
                             modalVisible={modalVisible}
                             setModalVisible={setModalVisible}
                             selectedDateTime={selectedDateTime}
@@ -265,7 +263,11 @@ const ServiceScreen = () => {
 
                         {/* Save Button */}
                         <Pressable
-                            style={styles.saveButton}
+                            style={({ pressed }) =>
+                                pressed
+                                    ? styles.pressableButton
+                                    : styles.saveButton
+                            }
                             onPress={submitSaveHandler}
                         >
                             <Text style={styles.saveButtonText}>SAVE</Text>
@@ -280,13 +282,14 @@ const ServiceScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#F8F8F8",
+        // backgroundColor: "#F8F8F8",
     },
     dateTimeContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
+        paddingHorizontal: 6,
     },
     dateTimeInputContainer: {
         flexDirection: "row",
@@ -311,6 +314,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: "#DDD",
         marginBottom: 12,
+        height: 60
     },
     icon: {
         marginRight: 10,
@@ -364,7 +368,7 @@ const styles = StyleSheet.create({
     PressedDateTimeInputContainer: {
         flexDirection: "row",
         width: "48%",
-        height: 64,
+        height: 48,
         backgroundColor: "#e0e0e0",
         alignItems: "center",
         padding: 10,
@@ -379,6 +383,16 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 16,
         color: "black",
+    },
+    pressableButton: {
+        marginTop: 24,
+        paddingVertical: 12,
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
+        height: 42,
+        borderRadius: 12,
+        backgroundColor: "#625be7",
     },
 });
 

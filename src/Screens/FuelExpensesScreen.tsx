@@ -1,4 +1,9 @@
-import { Ionicons } from "@expo/vector-icons";
+import {
+    FontAwesome5,
+    Ionicons,
+    MaterialCommunityIcons,
+    MaterialIcons,
+} from "@expo/vector-icons";
 import { useContext, useRef, useState } from "react";
 import {
     View,
@@ -9,13 +14,21 @@ import {
     ScrollView,
     SafeAreaView,
     Pressable,
+    TextInput,
+    Switch,
 } from "react-native";
 import { DateType } from "react-native-ui-datepicker";
 import { DateTimePickerModal } from "./DateTimePickerModal";
+import { ProfileContext } from "../providers/ProfileDataProvider";
 
 export const FuelExpensesScreen = () => {
+    // Retrieve the values provided by ProfileDataProvider
+    const { selectedVehicle } = useContext(ProfileContext);
+
     const [selectedDateTime, setSelectedDateTime] = useState<DateType>();
     const [modalVisible, setModalVisible] = useState(false);
+
+    const [odometer, setOdometer] = useState("");
 
     // References for each input field to manage focus
     const odometerRef = useRef(null);
@@ -45,13 +58,17 @@ export const FuelExpensesScreen = () => {
     const [selectedDate, setSelectedDate] = useState<DateType>(formattedDate);
     const [selectedTime, setSelectedTime] = useState<DateType>(formattedTime);
 
+    const [isEnabled, setIsEnabled] = useState(false);
+    const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : undefined}
             style={{ flex: 1 }}
+            keyboardVerticalOffset={20}
         >
             <ScrollView
-                contentContainerStyle={{ flexGrow: 1 }}
+                // contentContainerStyle={{ flexGrow: 1 }}
                 keyboardShouldPersistTaps="handled"
             >
                 <SafeAreaView style={styles.container}>
@@ -105,6 +122,248 @@ export const FuelExpensesScreen = () => {
                             setSelectedDate={setSelectedDate}
                             setSelectedTime={setSelectedTime}
                         />
+
+                        {/* Odometer Input */}
+                        <View style={styles.inputContainer}>
+                            <Ionicons
+                                name="speedometer"
+                                size={24}
+                                color="gray"
+                                style={styles.icon}
+                            />
+
+                            <View style={styles.innerInputContainer}>
+                                <TextInput
+                                    ref={odometerRef}
+                                    placeholder="Odometer (km)"
+                                    value={odometer}
+                                    onChangeText={setOdometer}
+                                    keyboardType="numeric"
+                                    returnKeyType="next"
+                                    onSubmitEditing={() =>
+                                        // @ts-ignore
+                                        serviceTypeRef.current?.focus()
+                                    }
+                                    style={styles.input}
+                                />
+                            </View>
+                        </View>
+
+                        {/* Last Odometer */}
+                        <View style={styles.hintContainer}>
+                            <Text style={styles.hint}>
+                                Last odometer:{" "}
+                                {selectedVehicle?.current_mileage || "N/A"} km
+                            </Text>
+                        </View>
+
+                        {/* Fuel Type Input */}
+                        <View style={styles.inputContainer}>
+                            <FontAwesome5
+                                name="gas-pump"
+                                size={24}
+                                color="gray"
+                                style={styles.icon}
+                            />
+                            <View style={styles.innerInputContainer}>
+                                <TextInput
+                                    ref={odometerRef}
+                                    placeholder="Fuel type"
+                                    value={odometer}
+                                    onChangeText={setOdometer}
+                                    keyboardType="default"
+                                    onSubmitEditing={() =>
+                                        // @ts-ignore
+                                        serviceTypeRef.current?.focus()
+                                    }
+                                    style={styles.input}
+                                />
+                            </View>
+                        </View>
+
+                        {/* Fuel Inputs */}
+                        <View style={styles.fuelInputsContainer}>
+                            <FontAwesome5
+                                name="money-bill-wave"
+                                size={22}
+                                color="gray"
+                                style={styles.icon}
+                            />
+                            <TextInput
+                                ref={odometerRef}
+                                placeholder="Price/L"
+                                value={odometer}
+                                onChangeText={setOdometer}
+                                keyboardType="default"
+                                onSubmitEditing={() =>
+                                    // @ts-ignore
+                                    serviceTypeRef.current?.focus()
+                                }
+                                style={styles.fuelInputs}
+                            />
+                            <TextInput
+                                ref={odometerRef}
+                                placeholder="Total cost"
+                                value={odometer}
+                                onChangeText={setOdometer}
+                                keyboardType="default"
+                                onSubmitEditing={() =>
+                                    // @ts-ignore
+                                    serviceTypeRef.current?.focus()
+                                }
+                                style={styles.fuelInputs}
+                            />
+                            <TextInput
+                                ref={odometerRef}
+                                placeholder="Litres"
+                                value={odometer}
+                                onChangeText={setOdometer}
+                                keyboardType="default"
+                                onSubmitEditing={() =>
+                                    // @ts-ignore
+                                    serviceTypeRef.current?.focus()
+                                }
+                                style={styles.fuelInputs}
+                            />
+                        </View>
+
+                        {/* Filling switch Input */}
+                        <View style={styles.inputContainer}>
+                            <FontAwesome5
+                                name="fill"
+                                size={24}
+                                color="gray"
+                                style={styles.icon}
+                            />
+
+                            <View
+                                style={[
+                                    styles.innerInputContainer,
+                                    { borderBottomColor: "white" },
+                                ]}
+                            >
+                                <Text style={styles.textSwitch}>
+                                    Are you filling the tank?
+                                </Text>
+
+                                <Switch
+                                    trackColor={{
+                                        false: "#767577",
+                                        true: "#81b0ff",
+                                    }}
+                                    thumbColor={
+                                        isEnabled ? "#f4f3f4" : "#f4f3f4"
+                                    }
+                                    ios_backgroundColor="#3e3e3e"
+                                    onValueChange={toggleSwitch}
+                                    value={isEnabled}
+                                />
+                            </View>
+                        </View>
+
+                        {/* Gas station Input */}
+                        <View style={styles.inputContainer}>
+                            <FontAwesome5
+                                name="gas-pump"
+                                size={24}
+                                color="gray"
+                                style={styles.icon}
+                            />
+
+                            <View style={styles.innerInputContainer}>
+                                <TextInput
+                                    ref={odometerRef}
+                                    placeholder="Gas Station"
+                                    value={odometer}
+                                    onChangeText={setOdometer}
+                                    keyboardType="default"
+                                    onSubmitEditing={() =>
+                                        // @ts-ignore
+                                        serviceTypeRef.current?.focus()
+                                    }
+                                    style={styles.input}
+                                />
+                            </View>
+                        </View>
+
+                        {/* Payment method Input */}
+                        <View style={styles.inputContainer}>
+                            <MaterialIcons
+                                name="payments"
+                                size={24}
+                                color="gray"
+                                style={styles.icon}
+                            />
+                            <View style={styles.innerInputContainer}>
+                                <TextInput
+                                    ref={odometerRef}
+                                    placeholder="Payment method"
+                                    value={odometer}
+                                    onChangeText={setOdometer}
+                                    keyboardType="default"
+                                    onSubmitEditing={() =>
+                                        // @ts-ignore
+                                        serviceTypeRef.current?.focus()
+                                    }
+                                    style={styles.input}
+                                />
+                            </View>
+                        </View>
+
+                        {/* Attatch File input */}
+                        {/* <View style={styles.inputContainer}>
+                            <MaterialIcons
+                                name="attach-file"
+                                size={24}
+                                color="gray"
+                                style={styles.icon}
+                            />
+                            <View
+                                style={[
+                                    styles.innerInputContainer,
+                                    { borderBottomWidth: 0 },
+                                ]}
+                            >
+                                <Pressable style={styles.attachFile}>
+                                    <Text style={styles.attachText}>
+                                        Attach file
+                                    </Text>
+                                </Pressable>
+                            </View>
+                        </View> */}
+
+                        {/* Payment method Input */}
+                        <View style={styles.inputContainer}>
+                            <MaterialIcons
+                                name="notes"
+                                size={24}
+                                color="gray"
+                                style={styles.icon}
+                            />
+                            <View style={styles.innerInputContainer}>
+                                <TextInput
+                                    ref={notesRef}
+                                    placeholder="Notes"
+                                    value={odometer}
+                                    onChangeText={setOdometer}
+                                    returnKeyType="done"
+                                    style={[styles.input, styles.notesInput]}
+                                    multiline
+                                />
+                            </View>
+                        </View>
+
+                        {/* Save Button */}
+                        <Pressable
+                            style={({ pressed }) =>
+                                pressed
+                                    ? styles.pressableButton
+                                    : styles.saveButton
+                            }
+                            // onPress={submitSaveHandler}
+                        >
+                            <Text style={styles.saveButtonText}>SAVE</Text>
+                        </Pressable>
                     </View>
                 </SafeAreaView>
             </ScrollView>
@@ -115,13 +374,14 @@ export const FuelExpensesScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#F8F8F8",
+        marginBottom: 200,
     },
     dateTimeContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
+        paddingHorizontal: 6,
     },
     dateTimeInputContainer: {
         flexDirection: "row",
@@ -136,31 +396,72 @@ const styles = StyleSheet.create({
         borderBottomColor: "#DDD",
         marginBottom: 12,
     },
+    iconContainer: {
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    innerInputContainer: {
+        flexDirection: "row",
+        flexGrow: 1,
+        borderBottomWidth: 1,
+        borderBottomColor: "#DDD",
+        justifyContent: "space-between",
+        alignItems: "center",
+        // paddingLeft: 12,
+        marginLeft: 16,
+    },
     inputContainer: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "white",
         padding: 10,
         marginVertical: 5,
         borderRadius: 8,
+        marginBottom: 12,
+    },
+
+    fuelInputsContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: 10,
+        marginVertical: 5,
+        borderRadius: 8,
+        marginBottom: 12,
+        gap: 10, // Ensures equal spacing between inputs
+    },
+    fuelInputs: {
+        flex: 1,  // Equal width distribution
+        height: 48,  // Set explicit height
         borderBottomWidth: 1,
         borderBottomColor: "#DDD",
-        marginBottom: 12,
+        fontSize: 16,
+        paddingHorizontal: 10,
+        textAlign: "center", // Aligns text properly inside inputs
     },
     icon: {
         marginRight: 10,
     },
     input: {
-        flex: 1,
         fontSize: 16,
         color: "black",
-        height: 28,
+        width: 300,
+    },
+    hintContainer: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "flex-end",
+        flexDirection: "row",
     },
     hint: {
         fontSize: 12,
         color: "gray",
         marginLeft: 10,
         marginBottom: 5,
+        marginRight: 12,
+    },
+    textSwitch: {
+        fontSize: 14,
+        color: "#454343",
     },
     attachFile: {
         marginVertical: 10,
@@ -172,11 +473,9 @@ const styles = StyleSheet.create({
     },
     notesInput: {
         height: 80,
+        width: 300,
         textAlignVertical: "top",
-        backgroundColor: "white",
-        width: "100%",
         borderRadius: 8,
-        padding: 8,
     },
     saveButton: {
         marginTop: 24,
@@ -184,7 +483,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         width: "100%",
-        height: 42,
+        // height: 48,
         backgroundColor: "#4942CD",
         borderRadius: 12,
     },
@@ -193,74 +492,8 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "bold",
     },
-    dateTimeInputField: {
-        flex: 1,
-        fontSize: 16,
-        color: "gray",
-    },
     innerKeyboardContainer: {
         padding: 16,
-    },
-    // Modal styles
-    modalOverlay: {
-        flex: 1,
-        backgroundColor: "rgba(0,0,0,0.5)",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    modalContainer: {
-        width: "85%",
-        height: "50%",
-        backgroundColor: "white",
-        padding: 20,
-        borderRadius: 15,
-        alignItems: "center",
-        elevation: 10,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 5,
-    },
-
-    modalTitle: {
-        fontSize: 18,
-        fontWeight: "bold",
-        color: "#333",
-        marginBottom: 10,
-    },
-
-    modalButtonsContainer: {
-        width: "100%",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-around",
-    },
-
-    confirmButton: {
-        marginTop: 15,
-        paddingVertical: 12,
-        paddingHorizontal: 30,
-        backgroundColor: "#00AFCF",
-        borderRadius: 8,
-    },
-
-    confirmButtonText: {
-        color: "white",
-        fontSize: 16,
-        fontWeight: "bold",
-    },
-    closeButton: {
-        marginTop: 15,
-        paddingVertical: 12,
-        paddingHorizontal: 30,
-        backgroundColor: "#00AFCF",
-        borderRadius: 8,
-    },
-
-    closeButtonText: {
-        color: "white",
-        fontSize: 16,
-        fontWeight: "bold",
     },
     dateTimeText: {
         width: "100%",
@@ -268,11 +501,10 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: "black",
     },
-
     PressedDateTimeInputContainer: {
         flexDirection: "row",
         width: "48%",
-        height: 64,
+        height: 48,
         backgroundColor: "#e0e0e0",
         alignItems: "center",
         padding: 10,
@@ -281,5 +513,14 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: "#DDD",
         marginBottom: 12,
+    },
+    pressableButton: {
+        marginTop: 24,
+        paddingVertical: 12,
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
+        borderRadius: 12,
+        backgroundColor: "#625be7",
     },
 });
