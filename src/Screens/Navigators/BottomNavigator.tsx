@@ -8,6 +8,7 @@ import AuthNavigator from "./AuthNavigator";
 import AddVehicleScreen from "../AddVehicleScreen";
 import HomeScreen from "../HomeScreen";
 import ReminderScreen from "../ReminderScreen";
+import HeaderServiceNavigator from "./HeaderServiceNavigator";
 
 const Tab = createBottomTabNavigator();
 
@@ -82,11 +83,25 @@ export default function BottomNavigator() {
                     }}
                 />
 
-                <Tab.Screen
+                {/* <Tab.Screen
                     name="ReminderScreen"
                     component={ReminderScreen}
                     options={{
                         title: "Reminders",
+                        tabBarIcon: ({ color, size }) => (
+                            <Ionicons
+                                name="car-outline"
+                                size={size}
+                                color={color}
+                            />
+                        ),
+                    }}
+                /> */}
+                <Tab.Screen
+                    name="HeaderServiceNavigatorScreen"
+                    component={HeaderServiceNavigator}
+                    options={{
+                        title: "HeaderServiceNavigator",
                         tabBarIcon: ({ color, size }) => (
                             <Ionicons
                                 name="car-outline"
@@ -144,21 +159,10 @@ export default function BottomNavigator() {
                                         screen: "InsuranceExpenseScreen",
                                     },
                                     {
-                                        title: "Oil Expense",
-                                        screen: "OilExpenseScreen",
-                                    },
-                                    {
                                         title: "Service Expense",
                                         screen: "ServiceExpenseScreen",
                                     },
-                                    {
-                                        title: "Service Reminder",
-                                        screen: "ServiceReminderScreen",
-                                    },
-                                    {
-                                        title: "Car Expense",
-                                        screen: "CarExpenseScreen",
-                                    },
+
                                     {
                                         title: "Reports",
                                         screen: "ReportsScreen",
@@ -167,19 +171,23 @@ export default function BottomNavigator() {
                                         title: "Reminder",
                                         screen: "ReminderScreen",
                                     },
-                                ].sort((a, b) => a.title.localeCompare(b.title)).map((item, index) => (
-                                    <Pressable
-                                        key={index}
-                                        style={styles.option}
-                                        onPress={() =>
-                                            handleSelection(item.screen)
-                                        }
-                                    >
-                                        <Text style={styles.optionText}>
-                                            {item.title}
-                                        </Text>
-                                    </Pressable>
-                                ))}
+                                ]
+                                    .sort((a, b) =>
+                                        a.title.localeCompare(b.title)
+                                    )
+                                    .map((item, index) => (
+                                        <Pressable
+                                            key={index}
+                                            style={styles.option}
+                                            onPress={() =>
+                                                handleSelection(item.screen)
+                                            }
+                                        >
+                                            <Text style={styles.optionText}>
+                                                {item.title}
+                                            </Text>
+                                        </Pressable>
+                                    ))}
                                 <Pressable
                                     style={styles.cancelButton}
                                     onPress={() => setModalVisible(false)}
