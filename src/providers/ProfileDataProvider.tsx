@@ -55,10 +55,10 @@ const ProfileDataProvider = ({ children }: PropsWithChildren) => {
         data: vehicleList,
         isLoading: isVehiclesLoading,
         error: errorVehicles,
-    } = useVehicleList(userId ? userId : "");
+    } = useVehicleList(userId);
 
     useEffect(() => {
-        if(userProfile && profile && vehicleList){
+        if(userProfile && vehicleList){
             setVehicles(vehicleList);
         }
 
