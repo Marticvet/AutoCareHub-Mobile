@@ -1,44 +1,49 @@
-import React, { useContext, useRef, useState } from "react";
+import {
+    FontAwesome5,
+    Ionicons,
+    MaterialCommunityIcons,
+    MaterialIcons,
+} from "@expo/vector-icons";
+import { useContext, useRef, useState } from "react";
 import {
     View,
     Text,
-    TextInput,
-    Pressable,
     StyleSheet,
-    ScrollView,
-    SafeAreaView,
     KeyboardAvoidingView,
     Platform,
+    ScrollView,
+    SafeAreaView,
+    Pressable,
+    TextInput,
+    Switch,
 } from "react-native";
-import {
-    Entypo,
-    FontAwesome5,
-    Ionicons,
-    MaterialIcons,
-} from "@expo/vector-icons";
-import { ProfileContext } from "../providers/ProfileDataProvider";
 import { DateType } from "react-native-ui-datepicker";
 import { DateTimePickerModal } from "./DateTimePickerModal";
+import { ProfileContext } from "../providers/ProfileDataProvider";
 
-const ServiceScreen = () => {
-    const [odometer, setOdometer] = useState("");
-    const [serviceType, setServiceType] = useState("");
-    const [place, setPlace] = useState("");
-    const [driver, setDriver] = useState("");
-    const [paymentMethod, setPaymentMethod] = useState("");
-    const [notes, setNotes] = useState("");
-
-    const [selectedDateTime, setSelectedDateTime] = useState<DateType>(); // Stores both Date & Time
-    const [modalVisible, setModalVisible] = useState(false);
-
+export const InsuranceExpenseScreen = () => {
     // Retrieve the values provided by ProfileDataProvider
     const { selectedVehicle } = useContext(ProfileContext);
 
+    const [selectedDateTime, setSelectedDateTime] = useState<DateType>();
+    const [modalVisible, setModalVisible] = useState(false);
+
+    const [odometer, setOdometer] = useState("");
+    const [fuelType, setFuelType] = useState("");
+    const [pricePerLiter, setPricePerLiter] = useState("");
+    const [totalCost, setTotalCost] = useState("");
+    const [litres, setLitres] = useState("");
+    const [place, setPlace] = useState("");
+    const [paymentMethod, setPaymentMethod] = useState("");
+    const [notes, setNotes] = useState("");
+
     // References for each input field to manage focus
     const odometerRef = useRef(null);
-    const serviceTypeRef = useRef(null);
+    const fuelTypeRef = useRef(null);
+    const pricePerLiterRef = useRef(null);
+    const totalCostRef = useRef(null);
+    const litresRef = useRef(null);
     const placeRef = useRef(null);
-    const driverRef = useRef(null);
     const paymentMethodRef = useRef(null);
     const notesRef = useRef(null);
 
@@ -62,17 +67,8 @@ const ServiceScreen = () => {
     const [selectedDate, setSelectedDate] = useState<DateType>(formattedDate);
     const [selectedTime, setSelectedTime] = useState<DateType>(formattedTime);
 
-    function submitSaveHandler() {
-        const serviceExpensesInputs = {
-            date: selectedDate,
-            odometer,
-            serviceType,
-            place,
-            driver,
-            paymentMethod,
-            notes,
-        };
-    }
+    const [isEnabled, setIsEnabled] = useState(false);
+    const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
     return (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -144,7 +140,6 @@ const ServiceScreen = () => {
                                 value={odometer}
                                 onChangeText={setOdometer}
                                 keyboardType="numeric"
-                                returnKeyType="next"
                                 onSubmitEditing={() =>
                                     // @ts-ignore
                                     serviceTypeRef.current?.focus()
@@ -162,34 +157,112 @@ const ServiceScreen = () => {
                         </Text>
                     </View>
 
-                    {/* Type of Service Input */}
+                    {/* Fuel Type Input */}
                     <View style={styles.inputContainer}>
-                        <Ionicons
-                            name="construct"
+                        <FontAwesome5
+                            name="gas-pump"
                             size={24}
                             color="gray"
                             style={styles.icon}
                         />
                         <View style={styles.innerInputContainer}>
                             <TextInput
-                                ref={serviceTypeRef}
-                                placeholder="Type of service"
-                                value={serviceType}
-                                onChangeText={setServiceType}
+                                ref={fuelTypeRef}
+                                placeholder="Fuel type"
+                                value={fuelType}
+                                onChangeText={setFuelType}
                                 keyboardType="default"
                                 onSubmitEditing={() =>
                                     // @ts-ignore
-                                    serviceTypeRef.current?.focus()
+                                    fuelTypeRef.current?.focus()
                                 }
                                 style={styles.input}
                             />
                         </View>
                     </View>
 
+                    {/* Fuel Inputs */}
+                    <View style={styles.fuelInputsContainer}>
+                        <FontAwesome5
+                            name="money-bill-wave"
+                            size={22}
+                            color="gray"
+                            style={styles.icon}
+                        />
+                        <TextInput
+                            ref={pricePerLiterRef}
+                            placeholder="Price/L"
+                            value={pricePerLiter}
+                            onChangeText={setPricePerLiter}
+                            keyboardType="numeric"
+                            onSubmitEditing={() =>
+                                // @ts-ignore
+                                pricePerLiterRef.current?.focus()
+                            }
+                            style={styles.fuelInputs}
+                        />
+                        <TextInput
+                            ref={totalCostRef}
+                            placeholder="Total cost"
+                            value={totalCost}
+                            onChangeText={setTotalCost}
+                            keyboardType="numeric"
+                            onSubmitEditing={() =>
+                                // @ts-ignore
+                                totalCostRef.current?.focus()
+                            }
+                            style={styles.fuelInputs}
+                        />
+                        <TextInput
+                            ref={litresRef}
+                            placeholder="Litres"
+                            value={litres}
+                            onChangeText={setLitres}
+                            keyboardType="numeric"
+                            onSubmitEditing={() =>
+                                // @ts-ignore
+                                litresRef.current?.focus()
+                            }
+                            style={styles.fuelInputs}
+                        />
+                    </View>
+
+                    {/* Filling switch Input */}
+                    <View style={styles.inputContainer}>
+                        <FontAwesome5
+                            name="fill"
+                            size={24}
+                            color="gray"
+                            style={styles.icon}
+                        />
+
+                        <View
+                            style={[
+                                styles.innerInputContainer,
+                                { borderBottomColor: "white" },
+                            ]}
+                        >
+                            <Text style={styles.textSwitch}>
+                                Are you filling the tank?
+                            </Text>
+
+                            <Switch
+                                trackColor={{
+                                    false: "#767577",
+                                    true: "#81b0ff",
+                                }}
+                                thumbColor={isEnabled ? "#f4f3f4" : "#f4f3f4"}
+                                ios_backgroundColor="#3e3e3e"
+                                onValueChange={toggleSwitch}
+                                value={isEnabled}
+                            />
+                        </View>
+                    </View>
+
                     {/* Gas station Input */}
                     <View style={styles.inputContainer}>
-                        <Entypo
-                            name="location-pin"
+                        <FontAwesome5
+                            name="gas-pump"
                             size={24}
                             color="gray"
                             style={styles.icon}
@@ -198,7 +271,7 @@ const ServiceScreen = () => {
                         <View style={styles.innerInputContainer}>
                             <TextInput
                                 ref={placeRef}
-                                placeholder="Place"
+                                placeholder="Gas Station"
                                 value={place}
                                 onChangeText={setPlace}
                                 keyboardType="default"
@@ -237,25 +310,25 @@ const ServiceScreen = () => {
 
                     {/* Attatch File input */}
                     {/* <View style={styles.inputContainer}>
-                        <MaterialIcons
-                            name="attach-file"
-                            size={24}
-                            color="gray"
-                            style={styles.icon}
-                        />
-                        <View
-                            style={[
-                                styles.innerInputContainer,
-                                { borderBottomWidth: 0 },
-                            ]}
-                        >
-                            <Pressable style={styles.attachFile}>
-                                <Text style={styles.attachText}>
-                                    Attach file
-                                </Text>
-                            </Pressable>
-                        </View>
-                    </View> */}
+                            <MaterialIcons
+                                name="attach-file"
+                                size={24}
+                                color="gray"
+                                style={styles.icon}
+                            />
+                            <View
+                                style={[
+                                    styles.innerInputContainer,
+                                    { borderBottomWidth: 0 },
+                                ]}
+                            >
+                                <Pressable style={styles.attachFile}>
+                                    <Text style={styles.attachText}>
+                                        Attach file
+                                    </Text>
+                                </Pressable>
+                            </View>
+                        </View> */}
 
                     {/* Note Input */}
                     <View style={styles.inputContainer}>
@@ -351,6 +424,15 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         gap: 10, // Ensures equal spacing between inputs
     },
+    fuelInputs: {
+        flex: 1, // Equal width distribution
+        height: 48, // Set explicit height
+        borderBottomWidth: 1,
+        borderBottomColor: "#DDD",
+        fontSize: 16,
+        paddingHorizontal: 10,
+        textAlign: "center", // Aligns text properly inside inputs
+    },
     icon: {
         marginRight: 10,
     },
@@ -438,5 +520,3 @@ const styles = StyleSheet.create({
         backgroundColor: "#625be7",
     },
 });
-
-export default ServiceScreen;

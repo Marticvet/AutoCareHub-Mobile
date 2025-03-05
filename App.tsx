@@ -11,11 +11,12 @@ import { ProfileDataProvider } from "./src/providers/ProfileDataProvider";
 // Navigators & Global Screens
 import SidebarNavigator from "./src/Screens/Navigators/SidebarNavigator";
 import BottomNavigator from "./src/Screens/Navigators/BottomNavigator";
-import ServiceExpensesScreen from "./src/Screens/ServiceExpensesScreen";
+import ServiceExpensesScreen from "./src/Screens/ServiceExpenseScreen";
 import ReminderScreen from "./src/Screens/ReminderScreen";
 import ReportsScreen from "./src/Screens/ReportsScreen";
-import ServiceScreen from "./src/Screens/ServiceExpensesScreen";
-import { FuelExpensesScreen } from "./src/Screens/FuelExpensesScreen";
+import { InsuranceExpenseScreen } from "./src/Screens/InsuranceExpenseScreen";
+import ServiceExpenseScreen from "./src/Screens/ServiceExpenseScreen";
+import { FuelExpenseScreen } from "./src/Screens/FuelExpenseScreen";
 
 const AuthStack = createStackNavigator();
 const RootStack = createStackNavigator();
@@ -84,11 +85,6 @@ function RootNavigator() {
                 }}
             />
             <RootStack.Screen
-                name="ServiceExpensesScreen"
-                component={ServiceExpensesScreen}
-                options={{ title: "Service Expense" }}
-            />
-            <RootStack.Screen
                 name="ReminderScreen"
                 component={ReminderScreen}
                 options={{ title: "Reminder" }}
@@ -99,14 +95,19 @@ function RootNavigator() {
                 options={{ title: "Reports" }}
             />
             <RootStack.Screen
-                name="ServiceScreen"
-                component={ServiceScreen}
-                options={{ title: "Service" }}
+                name="ServiceExpenseScreen"
+                component={ServiceExpenseScreen}
+                options={{ title: "Service Expense" }}
             />
             <RootStack.Screen
-                name="FuelExpensesScreen"
-                component={FuelExpensesScreen}
+                name="FuelExpenseScreen"
+                component={FuelExpenseScreen}
                 options={{ title: "Fuel Expense" }}
+            /> 
+             <RootStack.Screen
+                name="InsuranceExpenseScreen"
+                component={InsuranceExpenseScreen}
+                options={{ title: "Insurance Expense" }}
             />
             {/* Add more global screens here if needed */}
         </RootStack.Navigator>

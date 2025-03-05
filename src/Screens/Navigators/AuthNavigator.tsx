@@ -4,10 +4,10 @@ import QueryProvider from "../../providers/QueryProvider";
 import AddVehicleScreen from "../AddVehicleScreen";
 import VehicleDetailScreen from "../VehicleDetailScreen";
 import ReportsScreen from "../ReportsScreen";
-import ServiceScreen from "../ServiceExpensesScreen";
+import ServiceScreen from "../ServiceExpenseScreen";
 import ReminderScreen from "../ReminderScreen";
 import HomeScreen from "../HomeScreen"; // if needed
-import ServiceExpensesScreen from "../ServiceExpensesScreen";
+import ServiceExpensesScreen from "../ServiceExpenseScreen";
 
 const AppStack = createStackNavigator();
 

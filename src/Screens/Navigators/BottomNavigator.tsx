@@ -141,15 +141,15 @@ export default function BottomNavigator() {
                                     },
                                     {
                                         title: "Insurance Expense",
-                                        screen: "InsuranceExpensesScreen",
+                                        screen: "InsuranceExpenseScreen",
                                     },
                                     {
                                         title: "Oil Expense",
-                                        screen: "OilExpensesScreen",
+                                        screen: "OilExpenseScreen",
                                     },
                                     {
                                         title: "Service Expense",
-                                        screen: "ServiceExpensesScreen",
+                                        screen: "ServiceExpenseScreen",
                                     },
                                     {
                                         title: "Service Reminders",
@@ -157,7 +157,7 @@ export default function BottomNavigator() {
                                     },
                                     {
                                         title: "Car Expense",
-                                        screen: "CarExpensesScreen",
+                                        screen: "CarExpenseScreen",
                                     },
                                     {
                                         title: "Reports",
