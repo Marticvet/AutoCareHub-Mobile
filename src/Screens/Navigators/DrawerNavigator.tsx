@@ -3,7 +3,7 @@ import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { Pressable } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import SettingsScreen from "../Screens/SettingsScreen";
+import SettingsScreen from "../SettingsScreen";
 
 const Drawer = createDrawerNavigator();
 
