@@ -83,25 +83,11 @@ export default function BottomNavigator() {
                     }}
                 />
 
-                {/* <Tab.Screen
+                <Tab.Screen
                     name="ReminderScreen"
                     component={ReminderScreen}
                     options={{
                         title: "Reminders",
-                        tabBarIcon: ({ color, size }) => (
-                            <Ionicons
-                                name="car-outline"
-                                size={size}
-                                color={color}
-                            />
-                        ),
-                    }}
-                /> */}
-                <Tab.Screen
-                    name="HeaderServiceNavigatorScreen"
-                    component={HeaderServiceNavigator}
-                    options={{
-                        title: "HeaderServiceNavigator",
                         tabBarIcon: ({ color, size }) => (
                             <Ionicons
                                 name="car-outline"
@@ -170,6 +156,10 @@ export default function BottomNavigator() {
                                     {
                                         title: "Reminder",
                                         screen: "ReminderScreen",
+                                    },
+                                    {
+                                        title: "Header",
+                                        screen: "HeaderServiceNavigator",
                                     },
                                 ]
                                     .sort((a, b) =>

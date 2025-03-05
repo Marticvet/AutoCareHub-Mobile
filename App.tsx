@@ -17,6 +17,7 @@ import ReportsScreen from "./src/Screens/ReportsScreen";
 import { InsuranceExpenseScreen } from "./src/Screens/InsuranceExpenseScreen";
 import ServiceExpenseScreen from "./src/Screens/ServiceExpenseScreen";
 import { FuelExpenseScreen } from "./src/Screens/FuelExpenseScreen";
+import HeaderServiceNavigator from "./src/Screens/Navigators/HeaderServiceNavigator";
 
 const AuthStack = createStackNavigator();
 const RootStack = createStackNavigator();
@@ -108,6 +109,12 @@ function RootNavigator() {
                 name="InsuranceExpenseScreen"
                 component={InsuranceExpenseScreen}
                 options={{ title: "Insurance Expense" }}
+            />        
+            
+             <RootStack.Screen
+                name="HeaderServiceNavigator"
+                component={HeaderServiceNavigator}
+                options={{ title: "Headers" }}
             />
             {/* Add more global screens here if needed */}
         </RootStack.Navigator>
