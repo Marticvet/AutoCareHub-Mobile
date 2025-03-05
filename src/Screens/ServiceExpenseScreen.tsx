@@ -258,26 +258,26 @@ const ServiceExpenseScreen = () => {
                         </View>
                     </View> */}
 
-                    {/* Note Input */}
-                    <View style={styles.inputContainer}>
-                        <MaterialIcons
-                            name="notes"
-                            size={24}
-                            color="gray"
-                            style={styles.icon}
-                        />
-                        <View style={styles.innerInputContainer}>
-                            <TextInput
-                                ref={notesRef}
-                                placeholder="Notes"
-                                value={notes}
-                                onChangeText={setNotes}
-                                returnKeyType="done"
-                                style={[styles.input, styles.notesInput]}
-                                multiline
-                            />
-                        </View>
-                    </View>
+                 {/* Note Input */}
+                         <View style={styles.inputContainerNoteContainer}>
+                             <MaterialIcons
+                                 name="notes"
+                                 size={24}
+                                 color="gray"
+                                 style={styles.icon}
+                             />
+                             <View style={styles.innerInputContainer}>
+                                 <TextInput
+                                     ref={notesRef}
+                                     placeholder="Notes"
+                                     value={notes}
+                                     onChangeText={setNotes}
+                                     returnKeyType="done"
+                                     style={[styles.input, styles.notesInput]}
+                                     multiline
+                                 />
+                             </View>
+                         </View>
 
                     {/* Save Button */}
                     <Pressable
@@ -332,6 +332,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
         // paddingLeft: 12,
         marginLeft: 16,
+    },
+    inputContainerNoteContainer: {
+        flexDirection: "row",
+        padding: 10,
+        marginVertical: 5,
+        borderRadius: 8,
+        marginBottom: 12,
     },
     inputContainer: {
         flexDirection: "row",

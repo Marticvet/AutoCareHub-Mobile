@@ -29,22 +29,12 @@ export const InsuranceExpenseScreen = () => {
     const [modalVisible, setModalVisible] = useState(false);
 
     const [odometer, setOdometer] = useState("");
-    const [fuelType, setFuelType] = useState("");
-    const [pricePerLiter, setPricePerLiter] = useState("");
-    const [totalCost, setTotalCost] = useState("");
-    const [litres, setLitres] = useState("");
-    const [place, setPlace] = useState("");
-    const [paymentMethod, setPaymentMethod] = useState("");
+    const [cost, setCost] = useState("");
     const [notes, setNotes] = useState("");
 
     // References for each input field to manage focus
     const odometerRef = useRef(null);
-    const fuelTypeRef = useRef(null);
-    const pricePerLiterRef = useRef(null);
-    const totalCostRef = useRef(null);
-    const litresRef = useRef(null);
-    const placeRef = useRef(null);
-    const paymentMethodRef = useRef(null);
+    const costRef = useRef(null);
     const notesRef = useRef(null);
 
     const date = new Date(); // Get current date & time
@@ -57,62 +47,70 @@ export const InsuranceExpenseScreen = () => {
         day: "2-digit",
     });
 
-    // Format Time (User's Locale)
-    const formattedTime = date.toLocaleTimeString(userLocale, {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-    });
-
+    const [isValidUntilButtonPressed, setIsValidUntilButtonPressed] =
+        useState(false);
     const [selectedDate, setSelectedDate] = useState<DateType>(formattedDate);
-    const [selectedTime, setSelectedTime] = useState<DateType>(formattedTime);
+    const [selectedDueDate, setSelectedDueDate] =
+        useState<DateType>(formattedDate);
 
-    const [isEnabled, setIsEnabled] = useState(false);
-    const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+    console.log(selectedDate);
+    console.log(selectedDueDate);
 
     return (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
             <View style={styles.container}>
                 <View style={styles.innerKeyboardContainer}>
                     {/* Date & Time Inputs */}
-                    <View style={styles.dateTimeContainer}>
-                        <Pressable
-                            onPress={() => setModalVisible(true)}
-                            style={({ pressed }) =>
-                                pressed
-                                    ? styles.PressedDateTimeInputContainer
-                                    : styles.dateTimeInputContainer
-                            }
-                        >
-                            <Ionicons
-                                name="calendar"
-                                size={20}
-                                color="gray"
-                                style={styles.icon}
-                            />
-                            <Text style={styles.dateTimeText}>
-                                {selectedDate?.toString() || "dd/mm/yyyy"}
-                            </Text>
-                        </Pressable>
+                    <View style={styles.dateTimeWrapper}>
+                        {/* First Date-Time Picker */}
+                        <View style={styles.dateTimeContainer}>
+                            <Text style={styles.label}>Valid from</Text>
+                            <Pressable
+                                onPress={() => setModalVisible(true)}
+                                style={({ pressed }) =>
+                                    pressed
+                                        ? styles.PressedDateTimeInputContainer
+                                        : styles.dateTimeInputContainer
+                                }
+                            >
+                                <Ionicons
+                                    name="calendar"
+                                    size={20}
+                                    color="gray"
+                                    style={styles.icon}
+                                />
+                                <Text style={styles.dateTimeText}>
+                                    {selectedDate?.toString() || "dd/mm/yyyy"}
+                                </Text>
+                            </Pressable>
+                        </View>
 
-                        <Pressable
-                            onPress={() => setModalVisible(true)}
-                            style={({ pressed }) =>
-                                pressed
-                                    ? styles.PressedDateTimeInputContainer
-                                    : styles.dateTimeInputContainer
-                            }
-                        >
-                            <Ionicons
-                                name="calendar"
-                                size={20}
-                                color="gray"
-                                style={styles.icon}
-                            />
-                            <Text style={styles.dateTimeText}>
-                                {selectedTime?.toString() || "00:00"}
-                            </Text>
-                        </Pressable>
+                        {/* Second Date-Time Picker */}
+                        <View style={styles.dateTimeContainer}>
+                            <Text style={styles.label}>Valid until</Text>
+                            <Pressable
+                                onPress={() => {
+                                    setModalVisible(true);
+                                    setIsValidUntilButtonPressed(true);
+                                }}
+                                style={({ pressed }) =>
+                                    pressed
+                                        ? styles.PressedDateTimeInputContainer
+                                        : styles.dateTimeInputContainer
+                                }
+                            >
+                                <Ionicons
+                                    name="time"
+                                    size={20}
+                                    color="gray"
+                                    style={styles.icon}
+                                />
+                                <Text style={styles.dateTimeText}>
+                                    {selectedDueDate?.toString() ||
+                                        "dd/mm/yyyy"}
+                                </Text>
+                            </Pressable>
+                        </View>
                     </View>
 
                     <DateTimePickerModal
@@ -121,10 +119,15 @@ export const InsuranceExpenseScreen = () => {
                         selectedDateTime={selectedDateTime}
                         setSelectedDateTime={setSelectedDateTime}
                         setSelectedDate={setSelectedDate}
-                        setSelectedTime={setSelectedTime}
+                        insuranceExpenseScreen={true}
+                        setSelectedDueDate={setSelectedDueDate}
+                        setIsValidUntilButtonPressed={
+                            setIsValidUntilButtonPressed
+                        }
+                        isValidUntilButtonPressed={isValidUntilButtonPressed}
                     />
 
-                    {/* Odometer Input */}
+                    {/* Current odometer Input */}
                     <View style={styles.inputContainer}>
                         <Ionicons
                             name="speedometer"
@@ -149,159 +152,25 @@ export const InsuranceExpenseScreen = () => {
                         </View>
                     </View>
 
-                    {/* Last Odometer */}
-                    <View style={styles.hintContainer}>
-                        <Text style={styles.hint}>
-                            Last odometer:{" "}
-                            {selectedVehicle?.current_mileage || "N/A"} km
-                        </Text>
-                    </View>
-
-                    {/* Fuel Type Input */}
+                    {/* Current odometer Input */}
                     <View style={styles.inputContainer}>
-                        <FontAwesome5
-                            name="gas-pump"
-                            size={24}
-                            color="gray"
-                            style={styles.icon}
-                        />
-                        <View style={styles.innerInputContainer}>
-                            <TextInput
-                                ref={fuelTypeRef}
-                                placeholder="Fuel type"
-                                value={fuelType}
-                                onChangeText={setFuelType}
-                                keyboardType="default"
-                                onSubmitEditing={() =>
-                                    // @ts-ignore
-                                    fuelTypeRef.current?.focus()
-                                }
-                                style={styles.input}
-                            />
-                        </View>
-                    </View>
-
-                    {/* Fuel Inputs */}
-                    <View style={styles.fuelInputsContainer}>
                         <FontAwesome5
                             name="money-bill-wave"
                             size={22}
                             color="gray"
                             style={styles.icon}
                         />
-                        <TextInput
-                            ref={pricePerLiterRef}
-                            placeholder="Price/L"
-                            value={pricePerLiter}
-                            onChangeText={setPricePerLiter}
-                            keyboardType="numeric"
-                            onSubmitEditing={() =>
-                                // @ts-ignore
-                                pricePerLiterRef.current?.focus()
-                            }
-                            style={styles.fuelInputs}
-                        />
-                        <TextInput
-                            ref={totalCostRef}
-                            placeholder="Total cost"
-                            value={totalCost}
-                            onChangeText={setTotalCost}
-                            keyboardType="numeric"
-                            onSubmitEditing={() =>
-                                // @ts-ignore
-                                totalCostRef.current?.focus()
-                            }
-                            style={styles.fuelInputs}
-                        />
-                        <TextInput
-                            ref={litresRef}
-                            placeholder="Litres"
-                            value={litres}
-                            onChangeText={setLitres}
-                            keyboardType="numeric"
-                            onSubmitEditing={() =>
-                                // @ts-ignore
-                                litresRef.current?.focus()
-                            }
-                            style={styles.fuelInputs}
-                        />
-                    </View>
-
-                    {/* Filling switch Input */}
-                    <View style={styles.inputContainer}>
-                        <FontAwesome5
-                            name="fill"
-                            size={24}
-                            color="gray"
-                            style={styles.icon}
-                        />
-
-                        <View
-                            style={[
-                                styles.innerInputContainer,
-                                { borderBottomColor: "white" },
-                            ]}
-                        >
-                            <Text style={styles.textSwitch}>
-                                Are you filling the tank?
-                            </Text>
-
-                            <Switch
-                                trackColor={{
-                                    false: "#767577",
-                                    true: "#81b0ff",
-                                }}
-                                thumbColor={isEnabled ? "#f4f3f4" : "#f4f3f4"}
-                                ios_backgroundColor="#3e3e3e"
-                                onValueChange={toggleSwitch}
-                                value={isEnabled}
-                            />
-                        </View>
-                    </View>
-
-                    {/* Gas station Input */}
-                    <View style={styles.inputContainer}>
-                        <FontAwesome5
-                            name="gas-pump"
-                            size={24}
-                            color="gray"
-                            style={styles.icon}
-                        />
 
                         <View style={styles.innerInputContainer}>
                             <TextInput
-                                ref={placeRef}
-                                placeholder="Gas Station"
-                                value={place}
-                                onChangeText={setPlace}
-                                keyboardType="default"
+                                ref={odometerRef}
+                                placeholder="Cost"
+                                value={odometer}
+                                onChangeText={setOdometer}
+                                keyboardType="numeric"
                                 onSubmitEditing={() =>
                                     // @ts-ignore
-                                    placeRef.current?.focus()
-                                }
-                                style={styles.input}
-                            />
-                        </View>
-                    </View>
-
-                    {/* Payment method Input */}
-                    <View style={styles.inputContainer}>
-                        <MaterialIcons
-                            name="payments"
-                            size={24}
-                            color="gray"
-                            style={styles.icon}
-                        />
-                        <View style={styles.innerInputContainer}>
-                            <TextInput
-                                ref={paymentMethodRef}
-                                placeholder="Payment method"
-                                value={paymentMethod}
-                                onChangeText={setPaymentMethod}
-                                keyboardType="default"
-                                onSubmitEditing={() =>
-                                    // @ts-ignore
-                                    paymentMethodRef.current?.focus()
+                                    serviceTypeRef.current?.focus()
                                 }
                                 style={styles.input}
                             />
@@ -331,7 +200,7 @@ export const InsuranceExpenseScreen = () => {
                         </View> */}
 
                     {/* Note Input */}
-                    <View style={styles.inputContainer}>
+                    <View style={styles.inputContainerNoteContainer}>
                         <MaterialIcons
                             name="notes"
                             size={24}
@@ -371,25 +240,30 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingBottom: 150,
     },
-    dateTimeContainer: {
+    dateTimeWrapper: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        width: "100%",
-        paddingHorizontal: 6,
+        marginVertical: 10,
+        gap: 16, // Ensures spacing between elements
+    },
+    dateTimeContainer: {
+        flex: 1, // Ensures both take equal space
+    },
+    label: {
+        fontSize: 16,
+        fontWeight: "500",
+        color: "#333",
+        marginBottom: 5, // Spacing between label and button
     },
     dateTimeInputContainer: {
         flexDirection: "row",
-        width: "48%",
-        height: 48,
-        backgroundColor: "white",
         alignItems: "center",
-        padding: 10,
-        marginVertical: 5,
-        borderRadius: 8,
+        paddingVertical: 10,
+        paddingHorizontal: 15,
         borderBottomWidth: 1,
-        borderBottomColor: "#DDD",
-        marginBottom: 12,
+        borderColor: "#DDD",
+        width: "100%",
     },
     iconContainer: {
         alignItems: "center",
@@ -413,25 +287,12 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         marginBottom: 12,
     },
-
-    fuelInputsContainer: {
+    inputContainerNoteContainer: {
         flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
         padding: 10,
         marginVertical: 5,
         borderRadius: 8,
         marginBottom: 12,
-        gap: 10, // Ensures equal spacing between inputs
-    },
-    fuelInputs: {
-        flex: 1, // Equal width distribution
-        height: 48, // Set explicit height
-        borderBottomWidth: 1,
-        borderBottomColor: "#DDD",
-        fontSize: 16,
-        paddingHorizontal: 10,
-        textAlign: "center", // Aligns text properly inside inputs
     },
     icon: {
         marginRight: 10,
@@ -448,13 +309,7 @@ const styles = StyleSheet.create({
         justifyContent: "flex-end",
         flexDirection: "row",
     },
-    hint: {
-        fontSize: 12,
-        color: "gray",
-        marginLeft: 10,
-        marginBottom: 5,
-        marginRight: 12,
-    },
+
     textSwitch: {
         fontSize: 14,
         color: "#454343",
@@ -492,10 +347,9 @@ const styles = StyleSheet.create({
         padding: 16,
     },
     dateTimeText: {
-        width: "100%",
-        flex: 1,
         fontSize: 16,
-        color: "black",
+        color: "#555",
+        marginLeft: 8,
     },
     PressedDateTimeInputContainer: {
         flexDirection: "row",

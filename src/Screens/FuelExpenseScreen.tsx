@@ -331,7 +331,7 @@ export const FuelExpenseScreen = () => {
                         </View> */}
 
                     {/* Note Input */}
-                    <View style={styles.inputContainer}>
+                    <View style={styles.inputContainerNoteContainer}>
                         <MaterialIcons
                             name="notes"
                             size={24}
@@ -350,7 +350,7 @@ export const FuelExpenseScreen = () => {
                             />
                         </View>
                     </View>
-
+                    
                     {/* Save Button */}
                     <Pressable
                         style={({ pressed }) =>
@@ -518,5 +518,12 @@ const styles = StyleSheet.create({
         width: "100%",
         borderRadius: 12,
         backgroundColor: "#625be7",
+    },
+    inputContainerNoteContainer: {
+        flexDirection: "row",
+        padding: 10,
+        marginVertical: 5,
+        borderRadius: 8,
+        marginBottom: 12,
     },
 });

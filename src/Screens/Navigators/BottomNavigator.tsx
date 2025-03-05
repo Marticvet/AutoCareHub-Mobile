@@ -137,7 +137,7 @@ export default function BottomNavigator() {
                                 {[
                                     {
                                         title: "Fuel Expense",
-                                        screen: "FuelExpensesScreen",
+                                        screen: "FuelExpenseScreen",
                                     },
                                     {
                                         title: "Insurance Expense",
@@ -152,8 +152,8 @@ export default function BottomNavigator() {
                                         screen: "ServiceExpenseScreen",
                                     },
                                     {
-                                        title: "Service Reminders",
-                                        screen: "ServiceRemindersScreen",
+                                        title: "Service Reminder",
+                                        screen: "ServiceReminderScreen",
                                     },
                                     {
                                         title: "Car Expense",

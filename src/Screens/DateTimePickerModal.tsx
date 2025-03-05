@@ -13,12 +13,14 @@ export const DateTimePickerModal = (props: any) => {
         setSelectedDateTime,
         setSelectedDate,
         setSelectedTime,
+        insuranceExpenseScreen,
+        setSelectedDueDate,
+        setIsValidUntilButtonPressed,
+        isValidUntilButtonPressed,
     } = props;
     const defaultStyles = getDefaultStyles();
 
     function handleDateChange({ date }: { date?: DateType }) {
-        setSelectedDateTime(date);
-
         // Automatically adapt to user's locale and timezone
         // @ts-ignore
         const formattedDate = date.toLocaleDateString(undefined, {
@@ -35,7 +37,17 @@ export const DateTimePickerModal = (props: any) => {
         });
 
         setSelectedDate(formattedDate);
-        setSelectedTime(formattedTime);
+        if (insuranceExpenseScreen && insuranceExpenseScreen !== true) {
+            setSelectedTime(formattedTime);
+        }
+
+        if (isValidUntilButtonPressed) {
+            setSelectedDueDate(date);
+            setIsValidUntilButtonPressed(false);
+        } else {
+            setSelectedDateTime(date);
+        }
+
         // setModalVisible(false); // Close modal after selection if needed
     }
 
@@ -54,51 +66,53 @@ export const DateTimePickerModal = (props: any) => {
                 style={styles.modalOverlay}
                 onPress={() => setModalVisible(false)} // ✅ Close when tapping outside
             >
-            <View style={styles.modalOverlay}>
-                <View style={styles.modalContainer}>
-                    <DateTimePicker
-                        mode="single"
-                        date={selectedDateTime}
-                        onChange={handleDateChange}
-                        timePicker={true} // ✅ Enables both Date & Time selection
-                        styles={{
-                            ...defaultStyles,
-                            today: {
-                                borderColor: "#00AFCF",
-                                borderWidth: 2,
-                            },
-                            selected: {
-                                backgroundColor: "#00AFCF",
-                            },
-                            selected_label: { color: "white" },
-                            header: {
-                                // color: "white",
-                                width: 300,
-                            },
-                        }}
-                    />
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <DateTimePicker
+                            mode="single"
+                            date={selectedDateTime}
+                            onChange={handleDateChange}
+                            timePicker={!insuranceExpenseScreen ? true : false} // ✅ Enables both Date & Time selection
+                            styles={{
+                                ...defaultStyles,
+                                today: {
+                                    borderColor: "#00AFCF",
+                                    borderWidth: 2,
+                                },
+                                selected: {
+                                    backgroundColor: "#00AFCF",
+                                },
+                                selected_label: { color: "white" },
+                                header: {
+                                    // color: "white",
+                                    width: 300,
+                                },
+                            }}
+                        />
 
-                    <View style={styles.modalButtonsContainer}>
-                        {/* confirm button */}
-                        <Pressable
-                            style={styles.confirmButton}
-                            onPress={() => setModalVisible(false)}
-                        >
-                            <Text style={styles.confirmButtonText}>
-                                Confirm
-                            </Text>
-                        </Pressable>
+                        <View style={styles.modalButtonsContainer}>
+                            {/* confirm button */}
+                            <Pressable
+                                style={styles.confirmButton}
+                                onPress={() => setModalVisible(false)}
+                            >
+                                <Text style={styles.confirmButtonText}>
+                                    Confirm
+                                </Text>
+                            </Pressable>
 
-                        {/* close button */}
-                        <Pressable
-                            style={styles.closeButton}
-                            onPress={() => setModalVisible(false)}
-                        >
-                            <Text style={styles.closeButtonText}>Close</Text>
-                        </Pressable>
+                            {/* close button */}
+                            <Pressable
+                                style={styles.closeButton}
+                                onPress={() => setModalVisible(false)}
+                            >
+                                <Text style={styles.closeButtonText}>
+                                    Close
+                                </Text>
+                            </Pressable>
+                        </View>
                     </View>
                 </View>
-            </View>
             </Pressable>
         </Modal>
     );
