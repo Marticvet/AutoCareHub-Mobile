@@ -43,7 +43,7 @@ const ReminderScreen = () => {
             odometer,
             date,
             notes,
-            repeat: selectRepeaterSwitch === false ? "once" : "multiple"
+            repeat: selectRepeaterSwitch === false ? "once" : "multiple",
         });
     }
 
@@ -255,18 +255,48 @@ const ReminderScreen = () => {
                                 setIsDateChecked(isChecked)
                             }
                         />
-                        <TextInput
-                            style={styles.repetearSelectInput}
-                            placeholder="Date"
-                            placeholderTextColor="#888"
-                            keyboardType="default"
-                            value={date}
-                            onChangeText={setDate}
-                            onSubmitEditing={() =>
-                                // @ts-ignore
-                                dateRef.current?.focus()
-                            }
-                        />
+                        {selectRepeaterSwitch === false ? (
+                            <TextInput
+                                style={styles.repetearSelectInput}
+                                placeholder="Date"
+                                placeholderTextColor="#888"
+                                keyboardType="default"
+                                value={date}
+                                onChangeText={setDate}
+                                onSubmitEditing={() =>
+                                    // @ts-ignore
+                                    dateRef.current?.focus()
+                                }
+                            />
+                        ) : (
+                            <View style={styles.amountPeriodInputContainer}>
+                                <TextInput
+                                    style={styles.amountPeriodInput}
+                                    placeholder="Amount"
+                                    placeholderTextColor="#888"
+                                    keyboardType="default"
+                                    value={date}
+                                    onChangeText={setDate}
+                                    onSubmitEditing={() =>
+                                        // @ts-ignore
+                                        dateRef.current?.focus()
+                                    }
+                                />
+
+                                <TextInput
+                                    style={styles.amountPeriodInput}
+                                    placeholder="Period"
+                                    placeholderTextColor="#888"
+                                    keyboardType="default"
+                                    value={date}
+                                    onChangeText={setDate}
+                                    onSubmitEditing={() =>
+                                        // @ts-ignore
+                                        dateRef.current?.focus()
+                                    }
+                                />
+                            </View>
+                        )}
                     </View>
                 </View>
 
@@ -404,6 +434,22 @@ const styles = StyleSheet.create({
     },
     inputTypeContainerCustom: {
         marginLeft: 34,
+    },
+
+    amountPeriodInputContainer: {
+        flexDirection: "row",
+        flex: 0.8,
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginLeft: 16,
+    },
+    amountPeriodInput: {
+        fontSize: 16,
+        color: "black",
+        height: 48, // Set explicit height
+        width: 80,
+        borderBottomWidth: 1,
+        borderBottomColor: "#DDD",
     },
     // repeaterSelectContainer: {
     //     marginTop: 12,

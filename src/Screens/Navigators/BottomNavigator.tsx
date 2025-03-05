@@ -136,19 +136,19 @@ export default function BottomNavigator() {
                             <View style={styles.modalContainer}>
                                 {[
                                     {
-                                        title: "Fuel Expenses",
+                                        title: "Fuel Expense",
                                         screen: "FuelExpensesScreen",
                                     },
                                     {
-                                        title: "Insurance Expenses",
+                                        title: "Insurance Expense",
                                         screen: "InsuranceExpensesScreen",
                                     },
                                     {
-                                        title: "Oil Expenses",
+                                        title: "Oil Expense",
                                         screen: "OilExpensesScreen",
                                     },
                                     {
-                                        title: "Service Expenses",
+                                        title: "Service Expense",
                                         screen: "ServiceExpensesScreen",
                                     },
                                     {
@@ -156,7 +156,7 @@ export default function BottomNavigator() {
                                         screen: "ServiceRemindersScreen",
                                     },
                                     {
-                                        title: "Car Expenses",
+                                        title: "Car Expense",
                                         screen: "CarExpensesScreen",
                                     },
                                     {
@@ -167,7 +167,7 @@ export default function BottomNavigator() {
                                         title: "Reminder",
                                         screen: "ReminderScreen",
                                     },
-                                ].map((item, index) => (
+                                ].sort((a, b) => a.title.localeCompare(b.title)).map((item, index) => (
                                     <Pressable
                                         key={index}
                                         style={styles.option}
