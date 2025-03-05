@@ -17,41 +17,56 @@ import {
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 
 const ReminderScreen = () => {
-    const [expenseType, setExpenseType] = useState("");
-    const [serviceType, setServiceType] = useState("");
+    const [expenseType, setExpenseType] = useState<string>("");
+    const [serviceType, setServiceType] = useState<string>("");
+    const [odometer, seOdometer] = useState<string>("");
+    const [date, setDate] = useState<string>("");
+    const [notes, setNotes] = useState<string>("");
 
     const [isKmChecked, setIsKmChecked] = useState(true);
     const [isDateChecked, setIsDateChecked] = useState(false);
-    const [isOneTime, setIsOneTime] = useState(true);
-
-    const [notes, setNotes] = useState("");
 
     // References for each input field to manage focus
     const serviceTypeRef = useRef(null);
     const notesRef = useRef(null);
+    const odometerRef = useRef(null);
+    const dateRef = useRef(null);
 
     const [showServiceReminderContainer, setShowServiceReminderContainer] =
         useState(false);
     const [selectRepeaterSwitch, setSelectRepeaterSwitch] = useState(false);
 
+    function submitSaveHandler() {
+        console.log({
+            expenseType,
+            serviceType,
+            odometer,
+            date,
+            notes,
+            repeat: selectRepeaterSwitch === false ? "once" : "multiple"
+        });
+    }
+
     return (
         <View style={styles.container}>
             <ScrollView style={styles.content}>
                 {/* Switch Container */}
-                <View style={styles.switchContainer}>
+                <View
+                    style={[styles.switchContainer, styles.typeSwitchContainer]}
+                >
                     {showServiceReminderContainer === false ? (
-                        <FontAwesome6
-                            name="money-bills"
+                        <MaterialIcons
+                            name="payment"
                             size={24}
                             color="gray"
-                            style={styles.icon}
+                            style={[styles.icon]}
                         />
                     ) : (
-                        <FontAwesome5
-                            name="oil-can"
+                        <MaterialIcons
+                            name="car-repair"
                             size={24}
                             color="gray"
-                            style={styles.icon}
+                            style={[styles.icon]}
                         />
                     )}
 
@@ -100,7 +115,12 @@ const ReminderScreen = () => {
                 </View>
 
                 {/* Type of Service / Expense Input*/}
-                <View style={[styles.inputContainer, styles.inputTypeContainerCustom]}>
+                <View
+                    style={[
+                        styles.inputContainer,
+                        styles.inputTypeContainerCustom,
+                    ]}
+                >
                     <View style={styles.innerInputContainer}>
                         {!showServiceReminderContainer ? (
                             <TextInput
@@ -205,6 +225,13 @@ const ReminderScreen = () => {
                             style={styles.repetearSelectInput}
                             placeholder="Odometer (km)"
                             placeholderTextColor="#888"
+                            keyboardType="numeric"
+                            value={odometer}
+                            onChangeText={seOdometer}
+                            onSubmitEditing={() =>
+                                // @ts-ignore
+                                odometerRef.current?.focus()
+                            }
                         />
                     </View>
 
@@ -232,6 +259,13 @@ const ReminderScreen = () => {
                             style={styles.repetearSelectInput}
                             placeholder="Date"
                             placeholderTextColor="#888"
+                            keyboardType="default"
+                            value={date}
+                            onChangeText={setDate}
+                            onSubmitEditing={() =>
+                                // @ts-ignore
+                                dateRef.current?.focus()
+                            }
                         />
                     </View>
                 </View>
@@ -246,11 +280,15 @@ const ReminderScreen = () => {
                     />
                     <View style={styles.innerInputContainer}>
                         <TextInput
-                            // ref={notesRef}
+                            ref={notesRef}
                             placeholder="Notes"
                             value={notes}
                             onChangeText={setNotes}
                             returnKeyType="done"
+                            onSubmitEditing={() =>
+                                // @ts-ignore
+                                notesRef.current?.focus()
+                            }
                             style={[styles.input, styles.notesInput]}
                             multiline
                         />
@@ -262,7 +300,7 @@ const ReminderScreen = () => {
                     style={({ pressed }) =>
                         pressed ? styles.pressableButton : styles.saveButton
                     }
-                    // onPress={submitSaveHandler}
+                    onPress={submitSaveHandler}
                 >
                     <Text style={styles.saveButtonText}>SAVE</Text>
                 </Pressable>
@@ -283,6 +321,10 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         marginVertical: 10,
+        paddingLeft: 12,
+    },
+    typeSwitchContainer: {
+        paddingLeft: 8,
     },
     switchButton: {
         paddingVertical: 10,
@@ -291,10 +333,12 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginHorizontal: 5,
         flex: 0.5,
+        alignItems: "center",
     },
     switchButtonContainer: {
         flex: 1,
         flexDirection: "row",
+        paddingLeft: 12,
     },
     activeButton: {
         backgroundColor: "#4942CD",
@@ -308,7 +352,6 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         flexDirection: "row",
-        alignItems: "center",
         padding: 10,
         marginVertical: 5,
         borderRadius: 8,
@@ -319,9 +362,8 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         borderBottomWidth: 1,
         borderBottomColor: "#DDD",
-        justifyContent: "space-between",
+        justifyContent: "flex-start",
         alignItems: "center",
-        // paddingLeft: 12,
         marginLeft: 16,
     },
     input: {
@@ -335,19 +377,16 @@ const styles = StyleSheet.create({
     },
     notesInput: {
         height: 80,
-        width: 300,
         textAlignVertical: "top",
-        borderRadius: 8,
     },
     saveButton: {
         marginTop: 24,
         paddingVertical: 12,
         alignItems: "center",
         justifyContent: "center",
-        width: "100%",
-        // height: 48,
         backgroundColor: "#4942CD",
         borderRadius: 12,
+        marginHorizontal: 4,
     },
     saveButtonText: {
         color: "white",
@@ -359,12 +398,12 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         alignItems: "center",
         justifyContent: "center",
-        width: "100%",
         borderRadius: 12,
+        marginHorizontal: 4,
         backgroundColor: "#625be7",
     },
     inputTypeContainerCustom: {
-        paddingLeft: 24,
+        marginLeft: 34,
     },
     // repeaterSelectContainer: {
     //     marginTop: 12,

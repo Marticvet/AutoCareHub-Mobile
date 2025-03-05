@@ -140,7 +140,6 @@ export const FuelExpensesScreen = () => {
                                 value={odometer}
                                 onChangeText={setOdometer}
                                 keyboardType="numeric"
-                                returnKeyType="next"
                                 onSubmitEditing={() =>
                                     // @ts-ignore
                                     serviceTypeRef.current?.focus()
