@@ -9,6 +9,8 @@ import AddVehicleScreen from "../AddVehicleScreen";
 import HomeScreen from "../HomeScreen";
 import ReminderScreen from "../ReminderScreen";
 import HeaderServiceNavigator from "./HeaderServiceNavigator";
+import SettingsScreen from "../OptionsScreen";
+import OptionsScreen from "../OptionsScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -84,13 +86,13 @@ export default function BottomNavigator() {
                 />
 
                 <Tab.Screen
-                    name="ReminderScreen"
-                    component={ReminderScreen}
+                    name="OptionsScreen"
+                    component={OptionsScreen}
                     options={{
-                        title: "Reminders",
+                        title: "Options",
                         tabBarIcon: ({ color, size }) => (
                             <Ionicons
-                                name="car-outline"
+                                name="options"
                                 size={size}
                                 color={color}
                             />

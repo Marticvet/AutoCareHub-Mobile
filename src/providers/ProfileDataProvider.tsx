@@ -62,7 +62,7 @@ const ProfileDataProvider = ({ children }: PropsWithChildren) => {
             setVehicles(vehicleList);
         }
 
-    }, [ userProfile, vehicleList]);
+    }, [ userProfile, vehicleList, userId]);
     
     // Manage selected vehicle state as a full VehicleData object
     const [selectedVehicle, setSelectedVehicle] = useState<VehicleData | null>(

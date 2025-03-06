@@ -4,40 +4,49 @@ import { SafeAreaView, StyleSheet, View, StatusBar } from "react-native";
 import ServiceExpenseScreen from "../ServiceExpenseScreen";
 import ReminderScreen from "../ReminderScreen";
 import ReportsScreen from "../ReportsScreen";
+import TotalExpensesScreen from "../TotalExpensesScreen";
+import "react-native-reanimated";
+import { FuelExpensesScreen } from "../FuelExpensesScreen";
 
 const Tab = createMaterialTopTabNavigator();
 
 export const HeaderServiceNavigator = () => {
-    const route = useRoute();
-    const params = route.params as { screen?: string } | undefined;
-    const initialScreen = params?.screen || "ServiceExpenseScreen"; // Default tab
-
     return (
-        <SafeAreaView style={styles.safeContainer}>
-            <StatusBar barStyle="light-content" />
-            <View style={styles.innerContainer}>
-                <Tab.Navigator
-                    initialRouteName={initialScreen}
-                    screenOptions={{
-                        tabBarStyle: { backgroundColor: "#E8E8E8" },
-                        tabBarActiveTintColor: "#00AFCF",
-                        tabBarInactiveTintColor: "gray",
-                        tabBarIndicatorStyle: { backgroundColor: "#00AFCF" },
-                        tabBarLabelStyle: { fontSize: 14, fontWeight: "bold" },
-                    }}
-                >
-                    <Tab.Screen name="ServiceExpenseScreen" component={ServiceExpenseScreen} />
-                    <Tab.Screen name="ReminderScreen" component={ReminderScreen} />
-                    <Tab.Screen name="ReportsScreen" component={ReportsScreen} />
-                </Tab.Navigator>
-            </View>
-        </SafeAreaView>
+        <Tab.Navigator
+            initialRouteName={"TotalExpensesScreen"}
+            screenOptions={{
+                tabBarStyle: { backgroundColor: "#E8E8E8" },
+                tabBarActiveTintColor: "#00AFCF",
+                tabBarInactiveTintColor: "gray",
+                tabBarIndicatorStyle: { backgroundColor: "#00AFCF" },
+                tabBarLabelStyle: { fontSize: 14, fontWeight: "bold" },
+            }}
+        >
+            <Tab.Screen
+                name="TotalExpensesScreen"
+                component={TotalExpensesScreen}
+                options={{ title: "Total" }}
+            />
+
+            <Tab.Screen
+                name="FuelExpensesScreen"
+                component={FuelExpensesScreen}
+                options={{ title: "Refueling" }}
+            />
+
+            <Tab.Screen
+                name="da"
+                component={FuelExpensesScreen}
+                options={{ title: "Refueling" }}
+            />
+
+            <Tab.Screen
+                name="da1"
+                component={FuelExpensesScreen}
+                options={{ title: "Refueling" }}
+            />
+        </Tab.Navigator>
     );
 };
-
-const styles = StyleSheet.create({
-    safeContainer: { flex: 1, backgroundColor: "#FFFFFF", paddingTop: StatusBar.currentHeight || 0 },
-    innerContainer: { flex: 1 },
-});
 
 export default HeaderServiceNavigator;
