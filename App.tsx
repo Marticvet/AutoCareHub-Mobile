@@ -104,14 +104,14 @@ function RootNavigator() {
                 name="FuelExpenseScreen"
                 component={FuelExpenseScreen}
                 options={{ title: "Fuel Expense" }}
-            /> 
-             <RootStack.Screen
+            />
+            <RootStack.Screen
                 name="InsuranceExpenseScreen"
                 component={InsuranceExpenseScreen}
                 options={{ title: "Insurance Expense" }}
-            />        
-            
-             <RootStack.Screen
+            />
+
+            <RootStack.Screen
                 name="HeaderServiceNavigator"
                 component={HeaderServiceNavigator}
                 options={{ title: "Headers" }}
@@ -123,11 +123,11 @@ function RootNavigator() {
 
 function MainAppNavigator() {
     // Wrap your bottom tabs with your drawer so that the drawer is available globally.
-    return (
-        <SidebarNavigator>
-            <BottomNavigator />
-        </SidebarNavigator>
-    );
+
+    // <SidebarNavigator>
+    // </SidebarNavigator>
+
+    return <BottomNavigator />;
 }
 
 function NonAuthNavigator() {

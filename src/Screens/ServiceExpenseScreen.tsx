@@ -92,7 +92,7 @@ const ServiceExpenseScreen = () => {
                             <Ionicons
                                 name="calendar"
                                 size={20}
-                                color="gray"
+                                color="#6c6b6b"
                                 style={styles.icon}
                             />
                             <Text style={styles.dateTimeText}>
@@ -111,7 +111,7 @@ const ServiceExpenseScreen = () => {
                             <Ionicons
                                 name="calendar"
                                 size={20}
-                                color="gray"
+                                color="#6c6b6b"
                                 style={styles.icon}
                             />
                             <Text style={styles.dateTimeText}>
@@ -134,7 +134,7 @@ const ServiceExpenseScreen = () => {
                         <Ionicons
                             name="speedometer"
                             size={24}
-                            color="gray"
+                            color="#6c6b6b"
                             style={styles.icon}
                         />
 
@@ -168,7 +168,7 @@ const ServiceExpenseScreen = () => {
                         <Ionicons
                             name="construct"
                             size={24}
-                            color="gray"
+                            color="#6c6b6b"
                             style={styles.icon}
                         />
                         <View style={styles.innerInputContainer}>
@@ -192,7 +192,7 @@ const ServiceExpenseScreen = () => {
                         <Entypo
                             name="location-pin"
                             size={24}
-                            color="gray"
+                            color="#6c6b6b"
                             style={styles.icon}
                         />
 
@@ -217,7 +217,7 @@ const ServiceExpenseScreen = () => {
                         <MaterialIcons
                             name="payments"
                             size={24}
-                            color="gray"
+                            color="#6c6b6b"
                             style={styles.icon}
                         />
                         <View style={styles.innerInputContainer}>
@@ -241,7 +241,7 @@ const ServiceExpenseScreen = () => {
                         <MaterialIcons
                             name="attach-file"
                             size={24}
-                            color="gray"
+                            color="#6c6b6b"
                             style={styles.icon}
                         />
                         <View
@@ -263,7 +263,7 @@ const ServiceExpenseScreen = () => {
                              <MaterialIcons
                                  name="notes"
                                  size={24}
-                                 color="gray"
+                                 color="#6c6b6b"
                                  style={styles.icon}
                              />
                              <View style={styles.innerInputContainer}>

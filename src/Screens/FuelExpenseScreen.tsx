@@ -87,7 +87,7 @@ export const FuelExpenseScreen = () => {
                             <Ionicons
                                 name="calendar"
                                 size={20}
-                                color="gray"
+                                color="#6c6b6b"
                                 style={styles.icon}
                             />
                             <Text style={styles.dateTimeText}>
@@ -106,7 +106,7 @@ export const FuelExpenseScreen = () => {
                             <Ionicons
                                 name="calendar"
                                 size={20}
-                                color="gray"
+                                color="#6c6b6b"
                                 style={styles.icon}
                             />
                             <Text style={styles.dateTimeText}>
@@ -129,7 +129,7 @@ export const FuelExpenseScreen = () => {
                         <Ionicons
                             name="speedometer"
                             size={24}
-                            color="gray"
+                            color="#6c6b6b"
                             style={styles.icon}
                         />
 
@@ -162,7 +162,7 @@ export const FuelExpenseScreen = () => {
                         <FontAwesome5
                             name="gas-pump"
                             size={24}
-                            color="gray"
+                            color="#6c6b6b"
                             style={styles.icon}
                         />
                         <View style={styles.innerInputContainer}>
@@ -186,7 +186,7 @@ export const FuelExpenseScreen = () => {
                         <FontAwesome5
                             name="money-bill-wave"
                             size={22}
-                            color="gray"
+                            color="#6c6b6b"
                             style={styles.icon}
                         />
                         <TextInput
@@ -232,7 +232,7 @@ export const FuelExpenseScreen = () => {
                         <FontAwesome5
                             name="fill"
                             size={24}
-                            color="gray"
+                            color="#6c6b6b"
                             style={styles.icon}
                         />
 
@@ -264,7 +264,7 @@ export const FuelExpenseScreen = () => {
                         <FontAwesome5
                             name="gas-pump"
                             size={24}
-                            color="gray"
+                            color="#6c6b6b"
                             style={styles.icon}
                         />
 
@@ -289,7 +289,7 @@ export const FuelExpenseScreen = () => {
                         <MaterialIcons
                             name="payments"
                             size={24}
-                            color="gray"
+                            color="#6c6b6b"
                             style={styles.icon}
                         />
                         <View style={styles.innerInputContainer}>
@@ -313,7 +313,7 @@ export const FuelExpenseScreen = () => {
                             <MaterialIcons
                                 name="attach-file"
                                 size={24}
-                                color="gray"
+                                color="#6c6b6b"
                                 style={styles.icon}
                             />
                             <View
@@ -335,7 +335,7 @@ export const FuelExpenseScreen = () => {
                         <MaterialIcons
                             name="notes"
                             size={24}
-                            color="gray"
+                            color="#6c6b6b"
                             style={styles.icon}
                         />
                         <View style={styles.innerInputContainer}>

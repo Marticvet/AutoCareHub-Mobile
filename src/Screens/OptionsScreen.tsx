@@ -10,27 +10,74 @@ import {
     SectionList,
 } from "react-native";
 import { useAuth } from "../providers/AuthProvider";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
 const DATA = [
     {
-        title: "User's settings",
-        data: ["Pizza", "Burger", "Risotto"],
+        title: "General",
+        data: [
+            {
+                title: "Drivvo plans",
+                screen: "DrivvoPlansScreen",
+                icon: "crown",
+            }, // MaterialCommunityIcons
+            {
+                title: "My account",
+                screen: "MyAccountScreen",
+                icon: "account-circle",
+            }, // MaterialIcons
+            {
+                title: "Synchronize data",
+                screen: "SyncDataScreen",
+                icon: "cloud-sync",
+            }, // MaterialCommunityIcons
+            { title: "Storage", screen: "StorageScreen", icon: "database" }, // FontAwesome
+        ],
     },
     {
-        title: "Vehicles's settings",
-        data: ["French Fries", "Onion Rings", "Fried Shrimps"],
+        title: "Vehicles",
+        data: [
+            { title: "Vehicles", screen: "VehiclesScreen", icon: "car" }, // FontAwesome
+            { title: "Users", screen: "UsersScreen", icon: "account-multiple" }, // MaterialCommunityIcons
+            {
+                title: "Vehicle / User",
+                screen: "VehicleUserScreen",
+                icon: "car-multiple",
+            }, // MaterialCommunityIcons
+        ],
     },
     {
-        title: "Preferences",
-        data: ["Water", "Coke", "Beer"],
+        title: "Fuel & Places",
+        data: [
+            { title: "Fuel", screen: "FuelScreen", icon: "fuel" }, // MaterialCommunityIcons
+            {
+                title: "Gas stations",
+                screen: "GasStationsScreen",
+                icon: "gas-station",
+            }, // MaterialCommunityIcons
+            { title: "Places", screen: "PlacesScreen", icon: "map-marker" }, // FontAwesome
+        ],
     },
     {
-        title: "Settings",
-        data: ["Cheese Cake", "Ice Cream"],
-    },
-    {
-        title: "Contacts",
-        data: ["Cheese Cake", "Ice Cream"],
+        title: "Finance",
+        data: [
+            {
+                title: "Types of service",
+                screen: "TypesOfServiceScreen",
+                icon: "wrench",
+            }, // FontAwesome
+            {
+                title: "Types of expense",
+                screen: "TypesOfExpenseScreen",
+                icon: "credit-card",
+            }, // FontAwesome
+            {
+                title: "Type of income",
+                screen: "TypeOfIncomeScreen",
+                icon: "cash-multiple",
+            }, // MaterialCommunityIcons
+            { title: "Reasons", screen: "ReasonsScreen", icon: "briefcase" }, // FontAwesome
+        ],
     },
 ];
 
@@ -39,10 +86,17 @@ function OptionsScreen() {
         <SafeAreaView style={styles.container}>
             <SectionList
                 sections={DATA}
-                keyExtractor={(item, index) => item + index}
+                keyExtractor={(item) => item.screen}
                 renderItem={({ item }) => (
                     <View style={styles.item}>
-                        <Text style={styles.title}>{item}</Text>
+                        <MaterialCommunityIcons
+                            // @ts-ignore
+                            name={item.icon}
+                            size={24}
+                            color="#6c6b6b"
+                            style={styles.icon}
+                        />
+                        <Text style={styles.title}>{item.title}</Text>
                     </View>
                 )}
                 renderSectionHeader={({ section: { title } }) => (
@@ -55,11 +109,12 @@ function OptionsScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginHorizontal: 16,
+        margin: 16,
     },
     item: {
-        backgroundColor: "#f9c2ff",
-        padding: 20,
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 16,
         marginVertical: 8,
     },
     header: {
@@ -67,7 +122,10 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
     },
     title: {
-        fontSize: 24,
+        fontSize: 20,
+    },
+    icon: {
+        marginRight: 12,
     },
 });
 

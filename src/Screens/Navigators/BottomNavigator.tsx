@@ -29,7 +29,10 @@ export default function BottomNavigator() {
         <View style={{ flex: 1, position: "relative" }}>
             <Tab.Navigator
                 screenOptions={{
-                    headerShown: false,
+                    // headerShown: false,
+                    headerStyle: {
+                        backgroundColor: "#212640",
+                    },
                     tabBarStyle: { backgroundColor: "#212640" },
                     tabBarActiveTintColor: "#ffffff",
                     tabBarInactiveTintColor: "#888",

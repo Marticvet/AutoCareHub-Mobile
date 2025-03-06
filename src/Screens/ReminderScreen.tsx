@@ -58,14 +58,14 @@ const ReminderScreen = () => {
                         <MaterialIcons
                             name="payment"
                             size={24}
-                            color="gray"
+                            color="#6c6b6b"
                             style={[styles.icon]}
                         />
                     ) : (
                         <MaterialIcons
                             name="car-repair"
                             size={24}
-                            color="gray"
+                            color="#6c6b6b"
                             style={[styles.icon]}
                         />
                     )}
@@ -159,7 +159,7 @@ const ReminderScreen = () => {
                     <Fontisto
                         name="bell-alt"
                         size={24}
-                        color="gray"
+                        color="#6c6b6b"
                         style={styles.icon}
                     />
 
@@ -305,7 +305,7 @@ const ReminderScreen = () => {
                     <MaterialIcons
                         name="notes"
                         size={24}
-                        color="gray"
+                        color="#6c6b6b"
                         style={styles.icon}
                     />
                     <View style={styles.innerInputContainer}>
