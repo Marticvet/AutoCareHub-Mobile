@@ -26,11 +26,10 @@ import { Fuel_Expenses } from "../../types/fuel_expenses";
 import { useNavigation } from "@react-navigation/native";
 
 export const FuelExpenseScreen = () => {
-    const { userProfile } = useContext(ProfileContext);
+    const { userProfile, selectedVehicle } = useContext(ProfileContext);
     const navigation = useNavigation();
     const { mutate, isPending, error } = useInsertFuelExpense(); // ✅ Call Hook at the top level
     // Retrieve the values provided by ProfileDataProvider
-    const { selectedVehicle } = useContext(ProfileContext);
 
     const [selectedDateTime, setSelectedDateTime] = useState<DateType>();
     const [modalVisible, setModalVisible] = useState(false);

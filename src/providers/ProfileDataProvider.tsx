@@ -22,6 +22,7 @@ interface ProfileContextData {
     errorProfile?: any;
     errorVehicles?: any;
     setSelectedVehicle: (vehicle: VehicleData | null) => void;
+    fuelExpenses?: Fuel_Expenses[];
 }
 
 const ProfileContext = createContext<ProfileContextData>({
@@ -31,6 +32,7 @@ const ProfileContext = createContext<ProfileContextData>({
     isProfileLoading: false,
     isVehiclesLoading: false,
     setSelectedVehicle: () => {},
+    fuelExpenses: [],
 });
 
 const ProfileDataProvider = ({ children }: PropsWithChildren) => {
@@ -42,7 +44,7 @@ const ProfileDataProvider = ({ children }: PropsWithChildren) => {
     const [selectedVehicle, setSelectedVehicle] = useState<VehicleData | null>(
         null
     );
-    const [fuelExpenses, setFuelExpenses] = useState<Fuel_Expenses[] | null>(null);
+    const [fuelExpenses, setFuelExpenses] = useState<Fuel_Expenses[]>([]);
 
     // Fetch profile data
     const {
@@ -116,6 +118,7 @@ const ProfileDataProvider = ({ children }: PropsWithChildren) => {
             isVehiclesLoading,
             errorProfile,
             errorVehicles,
+            fuelExpenses,
         ]
     );
 
