@@ -10,6 +10,8 @@ import { useProfile } from "../api/profiles";
 import { Profile } from "../../types/profile";
 import { VehicleData } from "../../types/vehicle";
 import { useVehicle, useVehicleList } from "../api/vehicles";
+import { Fuel_Expenses } from "../../types/fuel_expenses";
+import { useFuelExpensesList } from "../api/fuel_expenses";
 
 interface ProfileContextData {
     userProfile: Profile | null;
@@ -40,6 +42,7 @@ const ProfileDataProvider = ({ children }: PropsWithChildren) => {
     const [selectedVehicle, setSelectedVehicle] = useState<VehicleData | null>(
         null
     );
+    const [fuelExpenses, setFuelExpenses] = useState<Fuel_Expenses[] | null>(null);
 
     // Fetch profile data
     const {
@@ -82,6 +85,16 @@ const ProfileDataProvider = ({ children }: PropsWithChildren) => {
         }
     }, [vehicleData]);
 
+    // Get all fuelExpenses by userId and user's selected_vehicle_id
+    const { data: fuelExpensesData, isLoading, error } = useFuelExpensesList(userId || "", userProfile?.selected_vehicle_id || "");
+
+
+    useEffect(() => {
+        if(fuelExpensesData&& fuelExpensesData.length > 0){
+            setFuelExpenses(fuelExpensesData);
+        }
+    }, [userProfile, userId]);
+
     // Memoize context value to optimize performance
     const contextValue = useMemo(
         () => ({
@@ -93,6 +106,7 @@ const ProfileDataProvider = ({ children }: PropsWithChildren) => {
             errorProfile,
             errorVehicles,
             setSelectedVehicle,
+            fuelExpenses
         }),
         [
             userProfile,

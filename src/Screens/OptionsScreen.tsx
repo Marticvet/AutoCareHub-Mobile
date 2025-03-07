@@ -17,11 +17,6 @@ const DATA = [
         title: "General",
         data: [
             {
-                title: "Drivvo plans",
-                screen: "DrivvoPlansScreen",
-                icon: "crown",
-            }, // MaterialCommunityIcons
-            {
                 title: "My account",
                 screen: "MyAccountScreen",
                 icon: "account-circle",
@@ -109,7 +104,7 @@ function OptionsScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        margin: 16,
+        margin: 12,
     },
     item: {
         flexDirection: "row",
@@ -118,11 +113,13 @@ const styles = StyleSheet.create({
         marginVertical: 8,
     },
     header: {
-        fontSize: 32,
-        backgroundColor: "#fff",
+        fontSize: 24,
+        borderBottomColor: "#6c6b6b",
+        borderBottomWidth: 1,
+        paddingBottom: 8,
     },
     title: {
-        fontSize: 20,
+        fontSize: 18,
     },
     icon: {
         marginRight: 12,

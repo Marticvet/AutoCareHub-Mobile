@@ -16,12 +16,19 @@ import {
     Pressable,
     TextInput,
     Switch,
+    Alert,
 } from "react-native";
 import { DateType } from "react-native-ui-datepicker";
 import { DateTimePickerModal } from "./DateTimePickerModal";
 import { ProfileContext } from "../providers/ProfileDataProvider";
+import { useInsertFuelExpense } from "../api/fuel_expenses";
+import { Fuel_Expenses } from "../../types/fuel_expenses";
+import { useNavigation } from "@react-navigation/native";
 
 export const FuelExpenseScreen = () => {
+    const { userProfile } = useContext(ProfileContext);
+    const navigation = useNavigation();
+    const { mutate, isPending, error } = useInsertFuelExpense(); // ✅ Call Hook at the top level
     // Retrieve the values provided by ProfileDataProvider
     const { selectedVehicle } = useContext(ProfileContext);
 
@@ -69,6 +76,80 @@ export const FuelExpenseScreen = () => {
 
     const [isEnabled, setIsEnabled] = useState(false);
     const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+
+    const addFuelExpenseHandler = () => {
+        const addFuelExpense: Fuel_Expenses = {
+            odometer: Number(odometer),
+            fuel_type: fuelType,
+            price_liter: Number(pricePerLiter),
+            total_cost: Number(totalCost),
+            total_litres: Number(litres),
+            full_tank: isEnabled,
+            gas_station: place,
+            payment_method: paymentMethod,
+            notes,
+            selected_vehicle_id: userProfile?.selected_vehicle_id,
+            user_id: userProfile?.id,
+        };
+
+        if (
+            !odometer.trim() ||
+            isNaN(Number(odometer)) ||
+            Number(odometer) <= 0 ||
+            !pricePerLiter.trim() ||
+            isNaN(Number(pricePerLiter)) ||
+            Number(pricePerLiter) <= 0 ||
+            !totalCost.trim() ||
+            isNaN(Number(totalCost)) ||
+            Number(totalCost) <= 0 ||
+            !litres.trim() ||
+            isNaN(Number(litres)) ||
+            Number(litres) <= 0 ||
+            !fuelType.trim() ||
+            !place.trim() ||
+            !paymentMethod.trim() ||
+            !userProfile?.selected_vehicle_id ||
+            !userProfile?.id
+        ) {
+            Alert.alert(
+                "Validation Error",
+                "Please fill in all fields correctly before submitting."
+            );
+            return;
+        }
+
+        // @ts-ignore
+        mutate(addFuelExpense, {
+            onSuccess: () => {
+                Alert.alert("Success", "Fuel Expense added successfully!", [
+                    { text: "OK", onPress: () => console.log("Alert closed") },
+                ]);
+
+                // ✅ OPTIONAL: Auto-close the alert after 1.5 seconds
+                setTimeout(() => {
+                    console.log("Closing alert...");
+                }, 1500);
+
+                // ✅ Reset All State Values
+                setOdometer("");
+                setFuelType("");
+                setPricePerLiter("");
+                setTotalCost("");
+                setLitres("");
+                setIsEnabled(false);
+                setPlace("");
+                setPaymentMethod("");
+                setNotes("");
+
+                // ✅ Navigate back if needed
+                navigation.goBack();
+            },
+            // @ts-ignore
+            onError: (err) => {
+                console.error("Error inserting Fuel Expense:", err.message);
+            },
+        });
+    };
 
     return (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -350,13 +431,13 @@ export const FuelExpenseScreen = () => {
                             />
                         </View>
                     </View>
-                    
+
                     {/* Save Button */}
                     <Pressable
                         style={({ pressed }) =>
                             pressed ? styles.pressableButton : styles.saveButton
                         }
-                        // onPress={submitSaveHandler}
+                        onPress={addFuelExpenseHandler}
                     >
                         <Text style={styles.saveButtonText}>SAVE</Text>
                     </Pressable>
