@@ -114,7 +114,7 @@ function RootNavigator() {
             <RootStack.Screen
                 name="HeaderServiceNavigator"
                 component={HeaderServiceNavigator}
-                options={{ title: "Headers" }}
+                options={{ title: "Analitics" }}
             />
             {/* Add more global screens here if needed */}
         </RootStack.Navigator>

@@ -163,7 +163,7 @@ export default function BottomNavigator() {
                                         screen: "ReminderScreen",
                                     },
                                     {
-                                        title: "Header",
+                                        title: "Analitics",
                                         screen: "HeaderServiceNavigator",
                                     },
                                 ]

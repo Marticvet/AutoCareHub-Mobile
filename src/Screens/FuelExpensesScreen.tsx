@@ -7,8 +7,9 @@ export const FuelExpensesScreen = () => {
     const { userProfile, selectedVehicle, fuelExpenses, expenses } =
         useContext(ProfileContext);
 
-        console.log(fuelExpenses, `fuelExpenses`);
+        // console.log(expenses, `expenses`);
         
+
 
     return (
         <View>
