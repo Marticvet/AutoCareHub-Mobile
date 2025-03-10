@@ -12,6 +12,7 @@ import { VehicleData } from "../../types/vehicle";
 import { useVehicle, useVehicleList } from "../api/vehicles";
 import { Fuel_Expenses } from "../../types/fuel_expenses";
 import { useFuelExpensesList } from "../api/fuel_expenses";
+import { useExpensesList } from "../api/expenses/expenses";
 
 interface ProfileContextData {
     userProfile: Profile | null;
@@ -23,6 +24,7 @@ interface ProfileContextData {
     errorVehicles?: any;
     setSelectedVehicle: (vehicle: VehicleData | null) => void;
     fuelExpenses?: Fuel_Expenses[];
+    expenses?: any[];
 }
 
 const ProfileContext = createContext<ProfileContextData>({
@@ -33,6 +35,7 @@ const ProfileContext = createContext<ProfileContextData>({
     isVehiclesLoading: false,
     setSelectedVehicle: () => {},
     fuelExpenses: [],
+    expenses: [],
 });
 
 const ProfileDataProvider = ({ children }: PropsWithChildren) => {
@@ -45,6 +48,7 @@ const ProfileDataProvider = ({ children }: PropsWithChildren) => {
         null
     );
     const [fuelExpenses, setFuelExpenses] = useState<Fuel_Expenses[]>([]);
+    const [expenses, setExpenses] = useState<any[]>([]);
 
     // Fetch profile data
     const {
@@ -61,10 +65,28 @@ const ProfileDataProvider = ({ children }: PropsWithChildren) => {
     } = useVehicleList(userId);
 
     // Fetch selected vehicle
-    const { data: vehicleData } = useVehicle(
-        userId,
+    const {
+        data: vehicleData,
+        isLoading: isSelectedVehicleLoading,
+        error: errorSelectedVehicle,
+    } = useVehicle(userId, userProfile?.selected_vehicle_id || "");
+
+    // Get all fuelExpenses by userId and user's selected_vehicle_id
+    const {
+        data: fuelExpensesData,
+        isLoading: isFuelExpensesLoading,
+        error: errorFuelExpenses,
+    } = useFuelExpensesList(
+        userId || "",
         userProfile?.selected_vehicle_id || ""
     );
+
+    // Fetch all expenses by selected vehicle's id
+    const {
+        data: expensesData,
+        isLoading: isExpensesLoading,
+        error: errorExpenses,
+    } = useExpensesList(userProfile?.selected_vehicle_id || "");
 
     // ✅ Load userProfile when API call completes
     useEffect(() => {
@@ -75,27 +97,29 @@ const ProfileDataProvider = ({ children }: PropsWithChildren) => {
 
     // ✅ Load vehicles when API call completes
     useEffect(() => {
-        if (vehicleList && vehicleList.length > 0) {
+        if (vehicleList) {
             setVehicles(vehicleList);
         }
-    }, [vehicleList]);
+    }, [vehicleList, isVehiclesLoading]);
 
     // ✅ Set selected vehicle when `vehicleData` is fetched
     useEffect(() => {
         if (vehicleData) {
             setSelectedVehicle(vehicleData);
         }
-    }, [vehicleData]);
-
-    // Get all fuelExpenses by userId and user's selected_vehicle_id
-    const { data: fuelExpensesData, isLoading, error } = useFuelExpensesList(userId || "", userProfile?.selected_vehicle_id || "");
-
+    }, [vehicleData, isSelectedVehicleLoading]);
 
     useEffect(() => {
-        if(fuelExpensesData&& fuelExpensesData.length > 0){
+        if (fuelExpensesData) {
             setFuelExpenses(fuelExpensesData);
         }
-    }, [userProfile, userId]);
+    }, [fuelExpensesData, isFuelExpensesLoading]);
+
+    useEffect(() => {
+        if (expensesData) {
+            setExpenses(expensesData);
+        }
+    }, [expensesData, isExpensesLoading]);
 
     // Memoize context value to optimize performance
     const contextValue = useMemo(
@@ -108,7 +132,8 @@ const ProfileDataProvider = ({ children }: PropsWithChildren) => {
             errorProfile,
             errorVehicles,
             setSelectedVehicle,
-            fuelExpenses
+            fuelExpenses,
+            expenses,
         }),
         [
             userProfile,
@@ -119,6 +144,7 @@ const ProfileDataProvider = ({ children }: PropsWithChildren) => {
             errorProfile,
             errorVehicles,
             fuelExpenses,
+            expenses,
         ]
     );
 

@@ -31,9 +31,9 @@ export const HeaderServiceNavigator = () => {
             <Tab.Screen
                 name="FuelExpensesScreen"
                 component={FuelExpensesScreen}
-                options={{ title: "Refueling" }}
+                options={{ title: "Fuel Epx" }}
             />
-
+{/* 
             <Tab.Screen
                 name="da"
                 component={FuelExpensesScreen}
@@ -44,7 +44,7 @@ export const HeaderServiceNavigator = () => {
                 name="da1"
                 component={FuelExpensesScreen}
                 options={{ title: "Refueling" }}
-            />
+            /> */}
         </Tab.Navigator>
     );
 };
