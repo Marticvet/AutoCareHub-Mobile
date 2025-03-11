@@ -16,14 +16,20 @@ import {
     Pressable,
     TextInput,
     Switch,
+    Alert,
 } from "react-native";
 import { DateType } from "react-native-ui-datepicker";
 import { DateTimePickerModal } from "./DateTimePickerModal";
 import { ProfileContext } from "../providers/ProfileDataProvider";
+import { Insurance_Expenses } from "../../types/insurance_expenses";
+import { useNavigation } from "@react-navigation/native";
+import { useInsertInsuranceExpense } from "../api/insurance_expenses";
 
 export const InsuranceExpenseScreen = () => {
+    const navigation = useNavigation();
     // Retrieve the values provided by ProfileDataProvider
-    const { selectedVehicle } = useContext(ProfileContext);
+    const { selectedVehicle, userProfile } = useContext(ProfileContext);
+    const { mutate, isPending, error } = useInsertInsuranceExpense(); // ✅ Call Hook at the top level
 
     const [selectedDateTime, setSelectedDateTime] = useState<DateType>();
     const [modalVisible, setModalVisible] = useState(false);
@@ -53,8 +59,64 @@ export const InsuranceExpenseScreen = () => {
     const [selectedDueDate, setSelectedDueDate] =
         useState<DateType>(formattedDate);
 
-    console.log(selectedDate);
-    console.log(selectedDueDate);
+    function submitSaveHandler() {
+        const addInsuranceExpense: Insurance_Expenses = {
+            odometer: Number(odometer),
+            cost: Number(cost),
+            notes,
+            valid_from: date,
+            valid_to: date,
+            selected_vehicle_id: userProfile?.selected_vehicle_id,
+            user_id: userProfile?.id,
+        };
+
+        // valid_from &&
+        // valid_to &&
+        // if (
+        //     !odometer.trim() ||
+        //     isNaN(Number(odometer)) ||
+        //     Number(odometer) <= 0 ||
+        //     !cost.trim() ||
+        //     isNaN(Number(cost)) ||
+        //     Number(cost) <= 0 ||
+        //     !userProfile?.selected_vehicle_id ||
+        //     !userProfile?.id
+        // ) {
+        //     // Submit data to Supabase
+        // } else {
+        //     Alert.alert(
+        //         "Validation Error",
+        //         "Please fill in all fields correctly before submitting."
+        //     );
+        //     return;
+        // }
+
+         // @ts-ignore
+         mutate(addInsuranceExpense, {
+            onSuccess: () => {
+                Alert.alert("Success", "Insurance Expense added successfully!", [
+                    { text: "OK", onPress: () => console.log("Alert closed") },
+                ]);
+
+                // ✅ OPTIONAL: Auto-close the alert after 1.5 seconds
+                setTimeout(() => {
+                    console.log("Closing alert...");
+                }, 1500);
+
+                // ✅ Reset All State Values
+                setOdometer("");
+                setCost("");
+                setNotes("");
+
+                // ✅ Navigate back if needed
+                navigation.goBack();
+            },
+            // @ts-ignore
+            onError: (err) => {
+                console.error("Error inserting Insurance Expense:", err.message);
+            },
+        });
+    }
 
     return (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -145,7 +207,7 @@ export const InsuranceExpenseScreen = () => {
                                 keyboardType="numeric"
                                 onSubmitEditing={() =>
                                     // @ts-ignore
-                                    serviceTypeRef.current?.focus()
+                                    odometerRef.current?.focus()
                                 }
                                 style={styles.input}
                             />
@@ -163,14 +225,14 @@ export const InsuranceExpenseScreen = () => {
 
                         <View style={styles.innerInputContainer}>
                             <TextInput
-                                ref={odometerRef}
+                                ref={costRef}
                                 placeholder="Cost"
-                                value={odometer}
-                                onChangeText={setOdometer}
+                                value={cost}
+                                onChangeText={setCost}
                                 keyboardType="numeric"
                                 onSubmitEditing={() =>
                                     // @ts-ignore
-                                    serviceTypeRef.current?.focus()
+                                    costRef.current?.focus()
                                 }
                                 style={styles.input}
                             />
@@ -225,7 +287,7 @@ export const InsuranceExpenseScreen = () => {
                         style={({ pressed }) =>
                             pressed ? styles.pressableButton : styles.saveButton
                         }
-                        // onPress={submitSaveHandler}
+                        onPress={submitSaveHandler}
                     >
                         <Text style={styles.saveButtonText}>SAVE</Text>
                     </Pressable>

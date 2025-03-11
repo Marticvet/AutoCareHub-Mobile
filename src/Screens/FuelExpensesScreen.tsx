@@ -4,13 +4,11 @@ import { useContext, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 
 export const FuelExpensesScreen = () => {
-    const { userProfile, selectedVehicle, fuelExpenses, expenses } =
+    const { userProfile, selectedVehicle, fuelExpenses, expenses, insuranceExpenses } =
         useContext(ProfileContext);
 
-        // console.log(expenses, `expenses`);
+        console.log(expenses, `expenses`);
         
-
-
     return (
         <View>
             <Text>Fuel expesnes</Text>
