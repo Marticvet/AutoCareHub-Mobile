@@ -9,6 +9,7 @@ import {
     SafeAreaView,
     KeyboardAvoidingView,
     Platform,
+    Alert,
 } from "react-native";
 import {
     Entypo,
@@ -19,12 +20,21 @@ import {
 import { ProfileContext } from "../providers/ProfileDataProvider";
 import { DateType } from "react-native-ui-datepicker";
 import { DateTimePickerModal } from "./DateTimePickerModal";
+import { useInsertServiceExpense } from "../api/service_expenses";
+import { useNavigation } from "@react-navigation/native";
 
 const ServiceExpenseScreen = () => {
+    const {
+        mutate: insertServiceExpense,
+        isPending,
+        error,
+    } = useInsertServiceExpense(); // ✅ Call Hook at the top level
+    const navigation = useNavigation();
+
     const [odometer, setOdometer] = useState("");
     const [serviceType, setServiceType] = useState("");
     const [place, setPlace] = useState("");
-    const [driver, setDriver] = useState("");
+    const [cost, setCost] = useState("");
     const [paymentMethod, setPaymentMethod] = useState("");
     const [notes, setNotes] = useState("");
 
@@ -32,13 +42,13 @@ const ServiceExpenseScreen = () => {
     const [modalVisible, setModalVisible] = useState(false);
 
     // Retrieve the values provided by ProfileDataProvider
-    const { selectedVehicle } = useContext(ProfileContext);
+    const { selectedVehicle, userProfile } = useContext(ProfileContext);
 
     // References for each input field to manage focus
     const odometerRef = useRef(null);
     const serviceTypeRef = useRef(null);
     const placeRef = useRef(null);
-    const driverRef = useRef(null);
+    const costRef = useRef(null);
     const paymentMethodRef = useRef(null);
     const notesRef = useRef(null);
 
@@ -63,16 +73,45 @@ const ServiceExpenseScreen = () => {
     const [selectedTime, setSelectedTime] = useState<DateType>(formattedTime);
 
     function submitSaveHandler() {
-        const serviceExpensesInputs = {
-            date: selectedDate,
-            odometer,
-            serviceType,
-            place,
-            driver,
-            paymentMethod,
+        const addServiceExpenses: Service_Expenses = {
+            odometer: Number(odometer),
+            cost: parseFloat(cost.replace(/,/g, ".")),
+            type_of_service: serviceType,
+            payment_method: paymentMethod,
+            place: place,
             notes,
-            // selected car
+            selected_vehicle_id: userProfile?.selected_vehicle_id,
+            user_id: userProfile?.id,
+            // date: date,
+            // time: date,
         };
+
+        // @ts-ignore
+        insertServiceExpense(addServiceExpenses, {
+            onSuccess: () => {
+                Alert.alert("Success", "Service Expense added successfully!", [
+                    { text: "OK", onPress: () => console.log("Alert closed") },
+                ]);
+
+                // ✅ OPTIONAL: Auto-close the alert after 1.5 seconds
+                setTimeout(() => {
+                    console.log("Closing alert...");
+                }, 1500);
+
+                // ✅ Reset All State Values
+                setOdometer("");
+                setPlace("");
+                setPaymentMethod("");
+                setNotes("");
+
+                // ✅ Navigate back if needed
+                navigation.goBack();
+            },
+            // @ts-ignore
+            onError: (err) => {
+                console.error("Error inserting Service Expense:", err.message);
+            },
+        });
     }
 
     return (
@@ -187,7 +226,31 @@ const ServiceExpenseScreen = () => {
                         </View>
                     </View>
 
-                    {/* Gas station Input */}
+                    {/* Cost of service Input */}
+                    <View style={styles.inputContainer}>
+                        <FontAwesome5
+                            name="money-bill-wave"
+                            size={24}
+                            color="#6c6b6b"
+                            style={styles.icon}
+                        />
+                        <View style={styles.innerInputContainer}>
+                            <TextInput
+                                ref={serviceTypeRef}
+                                placeholder="Cost of service"
+                                value={cost}
+                                onChangeText={setCost}
+                                keyboardType="numeric"
+                                onSubmitEditing={() =>
+                                    // @ts-ignore
+                                    costRef.current?.focus()
+                                }
+                                style={styles.input}
+                            />
+                        </View>
+                    </View>
+
+                    {/* Locaation Input */}
                     <View style={styles.inputContainer}>
                         <Entypo
                             name="location-pin"
@@ -258,33 +321,33 @@ const ServiceExpenseScreen = () => {
                         </View>
                     </View> */}
 
-                 {/* Note Input */}
-                         <View style={styles.inputContainerNoteContainer}>
-                             <MaterialIcons
-                                 name="notes"
-                                 size={24}
-                                 color="#6c6b6b"
-                                 style={styles.icon}
-                             />
-                             <View style={styles.innerInputContainer}>
-                                 <TextInput
-                                     ref={notesRef}
-                                     placeholder="Notes"
-                                     value={notes}
-                                     onChangeText={setNotes}
-                                     returnKeyType="done"
-                                     style={[styles.input, styles.notesInput]}
-                                     multiline
-                                 />
-                             </View>
-                         </View>
+                    {/* Note Input */}
+                    <View style={styles.inputContainerNoteContainer}>
+                        <MaterialIcons
+                            name="notes"
+                            size={24}
+                            color="#6c6b6b"
+                            style={styles.icon}
+                        />
+                        <View style={styles.innerInputContainer}>
+                            <TextInput
+                                ref={notesRef}
+                                placeholder="Notes"
+                                value={notes}
+                                onChangeText={setNotes}
+                                returnKeyType="done"
+                                style={[styles.input, styles.notesInput]}
+                                multiline
+                            />
+                        </View>
+                    </View>
 
                     {/* Save Button */}
                     <Pressable
                         style={({ pressed }) =>
                             pressed ? styles.pressableButton : styles.saveButton
                         }
-                        // onPress={submitSaveHandler}
+                        onPress={submitSaveHandler}
                     >
                         <Text style={styles.saveButtonText}>SAVE</Text>
                     </Pressable>

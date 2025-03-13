@@ -10,7 +10,7 @@ export const useExpensesList = (selected_vehicle_id: string) => {
         queryFn: async () => {
             const { data, error } = await supabase
                 .from(queryKey)
-                .select("*, fuel_expenses(*), insurance_expenses(*)") // Fetch vehicle + related fuel expenses
+                .select("*, fuel_expenses(*), insurance_expenses(*), service_expenses(*)") // Fetch vehicle + related fuel expenses
                 .eq("id", selected_vehicle_id); // Ensure selected_vehicle_id is used
 
             if (error) {
