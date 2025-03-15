@@ -1,11 +1,10 @@
 import { View, Text, TouchableOpacity, Dimensions } from "react-native";
 import { useContext, useMemo, useState } from "react";
 import { ProfileContext } from "../providers/ProfileDataProvider";
-import { LineChart } from "react-native-chart-kit";
+import { BarChart } from "react-native-chart-kit";
 
 // Get screen width
 const screenWidth = Dimensions.get("window").width;
-const screenHeight = Dimensions.get("window").height;
 
 export const FuelExpensesScreen = () => {
   const { fuelExpenses } = useContext(ProfileContext);
@@ -58,26 +57,11 @@ export const FuelExpensesScreen = () => {
     backgroundGradientFrom: "#ffffff",
     backgroundGradientTo: "#ffffff",
     decimalPlaces: 2, // Show values with 2 decimal places
-    color: (opacity = 1) => `rgba(33, 150, 243, ${opacity})`, // Blue line
+    color: (opacity = 1) => `rgba(33, 150, 243, ${opacity})`, // Blue bars
     labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // Black labels
-    propsForDots: {
-      r: "7", // Bigger dots
-      strokeWidth: "3",
-      stroke: "#2196F3", // Blue border for dots
-      fill: "#2196F3", // Blue fill for dots
-    },
-    propsForBackgroundLines: {
-      strokeDasharray: "", // Makes the grid lines dashed
-      stroke: "#E0E0E0", // Light gray grid
-    },
-    propsForVerticalLines: {
-      strokeDasharray: "", // Makes the grid lines dashed
-      stroke: "#E0E0E0", // Light gray grid
-    },
-    propsForLabels: {
-      fontSize: 14,
-      fontWeight: "600",
-    },
+    barPercentage: 0.6, // Increase bar width
+    fillShadowGradient: "#2196F3", // Blue bar color
+    fillShadowGradientOpacity: 1,
   };
 
   return (
@@ -85,10 +69,10 @@ export const FuelExpensesScreen = () => {
       
       {/* Title */}
       <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", color: "#333" }}>
-        Fuel Expenses Over Time
+        Fuel Expenses Overview
       </Text>
       <Text style={{ fontSize: 14, textAlign: "center", color: "#666", marginBottom: 10 }}>
-        Track your fuel costs month by month
+        Track your monthly fuel costs
       </Text>
 
       {/* Fuel Type Filter Buttons */}
@@ -123,18 +107,15 @@ export const FuelExpensesScreen = () => {
         ))}
       </View>
 
-      {/* Line Chart */}
-      <LineChart
+      {/* Bar Chart */}
+      <BarChart
         data={chartData}
         width={screenWidth - 40}
-        height={400}
-        chartConfig={chartConfig}
-        bezier // Smooth curved line
+        height={250}
         yAxisLabel="€"
-        yAxisSuffix=""
-        withVerticalLabels
-        withHorizontalLabels
-        withDots={true} // Show dots at data points
+        chartConfig={chartConfig}
+        showBarTops={true}
+        verticalLabelRotation={30} // Rotate labels to prevent overlap
         style={{
           borderRadius: 16,
           marginVertical: 10,
