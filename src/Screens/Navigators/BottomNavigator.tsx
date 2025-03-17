@@ -166,6 +166,10 @@ export default function BottomNavigator() {
                                         title: "Analitics",
                                         screen: "HeaderServiceNavigator",
                                     },
+                                    {
+                                        title: "Map",
+                                        screen: "MapScreen",
+                                    },
                                 ]
                                     .sort((a, b) =>
                                         a.title.localeCompare(b.title)

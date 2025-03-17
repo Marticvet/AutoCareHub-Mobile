@@ -93,6 +93,7 @@ export const FuelExpensesScreen = () => {
         {fuelTypes.map((type) => (
           <TouchableOpacity
             key={type}
+            // @ts-ignore
             onPress={() => setSelectedFuelType(type)}
             style={{
               paddingVertical: 8,
