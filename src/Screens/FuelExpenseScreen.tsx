@@ -27,7 +27,7 @@ import { useNavigation } from "@react-navigation/native";
 
 export const FuelExpenseScreen = () => {
     const { userProfile, selectedVehicle } = useContext(ProfileContext);
-    const navigation = useNavigation();
+    const navigation = useNavigation<any>();
     const { mutate, isPending, error } = useInsertFuelExpense(); // ✅ Call Hook at the top level
     // Retrieve the values provided by ProfileDataProvider
 
@@ -39,9 +39,10 @@ export const FuelExpenseScreen = () => {
     const [pricePerLiter, setPricePerLiter] = useState("");
     const [totalCost, setTotalCost] = useState("");
     const [litres, setLitres] = useState("");
-    const [place, setPlace] = useState("");
+    const [place, setPlace] = useState();
     const [paymentMethod, setPaymentMethod] = useState("");
     const [notes, setNotes] = useState("");
+    const [locationName, setLocationName] = useState("");
 
     // References for each input field to manage focus
     const odometerRef = useRef(null);
@@ -84,12 +85,15 @@ export const FuelExpenseScreen = () => {
             total_cost: Number(totalCost),
             total_litres: Number(litres),
             full_tank: isEnabled,
-            gas_station: place,
+            gas_station: JSON.stringify(place),
             payment_method: paymentMethod,
             notes,
             selected_vehicle_id: userProfile?.selected_vehicle_id,
             user_id: userProfile?.id,
         };
+
+        console.log(addFuelExpense);
+        
 
         if (
             !odometer.trim() ||
@@ -105,7 +109,7 @@ export const FuelExpenseScreen = () => {
             isNaN(Number(litres)) ||
             Number(litres) <= 0 ||
             !fuelType.trim() ||
-            !place.trim() ||
+            !place === undefined ||
             !paymentMethod.trim() ||
             !userProfile?.selected_vehicle_id ||
             !userProfile?.id
@@ -136,7 +140,7 @@ export const FuelExpenseScreen = () => {
                 setTotalCost("");
                 setLitres("");
                 setIsEnabled(false);
-                setPlace("");
+                setPlace(undefined);
                 setPaymentMethod("");
                 setNotes("");
 
@@ -149,6 +153,17 @@ export const FuelExpenseScreen = () => {
             },
         });
     };
+
+    function saveLocationHandler() {
+        navigation.navigate(
+            "MapScreen",
+
+            {
+                setPlace,
+                setLocationName
+            }
+        );
+    }
 
     return (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -352,8 +367,8 @@ export const FuelExpenseScreen = () => {
                             <TextInput
                                 ref={placeRef}
                                 placeholder="Gas Station"
-                                value={place}
-                                onChangeText={setPlace}
+                                value={locationName}
+                                onPress={saveLocationHandler}
                                 keyboardType="default"
                                 onSubmitEditing={() =>
                                     // @ts-ignore

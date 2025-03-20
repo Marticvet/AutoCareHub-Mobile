@@ -33,10 +33,11 @@ const ServiceExpenseScreen = () => {
 
     const [odometer, setOdometer] = useState("");
     const [serviceType, setServiceType] = useState("");
-    const [place, setPlace] = useState("");
+    const [place, setPlace] = useState();
     const [cost, setCost] = useState("");
     const [paymentMethod, setPaymentMethod] = useState("");
     const [notes, setNotes] = useState("");
+    const [locationName, setLocationName] = useState("");
 
     const [selectedDateTime, setSelectedDateTime] = useState<DateType>(); // Stores both Date & Time
     const [modalVisible, setModalVisible] = useState(false);
@@ -78,7 +79,7 @@ const ServiceExpenseScreen = () => {
             cost: parseFloat(cost.replace(/,/g, ".")),
             type_of_service: serviceType,
             payment_method: paymentMethod,
-            place: place,
+            place: JSON.stringify(place),
             notes,
             selected_vehicle_id: userProfile?.selected_vehicle_id,
             user_id: userProfile?.id,
@@ -89,6 +90,8 @@ const ServiceExpenseScreen = () => {
         // @ts-ignore
         insertServiceExpense(addServiceExpenses, {
             onSuccess: () => {
+                console.log(`here`);
+                
                 Alert.alert("Success", "Service Expense added successfully!", [
                     { text: "OK", onPress: () => console.log("Alert closed") },
                 ]);
@@ -100,7 +103,7 @@ const ServiceExpenseScreen = () => {
 
                 // ✅ Reset All State Values
                 setOdometer("");
-                setPlace("");
+                setPlace(undefined);
                 setPaymentMethod("");
                 setNotes("");
 
@@ -111,6 +114,14 @@ const ServiceExpenseScreen = () => {
             onError: (err) => {
                 console.error("Error inserting Service Expense:", err.message);
             },
+        });
+    }
+
+    function saveLocationHandler() {
+        // @ts-ignore
+        navigation.navigate("MapScreen", {
+            setPlace,
+            setLocationName
         });
     }
 
@@ -263,8 +274,8 @@ const ServiceExpenseScreen = () => {
                             <TextInput
                                 ref={placeRef}
                                 placeholder="Place"
-                                value={place}
-                                onChangeText={setPlace}
+                                value={locationName}
+                                onPress={saveLocationHandler}
                                 keyboardType="default"
                                 onSubmitEditing={() =>
                                     // @ts-ignore
