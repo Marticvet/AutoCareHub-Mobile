@@ -91,12 +91,14 @@ export const InsuranceExpenseScreen = () => {
         //     return;
         // }
 
-         // @ts-ignore
-         mutate(addInsuranceExpense, {
+        // @ts-ignore
+        mutate(addInsuranceExpense, {
             onSuccess: () => {
-                Alert.alert("Success", "Insurance Expense added successfully!", [
-                    { text: "OK", onPress: () => console.log("Alert closed") },
-                ]);
+                Alert.alert(
+                    "Success",
+                    "Insurance Expense added successfully!",
+                    [{ text: "OK", onPress: () => console.log("Alert closed") }]
+                );
 
                 // ✅ OPTIONAL: Auto-close the alert after 1.5 seconds
                 setTimeout(() => {
@@ -113,7 +115,10 @@ export const InsuranceExpenseScreen = () => {
             },
             // @ts-ignore
             onError: (err) => {
-                console.error("Error inserting Insurance Expense:", err.message);
+                console.error(
+                    "Error inserting Insurance Expense:",
+                    err.message
+                );
             },
         });
     }
@@ -210,6 +215,7 @@ export const InsuranceExpenseScreen = () => {
                                     odometerRef.current?.focus()
                                 }
                                 style={styles.input}
+                                clearButtonMode={"always"}
                             />
                         </View>
                     </View>
@@ -235,6 +241,7 @@ export const InsuranceExpenseScreen = () => {
                                     costRef.current?.focus()
                                 }
                                 style={styles.input}
+                                clearButtonMode={"always"}
                             />
                         </View>
                     </View>
@@ -278,6 +285,7 @@ export const InsuranceExpenseScreen = () => {
                                 returnKeyType="done"
                                 style={[styles.input, styles.notesInput]}
                                 multiline
+                                clearButtonMode={"always"}
                             />
                         </View>
                     </View>

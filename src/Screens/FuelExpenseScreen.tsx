@@ -24,8 +24,10 @@ import { ProfileContext } from "../providers/ProfileDataProvider";
 import { useInsertFuelExpense } from "../api/fuel_expenses";
 import { Fuel_Expenses } from "../../types/fuel_expenses";
 import { useNavigation } from "@react-navigation/native";
+import { useUpdateVehicle } from "../api/vehicles";
 
 export const FuelExpenseScreen = () => {
+    const { mutate: updateVehicle } = useUpdateVehicle();
     const { userProfile, selectedVehicle } = useContext(ProfileContext);
     const navigation = useNavigation<any>();
     const { mutate, isPending, error } = useInsertFuelExpense(); // ✅ Call Hook at the top level
@@ -34,15 +36,15 @@ export const FuelExpenseScreen = () => {
     const [selectedDateTime, setSelectedDateTime] = useState<DateType>();
     const [modalVisible, setModalVisible] = useState(false);
 
-    const [odometer, setOdometer] = useState("");
-    const [fuelType, setFuelType] = useState("");
-    const [pricePerLiter, setPricePerLiter] = useState("");
-    const [totalCost, setTotalCost] = useState("");
-    const [litres, setLitres] = useState("");
+    const [odometer, setOdometer] = useState<string>("");
+    const [fuelType, setFuelType] = useState<string>("");
+    const [pricePerLiter, setPricePerLiter] = useState<string>("");
+    const [totalCost, setTotalCost] = useState<string>("");
+    const [litres, setLitres] = useState<string>("");
     const [place, setPlace] = useState();
-    const [paymentMethod, setPaymentMethod] = useState("");
-    const [notes, setNotes] = useState("");
-    const [locationName, setLocationName] = useState("");
+    const [paymentMethod, setPaymentMethod] = useState<string>("");
+    const [notes, setNotes] = useState<string>("");
+    const [locationName, setLocationName] = useState<string>("");
 
     // References for each input field to manage focus
     const odometerRef = useRef(null);
@@ -79,7 +81,10 @@ export const FuelExpenseScreen = () => {
 
     const addFuelExpenseHandler = () => {
         const addFuelExpense: Fuel_Expenses = {
-            odometer: Number(odometer),
+            odometer:
+                odometer !== ""
+                    ? Number(odometer)
+                    : selectedVehicle?.current_mileage,
             fuel_type: fuelType,
             price_liter: Number(pricePerLiter),
             total_cost: Number(totalCost),
@@ -90,13 +95,11 @@ export const FuelExpenseScreen = () => {
             notes,
             selected_vehicle_id: userProfile?.selected_vehicle_id,
             user_id: userProfile?.id,
+            location_name: locationName,
         };
 
-        console.log(addFuelExpense);
-        
-
         if (
-            !odometer.trim() ||
+            !Number(odometer) ||
             isNaN(Number(odometer)) ||
             Number(odometer) <= 0 ||
             !pricePerLiter.trim() ||
@@ -121,19 +124,44 @@ export const FuelExpenseScreen = () => {
             return;
         }
 
-        // @ts-ignore
         mutate(addFuelExpense, {
             onSuccess: () => {
+                // Step 1: Update vehicle after fuel expense is added
+                updateVehicle(
+                    {
+                        vehicle: {
+                            ...selectedVehicle,
+                            // @ts-ignore
+                            current_mileage:
+                                odometer !== ""
+                                    ? Number(odometer)
+                                    : selectedVehicle?.current_mileage,
+                        },
+                        // @ts-ignore
+                        vehicleId: selectedVehicle?.id,
+                        // @ts-ignore
+                        userId: userProfile?.id,
+                    },
+                    {
+                        onSuccess: () => {
+                            console.log("✅ Vehicle updated successfully!");
+                        },
+                        onError: (error) => {
+                            console.error("🚨 Error updating vehicle:", error);
+                            return;
+                        },
+                    }
+                );
+
+                // ✅ Step 2: Show success alert
                 Alert.alert("Success", "Fuel Expense added successfully!", [
-                    { text: "OK", onPress: () => console.log("Alert closed") },
+                    {
+                        text: "OK",
+                        onPress: () => console.log("Alert closed"),
+                    },
                 ]);
 
-                // ✅ OPTIONAL: Auto-close the alert after 1.5 seconds
-                setTimeout(() => {
-                    console.log("Closing alert...");
-                }, 1500);
-
-                // ✅ Reset All State Values
+                // ✅ Step 3: Reset all form values
                 setOdometer("");
                 setFuelType("");
                 setPricePerLiter("");
@@ -144,12 +172,12 @@ export const FuelExpenseScreen = () => {
                 setPaymentMethod("");
                 setNotes("");
 
-                // ✅ Navigate back if needed
+                // ✅ Step 4: Navigate back (optional)
                 navigation.goBack();
             },
-            // @ts-ignore
-            onError: (err) => {
-                console.error("Error inserting Fuel Expense:", err.message);
+
+            onError: (err: any) => {
+                console.error("❌ Error inserting Fuel Expense:", err.message);
             },
         });
     };
@@ -160,7 +188,7 @@ export const FuelExpenseScreen = () => {
 
             {
                 setPlace,
-                setLocationName
+                setLocationName,
             }
         );
     }
@@ -240,6 +268,7 @@ export const FuelExpenseScreen = () => {
                                     serviceTypeRef.current?.focus()
                                 }
                                 style={styles.input}
+                                clearButtonMode={"always"}
                             />
                         </View>
                     </View>
@@ -272,6 +301,7 @@ export const FuelExpenseScreen = () => {
                                     fuelTypeRef.current?.focus()
                                 }
                                 style={styles.input}
+                                clearButtonMode={"always"}
                             />
                         </View>
                     </View>
@@ -295,6 +325,7 @@ export const FuelExpenseScreen = () => {
                                 pricePerLiterRef.current?.focus()
                             }
                             style={styles.fuelInputs}
+                            clearButtonMode={"always"}
                         />
                         <TextInput
                             ref={totalCostRef}
@@ -307,6 +338,7 @@ export const FuelExpenseScreen = () => {
                                 totalCostRef.current?.focus()
                             }
                             style={styles.fuelInputs}
+                            clearButtonMode={"always"}
                         />
                         <TextInput
                             ref={litresRef}
@@ -319,6 +351,7 @@ export const FuelExpenseScreen = () => {
                                 litresRef.current?.focus()
                             }
                             style={styles.fuelInputs}
+                            clearButtonMode={"always"}
                         />
                     </View>
 
@@ -375,6 +408,7 @@ export const FuelExpenseScreen = () => {
                                     placeRef.current?.focus()
                                 }
                                 style={styles.input}
+                                clearButtonMode={"always"}
                             />
                         </View>
                     </View>
@@ -399,6 +433,7 @@ export const FuelExpenseScreen = () => {
                                     paymentMethodRef.current?.focus()
                                 }
                                 style={styles.input}
+                                clearButtonMode={"always"}
                             />
                         </View>
                     </View>
@@ -442,6 +477,7 @@ export const FuelExpenseScreen = () => {
                                 returnKeyType="done"
                                 style={[styles.input, styles.notesInput]}
                                 multiline
+                                clearButtonMode={"always"}
                             />
                         </View>
                     </View>

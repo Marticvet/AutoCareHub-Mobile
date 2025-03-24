@@ -135,6 +135,8 @@ const ReminderScreen = () => {
                                     serviceTypeRef.current?.focus()
                                 }
                                 style={styles.input}
+                    clearButtonMode={'always'}
+
                             />
                         ) : (
                             <TextInput
@@ -149,6 +151,8 @@ const ReminderScreen = () => {
                                     serviceTypeRef.current?.focus()
                                 }
                                 style={styles.input}
+                    clearButtonMode={'always'}
+
                             />
                         )}
                     </View>
@@ -232,6 +236,8 @@ const ReminderScreen = () => {
                                 // @ts-ignore
                                 odometerRef.current?.focus()
                             }
+                    clearButtonMode={'always'}
+
                         />
                     </View>
 
@@ -267,6 +273,8 @@ const ReminderScreen = () => {
                                     // @ts-ignore
                                     dateRef.current?.focus()
                                 }
+                    clearButtonMode={'always'}
+
                             />
                         ) : (
                             <View style={styles.amountPeriodInputContainer}>
@@ -281,6 +289,8 @@ const ReminderScreen = () => {
                                         // @ts-ignore
                                         dateRef.current?.focus()
                                     }
+                    clearButtonMode={'always'}
+
                                 />
 
                                 <TextInput
@@ -294,6 +304,8 @@ const ReminderScreen = () => {
                                         // @ts-ignore
                                         dateRef.current?.focus()
                                     }
+                    clearButtonMode={'always'}
+
                                 />
                             </View>
                         )}
@@ -321,6 +333,8 @@ const ReminderScreen = () => {
                             }
                             style={[styles.input, styles.notesInput]}
                             multiline
+                    clearButtonMode={'always'}
+
                         />
                     </View>
                 </View>

@@ -350,6 +350,7 @@ function AddVehicleScreen(props: any) {
                                     handlePickerChange("vehicleLicense", value)
                                 }
                                 autoCapitalize="characters"
+                                clearButtonMode={"always"}
                             />
 
                             <Text style={styles.label}>
@@ -365,6 +366,7 @@ function AddVehicleScreen(props: any) {
                                         value
                                     )
                                 }
+                                clearButtonMode={"always"}
                             />
 
                             <Text style={styles.label}>
@@ -377,6 +379,7 @@ function AddVehicleScreen(props: any) {
                                     handlePickerChange("vin", value)
                                 }
                                 autoCapitalize="none"
+                                clearButtonMode={"always"}
                             />
 
                             <Text style={styles.label}>
@@ -389,6 +392,7 @@ function AddVehicleScreen(props: any) {
                                 onChangeText={(value) =>
                                     handlePickerChange("mileage", value)
                                 }
+                                clearButtonMode={"always"}
                             />
 
                             {/* Close Button */}

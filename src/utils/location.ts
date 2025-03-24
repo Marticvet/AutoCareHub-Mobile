@@ -1,5 +1,5 @@
 
-const GOOGLE_API_KEY = 'AIzaSyB_skL-jRa4RGlIUbbYzIA0TEufwW9k0HA';
+export const GOOGLE_API_KEY = 'AIzaSyB_skL-jRa4RGlIUbbYzIA0TEufwW9k0HA';
 // const GOOGLE_API_KEY = process.env.EXPO_GOOGLE_API_KEY || "";
 
 export function getMapPreview(lat: number, lng: number) {

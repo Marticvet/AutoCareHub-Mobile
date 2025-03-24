@@ -98,8 +98,7 @@ export const useUpdateVehicle = () => {
             // ✅ Refresh the list and the updated vehicle
             // @ts-ignore
             await queryClient.invalidateQueries(["vehicles"]); // Refresh all vehicles
-            // @ts-ignore
-            await queryClient.invalidateQueries(["vehicles", vehicleId]); // Refresh specific vehicle
+  
         },
     });
 };

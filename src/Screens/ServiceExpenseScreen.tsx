@@ -22,8 +22,10 @@ import { DateType } from "react-native-ui-datepicker";
 import { DateTimePickerModal } from "./DateTimePickerModal";
 import { useInsertServiceExpense } from "../api/service_expenses";
 import { useNavigation } from "@react-navigation/native";
+import { useUpdateVehicle } from "../api/vehicles";
 
 const ServiceExpenseScreen = () => {
+    const { mutate: updateVehicle } = useUpdateVehicle();
     const {
         mutate: insertServiceExpense,
         isPending,
@@ -31,13 +33,13 @@ const ServiceExpenseScreen = () => {
     } = useInsertServiceExpense(); // ✅ Call Hook at the top level
     const navigation = useNavigation();
 
-    const [odometer, setOdometer] = useState("");
-    const [serviceType, setServiceType] = useState("");
-    const [place, setPlace] = useState();
-    const [cost, setCost] = useState("");
-    const [paymentMethod, setPaymentMethod] = useState("");
-    const [notes, setNotes] = useState("");
-    const [locationName, setLocationName] = useState("");
+    const [odometer, setOdometer] = useState<string>("");
+    const [serviceType, setServiceType] = useState<string>("");
+    const [place, setPlace] = useState<string>();
+    const [cost, setCost] = useState<string>("");
+    const [paymentMethod, setPaymentMethod] = useState<string>("");
+    const [notes, setNotes] = useState<string>("");
+    const [locationName, setLocationName] = useState<string>("");
 
     const [selectedDateTime, setSelectedDateTime] = useState<DateType>(); // Stores both Date & Time
     const [modalVisible, setModalVisible] = useState(false);
@@ -75,7 +77,10 @@ const ServiceExpenseScreen = () => {
 
     function submitSaveHandler() {
         const addServiceExpenses: Service_Expenses = {
-            odometer: Number(odometer),
+            odometer:
+                odometer !== ""
+                    ? Number(odometer)
+                    : selectedVehicle?.current_mileage,
             cost: parseFloat(cost.replace(/,/g, ".")),
             type_of_service: serviceType,
             payment_method: paymentMethod,
@@ -83,6 +88,7 @@ const ServiceExpenseScreen = () => {
             notes,
             selected_vehicle_id: userProfile?.selected_vehicle_id,
             user_id: userProfile?.id,
+            location_name: locationName,
             // date: date,
             // time: date,
         };
@@ -90,8 +96,33 @@ const ServiceExpenseScreen = () => {
         // @ts-ignore
         insertServiceExpense(addServiceExpenses, {
             onSuccess: () => {
-                console.log(`here`);
-                
+                // Step 1: Update vehicle after fuel expense is added
+                updateVehicle(
+                    {
+                        vehicle: {
+                            ...selectedVehicle,
+                            // @ts-ignore
+                            current_mileage:
+                                odometer !== ""
+                                    ? Number(odometer)
+                                    : selectedVehicle?.current_mileage,
+                        },
+                        // @ts-ignore
+                        vehicleId: selectedVehicle?.id,
+                        // @ts-ignore
+                        userId: userProfile?.id,
+                    },
+                    {
+                        onSuccess: () => {
+                            console.log("✅ Vehicle updated successfully!");
+                        },
+                        onError: (error) => {
+                            console.error("🚨 Error updating vehicle:", error);
+                            return;
+                        },
+                    }
+                );
+
                 Alert.alert("Success", "Service Expense added successfully!", [
                     { text: "OK", onPress: () => console.log("Alert closed") },
                 ]);
@@ -121,7 +152,7 @@ const ServiceExpenseScreen = () => {
         // @ts-ignore
         navigation.navigate("MapScreen", {
             setPlace,
-            setLocationName
+            setLocationName,
         });
     }
 
@@ -201,6 +232,7 @@ const ServiceExpenseScreen = () => {
                                     serviceTypeRef.current?.focus()
                                 }
                                 style={styles.input}
+                                clearButtonMode={"always"}
                             />
                         </View>
                     </View>
@@ -233,6 +265,7 @@ const ServiceExpenseScreen = () => {
                                     serviceTypeRef.current?.focus()
                                 }
                                 style={styles.input}
+                                clearButtonMode={"always"}
                             />
                         </View>
                     </View>
@@ -257,6 +290,7 @@ const ServiceExpenseScreen = () => {
                                     costRef.current?.focus()
                                 }
                                 style={styles.input}
+                                clearButtonMode={"always"}
                             />
                         </View>
                     </View>
@@ -282,6 +316,7 @@ const ServiceExpenseScreen = () => {
                                     placeRef.current?.focus()
                                 }
                                 style={styles.input}
+                                clearButtonMode={"always"}
                             />
                         </View>
                     </View>
@@ -306,6 +341,7 @@ const ServiceExpenseScreen = () => {
                                     paymentMethodRef.current?.focus()
                                 }
                                 style={styles.input}
+                                clearButtonMode={"always"}
                             />
                         </View>
                     </View>
@@ -349,6 +385,7 @@ const ServiceExpenseScreen = () => {
                                 returnKeyType="done"
                                 style={[styles.input, styles.notesInput]}
                                 multiline
+                                clearButtonMode={"always"}
                             />
                         </View>
                     </View>

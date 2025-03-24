@@ -9,5 +9,6 @@ interface Service_Expenses {
     selected_vehicle_id?: string | null; // Selected vehicle UUID
     user_id?: string | null; // Selected vehicle UUID
     date?: Date | null,
-    time?: Date | null | string
+    time?: Date | null | string,
+    location_name?: string | null;
 }

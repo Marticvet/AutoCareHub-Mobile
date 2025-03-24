@@ -47,23 +47,23 @@ const VehicleDetailScreen = ({ route }: any) => {
             return;
         }
 
-        updateVehicle(
-            {
-                // @ts-ignore
-                vehicle: {...vehicle, vehicle_model: '330d'},
-                vehicleId,
-                userId,
-            },
-            {
-                onSuccess: () => {
-                    console.log("✅ Vehicle updated successfully!");
-                    navigation.goBack(); // ✅ Navigate back after update
-                },
-                onError: (error) => {
-                    console.error("🚨 Error updating vehicle:", error);
-                },
-            }
-        );
+        // updateVehicle(
+        //     {
+        //         // @ts-ignore
+        //         vehicle: {...vehicle, vehicle_model: vehicle. },
+        //         vehicleId,
+        //         userId,
+        //     },
+        //     {
+        //         onSuccess: () => {
+        //             console.log("✅ Vehicle updated successfully!");
+        //             navigation.goBack(); // ✅ Navigate back after update
+        //         },
+        //         onError: (error) => {
+        //             console.error("🚨 Error updating vehicle:", error);
+        //         },
+        //     }
+        // );
     }
 
     async function deleteVehicleHandler() {
