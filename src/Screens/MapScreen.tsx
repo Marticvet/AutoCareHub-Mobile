@@ -9,7 +9,7 @@ import {
     FlatList,
     Keyboard,
 } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Callout, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import {
     getCurrentPositionAsync,
     useForegroundPermissions,
@@ -133,8 +133,6 @@ export default function MapScreen({ route }: any) {
     ) => {
         const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${GOOGLE_API_KEY}`;
 
-        setPickedLocation(null);
-
         try {
             const response = await fetch(detailsUrl);
             const data = await response.json();
@@ -191,6 +189,8 @@ export default function MapScreen({ route }: any) {
         handleLocation(lat, lng);
     }
 
+    console.log(pickedLocation, `pickedLocation`);
+
     return (
         <View style={styles.container}>
             {/* Floating Address Input */}
@@ -245,7 +245,7 @@ export default function MapScreen({ route }: any) {
                 onPress={selectLocationHandler}
                 showsUserLocation={true}
             >
-                {/* ✅ Safe Marker Render */}
+                {/* ✅ Safe Marker Render*/}
                 {selectedLocation && (
                     <Marker
                         draggable
