@@ -80,7 +80,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         const { error } = await supabase.auth.signOut();
 
         if (error) {
-            console.error("🚨 Logout error:", error);
+            setSession(null);
             return;
         }
 
@@ -126,7 +126,8 @@ const useTokenRefresher = (session: any, logout: () => Promise<void>) => {
                         await supabase.auth.getSession();
                     }
                 } catch (error) {
-                    console.error("Error decoding token:", error);
+                    logout();
+                    console.log("Error decoding token:", error);
                 }
             }
         };

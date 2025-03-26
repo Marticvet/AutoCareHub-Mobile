@@ -189,8 +189,6 @@ export default function MapScreen({ route }: any) {
         handleLocation(lat, lng);
     }
 
-    console.log(pickedLocation, `pickedLocation`);
-
     return (
         <View style={styles.container}>
             {/* Floating Address Input */}

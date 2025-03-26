@@ -434,6 +434,7 @@ export const FuelExpenseScreen = () => {
                                 }
                                 style={styles.input}
                                 clearButtonMode={"always"}
+                                editable={false}
                             />
                         </View>
                     </View>
