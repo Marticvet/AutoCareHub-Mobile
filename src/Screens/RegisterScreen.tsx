@@ -17,6 +17,8 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import { supabase } from "../lib/supabase";
 
+// import * as Linking from "expo-linking";
+
 interface RegisterFormInterface {
     email: string;
     full_name: string;
@@ -125,6 +127,16 @@ function RegisterScreen() {
         );
     }
 
+    async function forgotPasswordHandler() {
+        // const resetPasswordURL = Linking.createURL("/LoginScreen");
+
+        // const { data, error } = await supabase.auth.resetPasswordForEmail("martigiant@gmail.com", {
+        //   redirectTo: resetPasswordURL,
+        // });
+      
+        // return { data, error };
+    }
+
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -158,7 +170,7 @@ function RegisterScreen() {
                                 value={registerForm.email}
                                 autoCorrect={false}
                                 autoCapitalize="none"
-                                clearButtonMode={'always'}
+                                clearButtonMode={"always"}
                             />
 
                             <Text style={styles.registerTextLabel}>
@@ -166,15 +178,15 @@ function RegisterScreen() {
                             </Text>
                             <TextInput
                                 style={styles.textInput}
-                                secureTextEntry={true} 
+                                secureTextEntry={true}
                                 placeholder="Enter your password"
                                 placeholderTextColor="#aaa"
                                 onChangeText={(value) =>
                                     registerFormHandler("password", value)
                                 }
                                 value={registerForm.password}
-                                clearButtonMode={'always'}
-                                textContentType={'oneTimeCode'}
+                                clearButtonMode={"always"}
+                                textContentType={"oneTimeCode"}
                             />
 
                             <Text style={styles.registerTextLabel}>
@@ -191,9 +203,9 @@ function RegisterScreen() {
                                     )
                                 }
                                 value={registerForm.confirmPassword}
-                                secureTextEntry={true} 
-                                clearButtonMode={'always'}
-                                textContentType={'oneTimeCode'}
+                                secureTextEntry={true}
+                                clearButtonMode={"always"}
+                                textContentType={"oneTimeCode"}
                             />
 
                             <Text style={styles.registerTextLabel}>
@@ -207,7 +219,7 @@ function RegisterScreen() {
                                     registerFormHandler("full_name", value)
                                 }
                                 value={registerForm.full_name}
-                                clearButtonMode={'always'}
+                                clearButtonMode={"always"}
                             />
                         </View>
 
@@ -234,6 +246,15 @@ function RegisterScreen() {
                                     onPress={navigateCreateAcountHandler}
                                 >
                                     Sign In
+                                </Text>
+                            </View>
+
+                            <View style={styles.forgetPasswordContainer}>
+                                <Text
+                                    style={styles.text}
+                                    onPress={forgotPasswordHandler}
+                                >
+                                    Forgot password?
                                 </Text>
                             </View>
                         </View>
@@ -416,6 +437,9 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 16,
         color: whiteColor, // Adjust for text color
+    },
+    forgetPasswordContainer: {
+        height: 40,
     },
 });
 

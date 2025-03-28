@@ -72,24 +72,24 @@ export const InsuranceExpenseScreen = () => {
 
         // valid_from &&
         // valid_to &&
-        // if (
-        //     !odometer.trim() ||
-        //     isNaN(Number(odometer)) ||
-        //     Number(odometer) <= 0 ||
-        //     !cost.trim() ||
-        //     isNaN(Number(cost)) ||
-        //     Number(cost) <= 0 ||
-        //     !userProfile?.selected_vehicle_id ||
-        //     !userProfile?.id
-        // ) {
-        //     // Submit data to Supabase
-        // } else {
-        //     Alert.alert(
-        //         "Validation Error",
-        //         "Please fill in all fields correctly before submitting."
-        //     );
-        //     return;
-        // }
+        if (
+            !odometer.trim() ||
+            isNaN(Number(odometer)) ||
+            Number(odometer) <= 0 ||
+            !cost.trim() ||
+            isNaN(Number(cost)) ||
+            Number(cost) <= 0 ||
+            !userProfile?.selected_vehicle_id ||
+            !userProfile?.id
+        ) {
+            // Submit data to Supabase
+        } else {
+            Alert.alert(
+                "Validation Error",
+                "Please fill in all fields correctly before submitting."
+            );
+            return;
+        }
 
         // @ts-ignore
         mutate(addInsuranceExpense, {
@@ -133,7 +133,10 @@ export const InsuranceExpenseScreen = () => {
                         <View style={styles.dateTimeContainer}>
                             <Text style={styles.label}>Valid from</Text>
                             <Pressable
-                                onPress={() => setModalVisible(true)}
+                                onPress={() => {
+                                    setModalVisible(true);
+                                    setIsValidUntilButtonPressed(false);
+                                }}
                                 style={({ pressed }) =>
                                     pressed
                                         ? styles.PressedDateTimeInputContainer
@@ -423,16 +426,14 @@ const styles = StyleSheet.create({
     },
     PressedDateTimeInputContainer: {
         flexDirection: "row",
-        width: "48%",
-        height: 48,
         backgroundColor: "#e0e0e0",
         alignItems: "center",
         padding: 10,
-        marginVertical: 5,
         borderRadius: 8,
-        borderBottomWidth: 1,
-        borderBottomColor: "#DDD",
-        marginBottom: 12,
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+        borderColor: "#DDD",
+        width: "100%",
     },
     pressableButton: {
         marginTop: 24,

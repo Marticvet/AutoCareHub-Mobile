@@ -9,7 +9,9 @@ export const DateTimePickerModal = (props: any) => {
     const {
         modalVisible,
         setModalVisible,
+        selectedDueDate,
         selectedDateTime,
+        selectedDate,
         setSelectedDateTime,
         setSelectedDate,
         setSelectedTime,
@@ -36,19 +38,20 @@ export const DateTimePickerModal = (props: any) => {
             second: "2-digit",
         });
 
-        setSelectedDate(formattedDate);
         if (insuranceExpenseScreen && insuranceExpenseScreen !== true) {
+            setSelectedDate(formattedDate);
             setSelectedTime(formattedTime);
-        }
-
-        if (isValidUntilButtonPressed) {
-            setSelectedDueDate(date);
-            setIsValidUntilButtonPressed(false);
-        } else {
             setSelectedDateTime(date);
         }
 
-        // setModalVisible(false); // Close modal after selection if needed
+        if (isValidUntilButtonPressed) {
+            setSelectedDateTime(date);
+            setSelectedDueDate(formattedDate);
+            setIsValidUntilButtonPressed(false);
+        } else {
+            setSelectedDateTime(date);
+            setSelectedDate(formattedDate);
+        }
     }
 
     return (
