@@ -1,12 +1,12 @@
 import { View, Text, StyleSheet, Dimensions, Pressable } from "react-native";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { ProfileContext } from "../providers/ProfileDataProvider";
-import { BarChart } from "react-native-chart-kit";
 import { DateType } from "react-native-ui-datepicker";
 import { Fuel_Expenses } from "../../types/fuel_expenses";
 import { parseMMDDYYYY } from "../utils/parseMMDDYYYY";
 import { Ionicons } from "@expo/vector-icons";
 import { DateTimePickerModal } from "./DateTimePickerModal";
+import { BarChart } from "react-native-chart-kit";
 
 // Get screen width
 const screenWidth = Dimensions.get("window").width;
@@ -25,13 +25,39 @@ const chartConfig = {
 
 export const FuelExpensesScreen = () => {
     const { fuelExpenses } = useContext(ProfileContext);
-    const [selectedFuelType, setSelectedFuelType] = useState(null);
 
-    const date = new Date(); // Get current date & time
+    // Get a date object for the current time
+    const now = new Date();
+    const oneMonthAgo = new Date(now);
+    oneMonthAgo.setDate(1); // Prevent day overflow
+    oneMonthAgo.setMonth(now.getMonth() - 1);
+
+    // Optional: set back the day to what it was, if valid
+    const lastDayOfPrevMonth = new Date(
+        oneMonthAgo.getFullYear(),
+        oneMonthAgo.getMonth() + 1,
+        0
+    ).getDate();
+    oneMonthAgo.setDate(Math.min(now.getDate(), lastDayOfPrevMonth));
+
+    const dueDate = new Date();
     const userLocale = Intl.DateTimeFormat().resolvedOptions().locale; // Auto-detect user locale
+    // Get a date object for the current time
+
+    oneMonthAgo.setDate(1); // Prevent day overflow
+    oneMonthAgo.setMonth(now.getMonth() - 1);
+
+    oneMonthAgo.setDate(Math.min(now.getDate(), lastDayOfPrevMonth));
 
     // Format Date (User's Locale)
-    const formattedDate = date.toLocaleDateString(userLocale, {
+    const formattedDate = oneMonthAgo.toLocaleDateString(userLocale, {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+    });
+
+    // Format Date (User's Locale)
+    const formattedDueDate = dueDate.toLocaleDateString(userLocale, {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
@@ -41,77 +67,65 @@ export const FuelExpensesScreen = () => {
         useState(false);
     const [selectedDate, setSelectedDate] = useState<DateType>(formattedDate);
     const [selectedDueDate, setSelectedDueDate] =
-        useState<DateType>(formattedDate);
+        useState<DateType>(formattedDueDate);
 
     const [selectedDateTime, setSelectedDateTime] = useState<DateType>();
     const [modalVisible, setModalVisible] = useState(false);
 
-    function filterByDateRange(
-        data: Fuel_Expenses[],
-        startDate: DateType,
-        endDate: DateType
-    ): Fuel_Expenses[] {
-        // @ts-ignore
-        const start = parseMMDDYYYY(startDate);
-        // @ts-ignore
-        const end = parseMMDDYYYY(endDate);
+    const [chartdata, setChartData] = useState<any[]>([]);
+    const [totalCost, setTotalCost] = useState<number>(0);
 
-        return data.filter((entry) => {
+    const [filteredFuelExpenses, setFilteredFuelExpenses] = useState<
+        Fuel_Expenses[]
+    >([]);
+
+    useEffect(() => {
+        if (fuelExpenses) {
+            setChartData([]);
+            setFilteredFuelExpenses([]);
+            setTotalCost(0);
+
             // @ts-ignore
-            const entryDate = new Date(entry.date);
-            return entryDate >= start && entryDate <= end;
-        });
-    }
+            const start = parseMMDDYYYY(selectedDate);
+            // @ts-ignore
+            const end = parseMMDDYYYY(selectedDueDate);
 
-    // If data is loading
-    if (!fuelExpenses) {
-        return (
-            <View style={{ padding: 20, alignItems: "center" }}>
-                <Text style={{ fontSize: 16, color: "#555" }}>
-                    Loading fuel expenses...
-                </Text>
-            </View>
-        );
-    }
+            const fuelTotalCost = fuelExpenses
+                .filter((entry: Fuel_Expenses) => {
+                    // @ts-ignore
+                    const entryDate = new Date(entry.date);
+                    return entryDate >= start && entryDate <= end;
+                })
+                .map((entry: Fuel_Expenses) => {
+                    return { date: entry.date, total_cost: entry.total_cost };
+                });
 
-    // If no data
-    if (fuelExpenses.length === 0) {
-        return (
-            <View style={{ padding: 20, alignItems: "center" }}>
-                <Text style={{ fontSize: 16, color: "#555" }}>
-                    No fuel expenses recorded yet.
-                </Text>
-            </View>
-        );
-    }
+            setFilteredFuelExpenses(fuelTotalCost);
 
-    // Filtered fuel expenses based on selected fuel type
-    const filteredFuelExpenses = filterByDateRange(
-        fuelExpenses ? fuelExpenses : [],
-        selectedDate,
-        selectedDueDate
-    );
-
-    // Format dates for X-Axis
-    const formattedLabels = filteredFuelExpenses.map((expense) =>
-        expense.date
-            ? new Date(expense.date).toLocaleDateString("en-GB", {
-                  day: "2-digit",
-                  month: "short",
-              })
-            : "Unknown"
-    );
-
-    // Get total cost data
-    const totalCosts = filteredFuelExpenses.map(
-        (expense) => expense.total_cost || 0
-    );
+            // .reduce(
+            //     // @ts-ignore
+            //     (accumulator, currentValue) =>
+            //         accumulator + Number(currentValue.total_cost),
+            //     0
+            // );
+        }
+    }, [selectedDate, selectedDueDate]);
 
     // Memoized chart data
     const chartData = useMemo(
         () => ({
-            labels: formattedLabels,
-            datasets: [{ data: totalCosts }],
+            labels: filteredFuelExpenses.map(
+                (entry) =>
+                    // @ts-ignore
+                    new Date(entry.date).toLocaleDateString("en-GB") // or use your locale
+            ),
+            datasets: [
+                {
+                    data: filteredFuelExpenses.map((entry) =>
+                        Number(entry.total_cost || 0)
+                    ),
+                },
+            ],
         }),
         [filteredFuelExpenses]
     );
@@ -214,7 +228,7 @@ export const FuelExpensesScreen = () => {
             <BarChart
                 data={chartData}
                 width={screenWidth - 40}
-                height={250}
+                height={350}
                 yAxisLabel="€"
                 chartConfig={chartConfig}
                 showBarTops={true}

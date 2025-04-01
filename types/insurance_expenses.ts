@@ -7,4 +7,6 @@ export interface Insurance_Expenses {
     user_id?: string | null; // Selected vehicle UUID
     valid_from?: Date | null,
     valid_to?: Date | null,
+    date?: Date | null,
+
 }

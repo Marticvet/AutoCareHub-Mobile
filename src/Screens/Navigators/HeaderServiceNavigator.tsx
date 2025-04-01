@@ -13,7 +13,7 @@ const Tab = createMaterialTopTabNavigator();
 export const HeaderServiceNavigator = () => {
     return (
         <Tab.Navigator
-            initialRouteName={"TotalExpensesScreen"}
+            initialRouteName={"ReportsScreen"}
             screenOptions={{
                 tabBarStyle: { backgroundColor: "#E8E8E8" },
                 tabBarActiveTintColor: "#00AFCF",
@@ -23,9 +23,9 @@ export const HeaderServiceNavigator = () => {
             }}
         >
             <Tab.Screen
-                name="TotalExpensesScreen"
-                component={TotalExpensesScreen}
-                options={{ title: "Total" }}
+                name="ReportsScreen"
+                component={ReportsScreen}
+                options={{ title: "Reports" }}
             />
 
             <Tab.Screen
